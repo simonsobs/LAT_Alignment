@@ -44,3 +44,12 @@ def mirror_fit(x, y, z, fit_func, **kwargs):
     z_fit = fit_func((x, y), *popt)
     rms = np.sqrt(np.mean((z - z_fit)**2))
     return popt, rms
+
+def get_delta(points, x0, y0, z0, a1, a2, a3):
+    if len(points.shape) == 1:
+        points = np.array([points])
+    real_points = points - np.array(x0, y0, z0)
+    model = rot.RotationSequence3D([a1, a2, a3], axes_order='xyz')
+    real_points[:, 0], real_points[:, 1], real_points[:, 2] = model(real_points[:, 0], real_points[:, 1], real_points[:, 2])
+
+    return points - real_points
