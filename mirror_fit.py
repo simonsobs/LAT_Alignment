@@ -27,6 +27,12 @@ def mirror(x, y, a):
             z += a[i,j]*(x/Rn)**i * (y/Rn)**j
     return z
 
+def primary_fit_func(xy, x0, y0, z0, a1, a2, a3):
+    z =  mirror(xy[0] - x0, xy[1] - y0, a_primary) - z0
+    model = rot.RotationSequence3D([a1, a2, a3], axes_order='xyz')
+    x, y, z = model(xy[0], xy[1], z)
+    return z
+
 def secondary_fit_func(xy, x0, y0, z0, a1, a2, a3):
     z =  mirror(xy[0] - x0, xy[1] - y0, a_secondary) - z0
     model = rot.RotationSequence3D([a1, a2, a3], axes_order='xyz')
