@@ -1,6 +1,6 @@
 import numpy as np
 import scipy.optimize as opt
-# import astropy.modeling.rotations as rot
+import astropy.modeling.rotations as rot
 
 a_primary = np.array([[0., 0., -57.74022, 1.5373825, 1.154294, -0.441762, 0.0906601,],
              [0., 0., 0., 0., 0., 0., 0.],
@@ -27,10 +27,10 @@ def mirror(x, y, a):
             z += a[i,j]*(x/Rn)**i * (y/Rn)**j
     return z
 
-def secondary_fit_func(xy, x0, y0, z0): #, a1, a2, a3):
+def secondary_fit_func(xy, x0, y0, z0, a1, a2, a3):
     z =  mirror(xy[0] - x0, xy[1] - y0, a_secondary) - z0
-    # model = rot.RotationSequence3D([a1, a2, a3], axes_order='xyz')
-    # x, y, z = model(xy[0], xy[1], z)
+    model = rot.RotationSequence3D([a1, a2, a3], axes_order='xyz')
+    x, y, z = model(xy[0], xy[1], z)
     return z
 
 def mirror_fit(x, y, z, fit_func, **kwargs):
