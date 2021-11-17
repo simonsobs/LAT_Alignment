@@ -2,6 +2,16 @@ import numpy as np
 from scipy.spatial.transform import Rotation as rot
 
 def rotate(point, end_point1, end_point2, thetha):
+    """
+    Rotate a point about an axis
+
+    @param point: The point to rotate
+    @param end_point1: A point on the axis of rotation
+    @param end_point2: Another point on the axis of rotation
+    @param thetha: Angle in radians to rotate by
+
+    @return point: The rotated point
+    """
     origin = np.mean(end_point1, end_point2)
     point_0 = point - origin
     ax = end_point2 - end_point1
@@ -11,6 +21,17 @@ def rotate(point, end_point1, end_point2, thetha):
 
 
 def rotate_panel(points, adjustors, thetha_0, thetha_1):
+    """
+    Rotate panel about axes created by adjustors
+
+    @param points: Points on panel to rotate
+    @param adjustors: Adjustor positions
+    @param thetha_0: Angle to rotate about first adjustor axis
+    @param thetha_1: Angle to rotate about second adjustor axis
+
+    @return rot_points: The rotated points
+    @return rot_adjustors: The rotated adjustors
+    """
     rot_points = np.zeros(points.shape)
     rot_adjustors = np.zeros(adjustors.shape)
     for i in range(len(points)):
@@ -23,5 +44,17 @@ def rotate_panel(points, adjustors, thetha_0, thetha_1):
 
 
 def translate_panel(points, adjustors, dx, dy, dz):
+    """
+    Translate panel
+
+    @param points: The points on panel to translate
+    @param adjustors: Adjustor positions
+    @param dx: Translation in x
+    @param dy: Translation in y
+    @param dz: Translation in z
+
+    @return points: The translated points
+    @return adjustors: The translated adjustors
+    """
     translation = np.array((dx, dy, dz))
     return points + translation, adjustors + translation
