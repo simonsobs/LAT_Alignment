@@ -22,6 +22,6 @@ def rotate_panel(points, adjustors, thetha_0, thetha_1):
     return rot_points, rot_adjustors
 
 
-def translate_panel(points, adjustors, dx, dy):
-    translation = np.array((dx, dy, 0))
+def translate_panel(points, adjustors, dx, dy, dz):
+    translation = np.array((dx, dy, dz))
     return points + translation, adjustors + translation
