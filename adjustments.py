@@ -34,11 +34,15 @@ def rotate_panel(points, adjustors, thetha_0, thetha_1):
     """
     rot_points = np.zeros(points.shape)
     rot_adjustors = np.zeros(adjustors.shape)
-    for i in range(len(points)):
+
+    n_points = len(points)
+    n_adjustors = len(adjustors)
+
+    for i in range(n_points):
         rot_points[i] = rotate(points[i], adjustors[1], adjustors[2], thetha_0)
-        rot_adjustors[i] = rotate(adjustors[i], adjustors[1], adjustors[2], thetha_0)
-    for i in range(len(points)):
         rot_points[i] = rotate(rot_points[i], adjustors[0], adjustors[3], thetha_1)
+    for i in range(n_adjustors):
+        rot_adjustors[i] = rotate(adjustors[i], adjustors[1], adjustors[2], thetha_0)
         rot_adjustors[i] = rotate(rot_adjustors[i], adjustors[0], adjustors[3], thetha_1)
     return rot_points, rot_adjustors
 
