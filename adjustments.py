@@ -90,13 +90,14 @@ def adjustment_fit_func(points_and_adj, dx, dy, dz, thetha_0, thetha_1):
     return np.linalg.norm(can_points - points)
 
 
-def calc_adjustments(can_points, points, adjustors):
+def calc_adjustments(can_points, points, adjustors, **kwargs):
     """
     Calculate adjustments needed to align panel
 
     @param can_points: The cannonical position of the points to align
     @param points: The measured positions of the points to align
     @param adjustors: The measured positions of the adjustors
+    @param **kwargs: Arguments to me passed to scipy.optimize.curve_fit
 
     @return dx: The required translation of panel in x
     @return dy: The required translation of panel in y
@@ -105,7 +106,9 @@ def calc_adjustments(can_points, points, adjustors):
     @return dy_err: The error in the fit for dy
     @return d_adj_err: The error in the fit for d_adj
     """
-    popt, pcov = opt.curve_fit(adjustment_fit_func, (can_points, points, adjustors), 0)
+    popt, pcov = opt.curve_fit(
+        adjustment_fit_func, (can_points, points, adjustors), 0, **kwargs
+    )
     perr = np.sqrt(np.diag(pcov))
 
     dx, dy, dz, thetha_0, thetha_1 = popt
