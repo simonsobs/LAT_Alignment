@@ -65,3 +65,25 @@ def translate_panel(points, adjustors, dx, dy, dz):
     """
     translation = np.array((dx, dy, dz))
     return points + translation, adjustors + translation
+
+
+def adjustment_fit_func(points_and_adj, dx, dy, dz, thetha_0, thetha_1):
+    """
+    Function to minimize when calculating adjustments
+
+    @param points_and_adj: Tuple containing three position arrays:
+                            can_points: The cannonical positions of the points to align
+                            points: The measured positions of the points to align
+                            adjustors: The measured positions of the adjustors
+    @param dx: Translation in x
+    @param dy: Translation in y
+    @param dz: Translation in z
+    @param thetha_0: Angle to rotate about first adjustor axis
+    @param thetha_1: Angle to rotate about second adjustor axis
+
+    @return norm: The norm of (cannonical positions - transformed positions)
+    """
+    can_points, points, adjustors = points_and_adj
+    points, adjustors = translate_panel(points, adjustors, dx, dy, dz)
+    points, adjustors = rotate_panel(points, adjustors, thetha_0, thetha_1)
+    return np.linalg.norm(can_points - points)
