@@ -1,4 +1,5 @@
 import numpy as np
+import scipy.optimize as opt
 from scipy.spatial.transform import Rotation as rot
 
 
@@ -87,3 +88,35 @@ def adjustment_fit_func(points_and_adj, dx, dy, dz, thetha_0, thetha_1):
     points, adjustors = translate_panel(points, adjustors, dx, dy, dz)
     points, adjustors = rotate_panel(points, adjustors, thetha_0, thetha_1)
     return np.linalg.norm(can_points - points)
+
+
+def calc_adjustments(can_points, points, adjustors):
+    """
+    Calculate adjustments needed to align panel
+
+    @param can_points: The cannonical position of the points to align
+    @param points: The measured positions of the points to align
+    @param adjustors: The measured positions of the adjustors
+
+    @return dx: The required translation of panel in x
+    @return dy: The required translation of panel in y
+    @return d_adj: The amount to move each adjustor
+    @return dx_err: The error in the fit for dx
+    @return dy_err: The error in the fit for dy
+    @return d_adj_err: The error in the fit for d_adj
+    """
+    popt, pcov = opt.curve_fit(adjustment_fit_func, (can_points, points, adjustors), 0)
+    perr = np.sqrt(np.diag(pcov))
+
+    dx, dy, dz, thetha_0, thetha_1 = popt
+    points, _adjustors = translate_panel(points, adjustors, dx, dy, dz)
+    points, _adjustors = rotate_panel(points, adjustors, thetha_0, thetha_1)
+
+    d_adj = _adjustors - adjustors
+
+    dx_err, dy_err, dz_err, thetha_0_err, thetha_1_err = perr
+    points, _adjustors = translate_panel(points, adjustors, dx_err, dy_err, dz_err)
+    points, _adjustors = rotate_panel(points, adjustors, thetha_0_err, thetha_1_err)
+    d_adj_err = _adjustors - adjustors
+
+    return dx, dy, d_adj[:, 2] + dz, dx_err, dy_err, d_adj_err[:, 2] + dz_err
