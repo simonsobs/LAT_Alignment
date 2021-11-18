@@ -110,6 +110,35 @@ def mirror_fit(x, y, z, fit_func, **kwargs):
     return popt, rms
 
 
+def transform_point(points, x0, y0, z0, a1, a2, a3):
+    """
+    Transform points from model space to real (measured) space
+
+    @param points: Points to compute at, either a 1d or 2d array
+                   Each point should be (x, y, z)
+    @param x0: x offset
+    @param y0: y offset
+    @param z0: z offset
+    @param a1: Rotation about x axis
+    @param a2: Rotation about y axis
+    @param a3: Rotation about z axis
+
+    @return points: The positions of the points in real space
+    """
+    ndims = len(points.shape)
+    if ndims == 1:
+        points = np.array([points])
+    real_points = points - np.array(x0, y0, z0)
+    model = rot.RotationSequence3D([a1, a2, a3], axes_order="xyz")
+    real_points[:, 0], real_points[:, 1], real_points[:, 2] = model(
+        real_points[:, 0], real_points[:, 1], real_points[:, 2]
+    )
+
+    if ndims == 1:
+        return real_points[0]
+    return real_points
+
+
 def get_delta(points, x0, y0, z0, a1, a2, a3):
     """
     Get the xyz offset of a point in real space from model space
@@ -127,17 +156,5 @@ def get_delta(points, x0, y0, z0, a1, a2, a3):
     @return delta: The xyz offsets of each point, same shape as points
                    Currently model - real
     """
-    ndims = len(points.shape)
-    if ndims == 1:
-        points = np.array([points])
-    real_points = points - np.array(x0, y0, z0)
-    model = rot.RotationSequence3D([a1, a2, a3], axes_order="xyz")
-    real_points[:, 0], real_points[:, 1], real_points[:, 2] = model(
-        real_points[:, 0], real_points[:, 1], real_points[:, 2]
-    )
-
-    delta = points - real_points
-
-    if ndims == 1:
-        return delta[0]
-    return delta
+    real_points = transform_point(points, x0, y0, z0, a1, a2, a3)
+    return points - real_points
