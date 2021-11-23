@@ -63,7 +63,7 @@ def primary_fit_func(xy, x0, y0, z0, a1, a2, a3):
     """
     z = mirror(xy[0] - x0, xy[1] - y0, a_primary) - z0
     model = rot.RotationSequence3D([a1, a2, a3], axes_order="xyz")
-    x, y, z = model(xy[0], xy[1], z)
+    x, y, z = model(xy[0] - x0, xy[1] - y0, z)
     return z
 
 
@@ -84,7 +84,7 @@ def secondary_fit_func(xy, x0, y0, z0, a1, a2, a3):
     """
     z = mirror(xy[0] - x0, xy[1] - y0, a_secondary) - z0
     model = rot.RotationSequence3D([a1, a2, a3], axes_order="xyz")
-    x, y, z = model(xy[0], xy[1], z)
+    x, y, z = model(xy[0] - x0, xy[1] - y0, z)
     return z
 
 
@@ -128,7 +128,7 @@ def transform_point(points, x0, y0, z0, a1, a2, a3):
     ndims = len(points.shape)
     if ndims == 1:
         points = np.array([points])
-    real_points = points - np.array(x0, y0, z0)
+    real_points = points - np.array([x0, y0, z0])
     model = rot.RotationSequence3D([a1, a2, a3], axes_order="xyz")
     real_points[:, 0], real_points[:, 1], real_points[:, 2] = model(
         real_points[:, 0], real_points[:, 1], real_points[:, 2]
