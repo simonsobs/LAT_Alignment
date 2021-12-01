@@ -81,6 +81,17 @@ def global_to_secondary(coords, shift):
     return global_to_mirror(coords, shift, v_m2, a_m2)
 
 
+def shift_coords(coords, shift):
+    """
+    Apply origin shift to coordinate
+
+    @param coords: Array of points to transform
+    @param shift: Origin shift in mm (in addition to the standard one for the mirror)
+
+    @return m_coords: The points in the secondary mirror coords
+    """
+    return coords - shift
+
 # Parse command line arguments
 parser = ap.ArgumentParser(
     description="Compute alignment for LAT mirrors, see README for more details"
