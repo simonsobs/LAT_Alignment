@@ -1,6 +1,9 @@
+import os
+import sys
+import argparse as ap
+import numpy as np
 import adjustments as adj
 import mirror_fit as mf
-import numpy as np
 
 """
 File structure:
@@ -23,10 +26,11 @@ Workflow:
     Print out adjustments and save to a file in root of measurement dir
 """
 
-v_m1 = (0, 0, 3600) #mm
-v_m2 = (0, -4800, 0) #mm
+v_m1 = (0, 0, 3600)  # mm
+v_m2 = (0, -4800, 0)  # mm
 a_m1 = -np.arctan(0.5)
-a_m2 = np.arctan(1./3.) - np.pi/2
+a_m2 = np.arctan(1.0 / 3.0) - np.pi / 2
+
 
 def global_to_mirror(coords, shift, v_m, a_m):
     """
@@ -40,11 +44,15 @@ def global_to_mirror(coords, shift, v_m, a_m):
     @return m_coords: The points in the mirror coords
     """
     shifted_coords = coords - shift - v_m
-    rot_mat = np.array([[1., 0., 0.],
-                        [0., np.cos(a_m), np.sin(a_m)],
-                        [0., -np.sin(a_m), np.cos(a_m)]])
+    rot_mat = np.array(
+        [
+            [1.0, 0.0, 0.0],
+            [0.0, np.cos(a_m), np.sin(a_m)],
+            [0.0, -np.sin(a_m), np.cos(a_m)],
+        ]
+    )
     m_coords = np.zeros(shifted_coords.shape)
-    for i,point in enumerate(shifted_coords):
+    for i, point in enumerate(shifted_coords):
         m_coords[i] = rot_mat @ point
     return m_coords
 
@@ -71,3 +79,69 @@ def global_to_secondary(coords, shift):
     @return m_coords: The points in the secondary mirror coords
     """
     return global_to_mirror(coords, shift, v_m2, a_m2)
+
+
+# Parse command line arguments
+parser = ap.ArgumentParser(
+    description="Compute alignment for LAT mirrors, see README for more details"
+)
+parser.add_argument("measurement_dir", help="Root directory for measurement to use")
+parser.add_argument(
+    "-c",
+    "--coordinates",
+    help="Measurement coordinate system, overrides setting in config file.\
+    Valid options are: global, primary, secondary.",
+)
+parser.add_argument(
+    "-s",
+    "--shift",
+    nargs=3,
+    help="Origin shift to apply in mm, overrides setting in config file",
+    type=float,
+)
+args = parser.parse_args()
+
+measurement_dir = args.measurement_dir
+coordinates = args.coordinates
+origin_shift = args.shift
+
+# Check that measurement directory exists
+if not os.path.exists(measurement_dir):
+    print("Supplied measurement directory does not exist. Please double check the path")
+    sys.exit()
+
+# Load in config file if needed
+if (coordinates is None) or (origin_shift is None):
+    confpath = os.path.join(measurement_dir, "config.txt")
+    if not os.path.exists(confpath):
+        print(
+            "Config file doesn't exist and equivalent command line arguments were not given"
+        )
+        sys.exit()
+    config = dict(np.genfromtxt(confpath, dtype=str))
+    if coordinates is None:
+        coordinates = config["coords"]
+    if origin_shift is None:
+        origin_shift = config["shift"].split()
+
+# Cast shift as float array
+origin_shift = np.array(origin_shift, dtype=float)
+
+# Make sure that shift is correct shape
+if len(origin_shift) != 3:
+    print(
+        "Coordinate origin shift invalid shape. \
+        Please supply values for x, y, and z in mm seperated by spaces"
+    )
+    sys.exit()
+
+# Check if coordinate system is valid
+valid_coords = ["global", "primary", "secondary"]
+if coordinates not in valid_coords:
+    print(
+        "Coordinate system '",
+        coordinates,
+        "' not valid\n Please use one of the following instead: global, primary, secondary",
+        sep="",
+    )
+    sys.exit()
