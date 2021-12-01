@@ -179,7 +179,9 @@ def output(file, string):
     print(string)
 
 
-def align_panels(panels, mirror_path, out_file, coord_trans, origin_shift, mirror_fit_func):
+def align_panels(
+    panels, mirror_path, out_file, coord_trans, origin_shift, mirror_fit_func
+):
     """
     Align panels of mirror
 
@@ -350,7 +352,9 @@ if os.path.exists(primary_path):
         coord_trans = secondary_to_primary
 
     # Align panels
-    align_panels(panels, primary_path, out_file, coord_trans, origin_shift, mf.primary_fit_func)
+    align_panels(
+        panels, primary_path, out_file, coord_trans, origin_shift, mf.primary_fit_func
+    )
 
 # Align secondary mirror
 secondary_path = os.path.join(measurement_dir, "M1")
@@ -371,4 +375,11 @@ if os.path.exists(secondary_path):
         coord_trans = primary_to_secondary
 
     # Align panels
-    align_panels(panels, secondary_path, out_file, coord_trans, origin_shift, mf.secondary_fit_func)
+    align_panels(
+        panels,
+        secondary_path,
+        out_file,
+        coord_trans,
+        origin_shift,
+        mf.secondary_fit_func,
+    )
