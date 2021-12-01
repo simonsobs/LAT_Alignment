@@ -276,3 +276,24 @@ if os.path.exists(primary_path):
 
     # Align panels
     align_panels(panels, primary_path, out_file, coord_trans, origin_shift, mf.primary_fit_func)
+
+# Align secondary mirror
+secondary_path = os.path.join(measurement_dir, "M1")
+if os.path.exists(secondary_path):
+    output(out_file, "Aligning secondary mirror")
+
+    # Get all panel files
+    panels = os.listdir(secondary_path)
+    if len(panels) == 0:
+        output(out_file, "No panels found for secondary mirror")
+
+    # Figure out which coordinate transform to use
+    if coordinates is "global":
+        coord_trans = global_to_secondary
+    elif coordinates is "secondary":
+        coord_trans = shift_coords
+    else:
+        coord_trans = secondary_to_primary
+
+    # Align panels
+    align_panels(panels, secondary_path, out_file, coord_trans, origin_shift, mf.secondary_fit_func)
