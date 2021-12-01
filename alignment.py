@@ -92,6 +92,18 @@ def shift_coords(coords, shift):
     """
     return coords - shift
 
+
+def output(file, string):
+    """
+    Print and save to file at same time
+
+    @param file: File pointer to write to
+    @param string: String to print and save
+    """
+    file.write(string)
+    print(string)
+
+
 # Parse command line arguments
 parser = ap.ArgumentParser(
     description="Compute alignment for LAT mirrors, see README for more details"
