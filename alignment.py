@@ -100,7 +100,7 @@ def output(file, string):
     @param file: File pointer to write to
     @param string: String to print and save
     """
-    file.write(string)
+    file.write(string + "\n")
     print(string)
 
 
@@ -168,3 +168,9 @@ if coordinates not in valid_coords:
         sep="",
     )
     sys.exit()
+
+# Initialize output file
+out_file = open(os.path.join(measurement_dir, "output.txt"))
+output(out_file, "Starting alignment procedure for measurement at: " + measurement_dir)
+output(out_file, "Using coordinate system: " + coordinates)
+output(out_file, "Using origin shift: " + str(origin_shift))
