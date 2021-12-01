@@ -104,6 +104,87 @@ def output(file, string):
     print(string)
 
 
+def align_panels(panels, mirror_path, out_file, coord_trans, origin_shift, mirror_fit_func):
+    """
+    Align panels of mirror
+
+    @param panels: The filenames for each panel in the mirror directory
+    @param mirror_path: Path to the mirror directory
+    @param out_file: The output file to write to
+    @param coord_trans: The coordinate transform to apply to measured points
+    @param origin_shift: The origin_shift to pass to coord_trans
+    @param mirror_fit_func: The function used to fit the mirror
+    """
+    for p in panels:
+        panel_path = os.path.join(mirror_path, p)
+        if not os.path.isfile(panel_path):
+            output(out_file, panel_path + " does not seem to be a panel")
+            continue
+        panel_name = os.path.splitext(p)[0]
+        output(out_file, "Aligning panel " + panel_name)
+
+        # Lookup cannonical alignment points and adjustor locations
+        # TODO: Make lookup tables for this
+        # Temporary for now
+        can_points = np.zeros((5, 3))
+        adjustors = np.zeros((5, 3))
+
+        # Load pointcloud from data
+        # Will need to change genfromtxt args based on what FARO software outputs
+        points = np.genfromtxt(panel_path, dtype=float)
+
+        # Transform points to mirror coordinates
+        points = coord_trans(points, origin_shift)
+
+        # Fit to mirror surface
+        popt, rms = mf.mirror_fit(
+            points[:, 0], points[:, 1], points[:, 2], mirror_fit_func
+        )
+        output(out_file, "RMS of surface is: " + str(rms))
+
+        # Transform cannonical alignment points and adjustors to measurement basis
+        points = mf.transform_point(can_points, *popt)
+        adjustors = mf.transform_point(adjustors, *popt)
+
+        # Calculate adjustments
+        dx, dy, d_adj, dx_err, dy_err, d_adj_err = adj.calc_adjustments(
+            can_points, points, adjustors
+        )
+        # TODO: Convert these into turns of the adjustor rods
+        if dx < 0:
+            x_dir = "left"
+        else:
+            x_dir = "right"
+        output(
+            out_file,
+            "Move panel " + str(dx) + " ± " + str(dx_err) + " mm to the " + x_dir,
+        )
+        if dy < 0:
+            y_dir = "down"
+        else:
+            y_dir = "up"
+        output(out_file, "Move panel " + str(dy) + " ± " + str(dy_err) + " mm " + y_dir)
+
+        for i in range(len(d_adj)):
+            d = d_adj[i]
+            d_err = d_adj_err[i]
+            if d < 0:
+                d_dir = "in"
+            else:
+                d_dir = "out"
+            output(
+                out_file,
+                "Move adjustor "
+                + str(i)
+                + " "
+                + str(d)
+                + " ± "
+                + str(d_err)
+                + " mm "
+                + d_dir,
+            )
+
+
 # Parse command line arguments
 parser = ap.ArgumentParser(
     description="Compute alignment for LAT mirrors, see README for more details"
@@ -194,71 +275,4 @@ if os.path.exists(primary_path):
         coord_trans = primary_to_secondary
 
     # Align panels
-    for p in panels:
-        panel_path = os.path.join(primary_path, p)
-        if not os.path.isfile(panel_path):
-            output(out_file, panel_path + " does not seem to be a panel")
-            continue
-        panel_name = os.path.splitext(p)[0]
-        output(out_file, "Aligning panel " + panel_name)
-
-        # Lookup cannonical alignment points and adjustor locations
-        # TODO: Make lookup tables for this
-        # Temporary for now
-        can_points = np.zeros((5, 3))
-        adjustors = np.zeros((5, 3))
-
-        # Load pointcloud from data
-        # Will need to change genfromtxt args based on what FARO software outputs
-        points = np.genfromtxt(panel_path, dtype=float)
-
-        # Transform points to mirror coordinates
-        points = coord_trans(points, origin_shift)
-
-        # Fit to mirror surface
-        popt, rms = mf.mirror_fit(
-            points[:, 0], points[:, 1], points[:, 2], mf.primary_fit_func
-        )
-        output(out_file, "RMS of surface is: " + str(rms))
-
-        # Transform cannonical alignment points and adjustors to measurement basis
-        points = mf.transform_point(can_points, *popt)
-        adjustors = mf.transform_point(adjustors, *popt)
-
-        # Calculate adjustments
-        dx, dy, d_adj, dx_err, dy_err, d_adj_err = adj.calc_adjustments(
-            can_points, points, adjustors
-        )
-        # TODO: Convert these into turns of the adjustor rods
-        if dx < 0:
-            x_dir = "left"
-        else:
-            x_dir = "right"
-        output(
-            out_file,
-            "Move panel " + str(dx) + " ± " + str(dx_err) + " mm to the " + x_dir,
-        )
-        if dy < 0:
-            y_dir = "down"
-        else:
-            y_dir = "up"
-        output(out_file, "Move panel " + str(dy) + " ± " + str(dy_err) + " mm " + y_dir)
-
-        for i in range(len(d_adj)):
-            d = d_adj[i]
-            d_err = d_adj_err[i]
-            if d < 0:
-                d_dir = "in"
-            else:
-                d_dir = "out"
-            output(
-                out_file,
-                "Move adjustor "
-                + str(i)
-                + " "
-                + str(d)
-                + " ± "
-                + str(d_err)
-                + " mm "
-                + d_dir,
-            )
+    align_panels(panels, primary_path, out_file, coord_trans, origin_shift, mf.primary_fit_func)
