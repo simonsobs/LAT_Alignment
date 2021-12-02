@@ -12,28 +12,6 @@ import coordinate_transforms as ct
 import mirror_fit as mf
 
 
-"""
-File structure:
-    Each measurement session will have its own directory with some useful naming scheme
-        Something like YYYYMMDD_num is probably good
-    Each mirror will have its own subdir
-    Within each mirror directory have a file for each panel whose name is the panel name
-    File will contain pointcloud of measurements
-    In root of directory we need some sort of config file that tells you what coordinate system the measurements were taken in as well as any adjustments that need to be applied to the model (ie: an origin shift to account for something that is in the wrong place but can't be moved)
-        (these could also just be command line arguments)
-    Also need to have some sort of lookup table that contains the positions of the alignmnt points and adjustors for each panel (in the mirror coordinates)
-    
-Workflow:
-    Read in config file/parse command line arguments
-    Load measurements on a per panel basis
-    Transform panel from measurement coordinates to mirror coordinates
-    Fit using mf
-    Transform adjustor and alignment point locations with fit params
-    Fit for adjustments with adj
-    Print out adjustments and save to a file in root of measurement dir
-"""
-
-
 def output(file, string):
     """
     Print and save to file at same time
