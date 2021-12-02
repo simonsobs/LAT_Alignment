@@ -201,7 +201,7 @@ if os.path.exists(primary_path):
     )
 
 # Align secondary mirror
-secondary_path = os.path.join(measurement_dir, "M1")
+secondary_path = os.path.join(measurement_dir, "M2")
 if os.path.exists(secondary_path):
     output(out_file, "Aligning secondary mirror")
 
