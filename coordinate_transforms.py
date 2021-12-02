@@ -1,3 +1,9 @@
+"""
+Functions to transform between LAT coordinate systems.
+See README for descriptions of each coordinate system.
+
+Author: Saianeesh Keshav Haridas
+"""
 import numpy as np
 
 

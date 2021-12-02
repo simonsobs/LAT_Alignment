@@ -1,3 +1,8 @@
+"""
+Perform alignment of LAT mirrors
+
+Author: Saianeesh Keshav Haridas
+"""
 import os
 import sys
 import argparse as ap

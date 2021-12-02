@@ -1,3 +1,8 @@
+"""
+Fit point cloud to the analytic functional form of the LAT mirror surfaces
+
+Author: Saianeesh Keshav Haridas
+"""
 import numpy as np
 import scipy.optimize as opt
 from scipy.spatial.transform import Rotation as rot

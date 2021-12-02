@@ -1,3 +1,8 @@
+"""
+Calculate adjustments needed to align LAT mirror panel
+
+Author: Saianeesh Keshav Haridas
+"""
 import numpy as np
 import scipy.optimize as opt
 from scipy.spatial.transform import Rotation as rot
