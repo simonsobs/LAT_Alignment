@@ -4,7 +4,7 @@ Tools for LAT mirror alignment
 ## Usage
 1. Create the appropriate directory structure for your measurement (see [File Structure](#file-structure) for details).
 2. Place the measurement files in the appropriate place in your created directory (see [Measurement Files](#measurement-files) for details).
-3. Create a file with any information about the measurement that could prove useful (see [Description File](#description-file).
+3. Create a file with any information about the measurement that could prove useful (see [Description File](#description-file) for details).
 4. If required create a config file, alternatively pass these options as command line arguments (see [Config File](#config-file) for details).
 5. Run the alignment script with `python alignment.py /PATH/TO/MEASUREMENT/DIRECTORY`
 6. Follow the instructions in the output to align panels. This output will both be printed in the terminal and written to an output file (see [Output File](#output-file))
