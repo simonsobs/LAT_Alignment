@@ -46,6 +46,45 @@ def mirror(x, y, a):
     return z
 
 
+def mirror_fit_func(xy, x0, y0, z0, a1, a2, a3, a):
+    """
+    Function to fit against for primary mirror
+    Note that since each panel adjusts independantly it is reccomended to fit on a per panel basis
+
+    @param xy: Tuple where first element is array of x points and second is y
+    @param x0: x offset
+    @param y0: y offset
+    @param z0: z offset
+    @param a1: Rotation about x axis
+    @param a2: Rotation about y axis
+    @param a3: Rotation about z axis
+    @param a: Coeffecients of the mirror function
+              Use a_primary for the primary mirror
+              Use a_secondary for the secondary mirror
+
+    @return z: The z position of the mirror at each xy
+    """
+    x = xy[0] - x0
+    y = xy[1] - y0
+    z = mirror(x, y, a) - z0
+
+    xyz = np.zeros((x.shape, 3))
+    xyz[:, 0] = x
+    xyz[:, 1] = y
+    xyz[:, 2] = z
+
+    origin = np.array((x.max() + x.min(), y.max() + y.min(), z.max() + z.min())) / 2.0
+    xyz -= origin
+
+    ax1 = rot.from_rotvec(a1 * [1, 0, 0])
+    ax2 = rot.from_rotvec(a2 * [0, 1, 0])
+    ax3 = rot.from_rotvec(a3 * [0, 0, 1])
+    ax = ax1 * ax2 * ax3
+    xyz = ax.apply(xyz) + origin
+
+    return xyz[:, 2]
+
+
 def primary_fit_func(xy, x0, y0, z0, a1, a2, a3):
     """
     Function to fit against for primary mirror
@@ -61,25 +100,7 @@ def primary_fit_func(xy, x0, y0, z0, a1, a2, a3):
 
     @return z: The z position of the mirror at each xy
     """
-    x = xy[0] - x0
-    y = xy[1] - y0
-    z = mirror(x, y, a_primary) - z0
-
-    xyz = np.zeros((x.shape, 3))
-    xyz[:,0] = x
-    xyz[:,1] = y
-    xyz[:,2] = z
-
-    origin = np.array((x.max()+x.min(), y.max()+y.min(), z.max()+z.min()))/2.
-    xyz -= origin
-
-    ax1 = rot.from_rotvec(a1*[1,0,0])
-    ax2 = rot.from_rotvec(a2*[0,1,0])
-    ax3 = rot.from_rotvec(a3*[0,0,1])
-    ax = ax1*ax2*ax3
-    xyz = ax.apply(xyz) + origin
-
-    return xyz[:,2]
+    return mirror_fit_func(xy, x0, y0, z0, a1, a2, a3, a_primary)
 
 
 def secondary_fit_func(xy, x0, y0, z0, a1, a2, a3):
@@ -97,25 +118,7 @@ def secondary_fit_func(xy, x0, y0, z0, a1, a2, a3):
 
     @return z: The z position of the mirror at each xy
     """
-    x = xy[0] - x0
-    y = xy[1] - y0
-    z = mirror(x, y, a_secondary) - z0
-
-    xyz = np.zeros((x.shape, 3))
-    xyz[:,0] = x
-    xyz[:,1] = y
-    xyz[:,2] = z
-
-    origin = np.array((x.max()+x.min(), y.max()+y.min(), z.max()+z.min()))/2.
-    xyz -= origin
-
-    ax1 = rot.from_rotvec(a1*[1,0,0])
-    ax2 = rot.from_rotvec(a2*[0,1,0])
-    ax3 = rot.from_rotvec(a3*[0,0,1])
-    ax = ax1*ax2*ax3
-    xyz = ax.apply(xyz) + origin
-
-    return xyz[:,2]
+    return mirror_fit_func(xy, x0, y0, z0, a1, a2, a3, a_secondary)
 
 
 def mirror_fit(x, y, z, fit_func, **kwargs):
