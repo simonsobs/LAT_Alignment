@@ -210,9 +210,9 @@ if os.path.exists(primary_path):
         output(out_file, "No panels found for primary mirror")
 
     # Figure out which coordinate transform to use
-    if coordinates is "global":
+    if coordinates == "global":
         coord_trans = ct.global_to_primary
-    elif coordinates is "primary":
+    elif coordinates == "primary":
         coord_trans = ct.shift_coords
     else:
         coord_trans = ct.secondary_to_primary
@@ -233,9 +233,9 @@ if os.path.exists(secondary_path):
         output(out_file, "No panels found for secondary mirror")
 
     # Figure out which coordinate transform to use
-    if coordinates is "global":
+    if coordinates == "global":
         coord_trans = ct.global_to_secondary
-    elif coordinates is "secondary":
+    elif coordinates == "secondary":
         coord_trans = ct.shift_coords
     else:
         coord_trans = ct.primary_to_secondary
