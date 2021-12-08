@@ -119,15 +119,14 @@ def calc_adjustments(can_points, points, adjustors, **kwargs):
     perr = np.sqrt(np.diag(pcov))
 
     dx, dy, dz, thetha_0, thetha_1, z_t = popt
-    points, _adjustors = translate_panel(points, adjustors, dx, dy, dz)
-    points, _adjustors = rotate_panel(points, adjustors, thetha_0, thetha_1)
+    _points, _adjustors = translate_panel(points, adjustors, dx, dy, dz)
+    _points, _adjustors = rotate_panel(_points, _adjustors, thetha_0, thetha_1)
     _adjustors[-1,1] += z_t
-
     d_adj = _adjustors - adjustors
 
     dx_err, dy_err, dz_err, thetha_0_err, thetha_1_err, z_t_err = perr
-    points, _adjustors = translate_panel(points, adjustors, dx_err, dy_err, dz_err)
-    points, _adjustors = rotate_panel(points, adjustors, thetha_0_err, thetha_1_err)
+    _points, _adjustors = translate_panel(points, adjustors, dx_err, dy_err, dz_err)
+    _points, _adjustors = rotate_panel(_points, _adjustors, thetha_0_err, thetha_1_err)
     _adjustors[-1,1] += z_t_err
     d_adj_err = _adjustors - adjustors
 
