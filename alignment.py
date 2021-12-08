@@ -59,7 +59,10 @@ def align_panels(
 
         # Load pointcloud from data
         # Will need to change genfromtxt args based on what FARO software outputs
-        points = np.genfromtxt(panel_path, dtype=float)
+        points = np.genfromtxt(panel_path, skip_header=1, usecols=(5, 6, 7), dtype=str)
+        points = np.array(
+            list(map(lambda p: p.replace(",", ""), points.flatten()))
+        ).reshape(points.shape)
 
         # Transform points to mirror coordinates and compensate
         points = coord_trans(points, origin_shift)
@@ -170,7 +173,7 @@ if (coordinates is None) or (origin_shift is None) or (compensation is None):
 if origin_shift is None:
     origin_shift = np.zeros(3, dtype=float)
 if compensation is None:
-    compensation = 0.
+    compensation = 0.0
 
 # Cast config options
 origin_shift = np.array(origin_shift, dtype=float)
