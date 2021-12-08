@@ -24,7 +24,13 @@ def output(file, string):
 
 
 def align_panels(
-    panels, mirror_path, out_file, coord_trans, origin_shift, mirror_fit_func
+    panels,
+    mirror_path,
+    out_file,
+    coord_trans,
+    origin_shift,
+    compensation,
+    mirror_fit_func,
 ):
     """
     Align panels of mirror
@@ -34,6 +40,7 @@ def align_panels(
     @param out_file: The output file to write to
     @param coord_trans: The coordinate transform to apply to measured points
     @param origin_shift: The origin_shift to pass to coord_trans
+    @param compensation: Compensation to apply to measurement
     @param mirror_fit_func: The function used to fit the mirror
     """
     for p in panels:
@@ -54,8 +61,9 @@ def align_panels(
         # Will need to change genfromtxt args based on what FARO software outputs
         points = np.genfromtxt(panel_path, dtype=float)
 
-        # Transform points to mirror coordinates
+        # Transform points to mirror coordinates and compensate
         points = coord_trans(points, origin_shift)
+        points = ct.compensate(points, compensation)
 
         # Fit to mirror surface
         popt, rms = mf.mirror_fit(
@@ -124,11 +132,18 @@ parser.add_argument(
     help="Origin shift to apply in mm, overrides setting in config file",
     type=float,
 )
+parser.add_argument(
+    "-f",
+    "--compensation",
+    help="FARO compensation in mm to apply",
+    type=float,
+)
 args = parser.parse_args()
 
 measurement_dir = args.measurement_dir
 coordinates = args.coordinates
 origin_shift = args.shift
+compensation = args.compensation
 
 # Check that measurement directory exists
 if not os.path.exists(measurement_dir):
@@ -136,7 +151,7 @@ if not os.path.exists(measurement_dir):
     sys.exit()
 
 # Load in config file if needed
-if (coordinates is None) or (origin_shift is None):
+if (coordinates is None) or (origin_shift is None) or (compensation is None):
     confpath = os.path.join(measurement_dir, "config.txt")
     if not os.path.exists(confpath):
         print(
@@ -148,9 +163,12 @@ if (coordinates is None) or (origin_shift is None):
         coordinates = config["coords"]
     if origin_shift is None:
         origin_shift = config["shift"].split()
+    if compensation is None:
+        compensation = config["compensation"]
 
-# Cast shift as float array
+# Cast config options
 origin_shift = np.array(origin_shift, dtype=float)
+compensation = float(compensation)
 
 # Make sure that shift is correct shape
 if len(origin_shift) != 3:
@@ -197,7 +215,13 @@ if os.path.exists(primary_path):
 
     # Align panels
     align_panels(
-        panels, primary_path, out_file, coord_trans, origin_shift, mf.primary_fit_func
+        panels,
+        primary_path,
+        out_file,
+        coord_trans,
+        origin_shift,
+        compensation,
+        mf.primary_fit_func,
     )
 
 # Align secondary mirror
@@ -225,5 +249,6 @@ if os.path.exists(secondary_path):
         out_file,
         coord_trans,
         origin_shift,
+        compensation,
         mf.secondary_fit_func,
     )
