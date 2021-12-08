@@ -168,15 +168,15 @@ def compensate(coords, compensation):
         # Since the input is 3D, each simplex is a tetrahedron
         # Calculate unit normal vector at each vertex
         for i in range(4):
-            vect_1 = coords[sim[(i+1)%4]] - coords[sim[i]]
-            vect_2 = coords[sim[(i-1)%4]] - coords[sim[i]]
-            vect_3 = coords[sim[(i+2)%4]] - coords[sim[i]]
+            vect_1 = coords[sim[(i + 1) % 4]] - coords[sim[i]]
+            vect_2 = coords[sim[(i - 1) % 4]] - coords[sim[i]]
+            vect_3 = coords[sim[(i + 2) % 4]] - coords[sim[i]]
             norm_vec = np.cross(vect_1, vect_2)
             flip = np.sign((np.dot(norm_vec, vect_3)))
             norm_vec /= np.linalg.norm(norm_vec)
-            norms[sim[i]] += flip*norm_vec
+            norms[sim[i]] += flip * norm_vec
 
     # Get average unit normal vector at each point
     norms /= np.linalg.norm(norms, axis=1)[:, np.newaxis]
 
-    return coords + compensation*norms
+    return coords + compensation * norms
