@@ -19,7 +19,7 @@ def rotate(point, end_point1, end_point2, thetha):
 
     @return point: The rotated point
     """
-    origin = np.mean(end_point1, end_point2)
+    origin = np.mean((end_point1, end_point2))
     point_0 = point - origin
     ax = end_point2 - end_point1
     ax = rot.from_rotvec(thetha * ax / np.linalg.norm(ax))
@@ -73,27 +73,27 @@ def translate_panel(points, adjustors, dx, dy, dz):
     return points + translation, adjustors + translation
 
 
-def adjustment_fit_func(points_and_adj, dx, dy, dz, thetha_0, thetha_1, z_t):
+def adjustment_fit_func(pars, can_points, points, adjustors):
     """
     Function to minimize when calculating adjustments
 
-    @param points_and_adj: Tuple containing three position arrays:
-                            can_points: The cannonical positions of the points to align
-                            points: The measured positions of the points to align
-                            adjustors: The measured positions of the adjustors
-    @param dx: Translation in x
-    @param dy: Translation in y
-    @param dz: Translation in z
-    @param thetha_0: Angle to rotate about first adjustor axis
-    @param thetha_1: Angle to rotate about second adjustor axis
-    @param z_t: Additional translation to tension the center point
+    @param pars: The parameters to fit for:
+                    dx: Translation in x
+                    dy: Translation in y
+                    dz: Translation in z
+                    thetha_0: Angle to rotate about first adjustor axis
+                    thetha_1: Angle to rotate about second adjustor axis
+                    z_t: Additional translation to tension the center point
+    @param can_points: The cannonical positions of the points to align
+    @param points: The measured positions of the points to align
+    @param adjustors: The measured positions of the adjustors
 
     @return norm: The norm of (cannonical positions - transformed positions)
     """
-    can_points, points, adjustors = points_and_adj
+    dx, dy, dz, thetha_0, thetha_1, z_t = pars
     points, adjustors = translate_panel(points, adjustors, dx, dy, dz)
     points, adjustors = rotate_panel(points, adjustors, thetha_0, thetha_1)
-    points[-1,-1] += z_t
+    points[-1, -1] += z_t
     return np.linalg.norm(can_points - points)
 
 
@@ -113,21 +113,22 @@ def calc_adjustments(can_points, points, adjustors, **kwargs):
     @return dy_err: The error in the fit for dy
     @return d_adj_err: The error in the fit for d_adj
     """
-    popt, pcov = opt.curve_fit(
-        adjustment_fit_func, (can_points, points, adjustors), 0, **kwargs
-    )
-    perr = np.sqrt(np.diag(pcov))
-
-    dx, dy, dz, thetha_0, thetha_1, z_t = popt
+    res = opt.minimize(adjustment_fit_func, np.zeros(6), (can_points, points, adjustors))
+    
+    dx, dy, dz, thetha_0, thetha_1, z_t = res.x 
     _points, _adjustors = translate_panel(points, adjustors, dx, dy, dz)
     _points, _adjustors = rotate_panel(_points, _adjustors, thetha_0, thetha_1)
-    _adjustors[-1,1] += z_t
+    _adjustors[-1, -1] += z_t
     d_adj = _adjustors - adjustors
-
+    
+    ftol = 2.220446049250313e-09
+    if 'ftol' in kwargs:
+        ftol = kwargs['ftol']
+    perr = np.sqrt(ftol*np.diag(res.hess_inv))
     dx_err, dy_err, dz_err, thetha_0_err, thetha_1_err, z_t_err = perr
     _points, _adjustors = translate_panel(points, adjustors, dx_err, dy_err, dz_err)
     _points, _adjustors = rotate_panel(_points, _adjustors, thetha_0_err, thetha_1_err)
-    _adjustors[-1,1] += z_t_err
+    _adjustors[-1, -1] += z_t_err
     d_adj_err = _adjustors - adjustors
 
     return dx, dy, d_adj[:, 2] + dz, dx_err, dy_err, d_adj_err[:, 2] + dz_err
