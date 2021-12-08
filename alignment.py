@@ -61,8 +61,7 @@ def align_panels(
         # Will need to change genfromtxt args based on what FARO software outputs
         points = np.genfromtxt(panel_path, skip_header=1, usecols=(5, 6, 7), dtype=str)
         points = np.array(
-            list(map(lambda p: p.replace(",", ""), points.flatten())),
-            dtype=float
+            list(map(lambda p: p.replace(",", ""), points.flatten())), dtype=float
         ).reshape(points.shape)
 
         # Transform points to mirror coordinates and compensate
@@ -71,7 +70,10 @@ def align_panels(
 
         # Fit to mirror surface
         popt, rms = mf.mirror_fit(
-            points[:, 0], points[:, 1], points[:, 2], mirror_fit_func,
+            points[:, 0],
+            points[:, 1],
+            points[:, 2],
+            mirror_fit_func,
         )
         output(out_file, "RMS of surface is: " + str(rms))
 

@@ -81,9 +81,9 @@ def mirror_fit_func(xy, x0, y0, z0, a1, a2, a3, a):
     origin = np.array((x.max() + x.min(), y.max() + y.min(), z.max() + z.min())) / 2.0
     xyz -= origin
 
-    ax1 = rot.from_rotvec(a1 * np.array([1., 0., 0.]))
-    ax2 = rot.from_rotvec(a2 * np.array([0., 1., 0.]))
-    ax3 = rot.from_rotvec(a3 * np.array([0., 0., 1.]))
+    ax1 = rot.from_rotvec(a1 * np.array([1.0, 0.0, 0.0]))
+    ax2 = rot.from_rotvec(a2 * np.array([0.0, 1.0, 0.0]))
+    ax3 = rot.from_rotvec(a3 * np.array([0.0, 0.0, 1.0]))
     ax = ax1 * ax2 * ax3
     xyz = ax.apply(xyz) + origin
 
@@ -142,8 +142,6 @@ def mirror_fit(x, y, z, fit_func, **kwargs):
     @return popt: The fit parameters, see docstring of the fit_func for details
     @return rms: The rms between the measured points and the fit model
     """
-    # popt, pcov = opt.curve_fit(fit_func, (x, y), z, **kwargs)
-    # z_fit = fit_func((x, y), *popt)
     def min_func(pars, x, y, z):
         _z = fit_func((x, y), *pars)
         return np.sqrt(np.mean((z - _z) ** 2))
@@ -170,18 +168,18 @@ def transform_point(points, x0, y0, z0, a1, a2, a3):
     ndims = len(points.shape)
     if ndims == 1:
         points = np.array([points])
-    
+
     real_points = points - np.array([x0, y0, z0])
-    
+
     x = real_points[:, 0]
     y = real_points[:, 1]
     z = real_points[:, 2]
     origin = np.array((x.max() + x.min(), y.max() + y.min(), z.max() + z.min())) / 2.0
     real_points -= origin
 
-    ax1 = rot.from_rotvec(a1 * np.array([1., 0., 0.]))
-    ax2 = rot.from_rotvec(a2 * np.array([0., 1., 0.]))
-    ax3 = rot.from_rotvec(a3 * np.array([0., 0., 1.]))
+    ax1 = rot.from_rotvec(a1 * np.array([1.0, 0.0, 0.0]))
+    ax2 = rot.from_rotvec(a2 * np.array([0.0, 1.0, 0.0]))
+    ax3 = rot.from_rotvec(a3 * np.array([0.0, 0.0, 1.0]))
     ax = ax1 * ax2 * ax3
     real_points = ax.apply(real_points) + origin
 

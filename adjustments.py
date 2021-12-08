@@ -113,18 +113,20 @@ def calc_adjustments(can_points, points, adjustors, **kwargs):
     @return dy_err: The error in the fit for dy
     @return d_adj_err: The error in the fit for d_adj
     """
-    res = opt.minimize(adjustment_fit_func, np.zeros(6), (can_points, points, adjustors))
-    
-    dx, dy, dz, thetha_0, thetha_1, z_t = res.x 
+    res = opt.minimize(
+        adjustment_fit_func, np.zeros(6), (can_points, points, adjustors)
+    )
+
+    dx, dy, dz, thetha_0, thetha_1, z_t = res.x
     _points, _adjustors = translate_panel(points, adjustors, dx, dy, dz)
     _points, _adjustors = rotate_panel(_points, _adjustors, thetha_0, thetha_1)
     _adjustors[-1, -1] += z_t
     d_adj = _adjustors - adjustors
-    
+
     ftol = 2.220446049250313e-09
-    if 'ftol' in kwargs:
-        ftol = kwargs['ftol']
-    perr = np.sqrt(ftol*np.diag(res.hess_inv))
+    if "ftol" in kwargs:
+        ftol = kwargs["ftol"]
+    perr = np.sqrt(ftol * np.diag(res.hess_inv))
     dx_err, dy_err, dz_err, thetha_0_err, thetha_1_err, z_t_err = perr
     _points, _adjustors = translate_panel(points, adjustors, dx_err, dy_err, dz_err)
     _points, _adjustors = rotate_panel(_points, _adjustors, thetha_0_err, thetha_1_err)
