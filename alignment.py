@@ -166,6 +166,12 @@ if (coordinates is None) or (origin_shift is None) or (compensation is None):
     if compensation is None:
         compensation = config["compensation"]
 
+# Set some defaults
+if origin_shift is None:
+    origin_shift = np.zeros(3, dtype=float)
+if compensation is None:
+    compensation = 0.
+
 # Cast config options
 origin_shift = np.array(origin_shift, dtype=float)
 compensation = float(compensation)
