@@ -59,7 +59,9 @@ Currently the only supported options are:
 
 `coords`: The coordinate system that the measurement was taken in (see [Coordinate Systems](#coordinate-systems) for more information. Valid values are `global`, `primary`, and `secondary`.
 
-`shift`: The shift in the origin from the coordinate system specified with `coords` in mm. Provide space separated values for the offsets in x, y, and z.
+`shift`: The shift in the origin from the coordinate system specified with `coords` in mm. Provide space separated values for the offsets in x, y, and z. Default value is `0 0 0`.
+
+`compensation`: The compensation in mm to apply to the measurement data. This is the value that the FARO would typically apply to its measurements to account for the SMR. Value should be equal to the radius of the SMR. Default value is `0`.
 
 Note that the values in `config.txt` are overridden by command line arguments passed to `alignment.py`.
 
