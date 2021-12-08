@@ -5,7 +5,7 @@ See README for descriptions of each coordinate system.
 Author: Saianeesh Keshav Haridas
 """
 import numpy as np
-
+import scipy.spatial as spat
 
 v_m1 = (0, 0, 3600)  # mm
 v_m2 = (0, -4800, 0)  # mm
@@ -147,3 +147,36 @@ def shift_coords(coords, shift):
     @return m_coords: The points in the secondary mirror coords
     """
     return coords - shift
+
+
+def compensate(coords, compensation):
+    """
+    Copensate measurement from FARO by applying a shift normal to the surface
+
+    @param coords: Array of points to transform
+    @param compensation: Compensation in mm
+
+    @return c_coords: The compensated coordinates
+    """
+    # Complute Delaunay tessellation of point cloud
+    simplices = spat.Delaunay(coords, True).simplices
+
+    # Initialize array of normal vectors
+    norms = np.zeros(coords.shape)
+
+    for sim in simplices:
+        # Since the input is 3D, each simplex is a tetrahedron
+        # Calculate unit normal vector at each vertex
+        for i in range(4):
+            vect_1 = coords[sim[(i+1)%4]] - coords[sim[i]]
+            vect_2 = coords[sim[(i-1)%4]] - coords[sim[i]]
+            vect_3 = coords[sim[(i+2)%4]] - coords[sim[i]]
+            norm_vec = np.cross(vect_1, vect_2)
+            flip = np.sign((np.dot(norm_vec, vect_3)))
+            norm_vec /= np.linalg.norm(norm_vec)
+            norms[sim[i]] += flip*norm_vec
+
+    # Get average unit normal vector at each point
+    norms /= np.linalg.norm(norms, axis=1)[:, np.newaxis]
+
+    return coords + compensation*norms
