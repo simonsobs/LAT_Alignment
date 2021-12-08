@@ -142,10 +142,14 @@ def mirror_fit(x, y, z, fit_func, **kwargs):
     @return popt: The fit parameters, see docstring of the fit_func for details
     @return rms: The rms between the measured points and the fit model
     """
-    popt, pcov = opt.curve_fit(fit_func, (x, y), z, **kwargs)
-    z_fit = fit_func((x, y), *popt)
-    rms = np.sqrt(np.mean((z - z_fit) ** 2))
-    return popt, rms
+    # popt, pcov = opt.curve_fit(fit_func, (x, y), z, **kwargs)
+    # z_fit = fit_func((x, y), *popt)
+    def min_func(pars, x, y, z):
+        _z = fit_func((x, y), *pars)
+        return np.sqrt(np.mean((z - _z) ** 2))
+
+    res = opt.minimize(min_func, np.zeros(6), (x, y, z))
+    return res.x, res.fun
 
 
 def transform_point(points, x0, y0, z0, a1, a2, a3):
