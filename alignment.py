@@ -54,14 +54,15 @@ def align_panels(
         # Lookup cannonical alignment points and adjustor locations
         # TODO: Make lookup tables for this
         # Temporary for now
-        can_points = np.zeros((5, 3))
-        adjustors = np.zeros((5, 3))
+        can_points = np.random.random((5, 3))
+        adjustors = np.random.random((5, 3))
 
         # Load pointcloud from data
         # Will need to change genfromtxt args based on what FARO software outputs
         points = np.genfromtxt(panel_path, skip_header=1, usecols=(5, 6, 7), dtype=str)
         points = np.array(
-            list(map(lambda p: p.replace(",", ""), points.flatten()))
+            list(map(lambda p: p.replace(",", ""), points.flatten())),
+            dtype=float
         ).reshape(points.shape)
 
         # Transform points to mirror coordinates and compensate
@@ -70,7 +71,7 @@ def align_panels(
 
         # Fit to mirror surface
         popt, rms = mf.mirror_fit(
-            points[:, 0], points[:, 1], points[:, 2], mirror_fit_func
+            points[:, 0], points[:, 1], points[:, 2], mirror_fit_func,
         )
         output(out_file, "RMS of surface is: " + str(rms))
 
@@ -161,7 +162,7 @@ if (coordinates is None) or (origin_shift is None) or (compensation is None):
             "Config file doesn't exist and equivalent command line arguments were not given"
         )
         sys.exit()
-    config = dict(np.genfromtxt(confpath, dtype=str))
+    config = dict(np.genfromtxt(confpath, dtype=str, delimiter="\t"))
     if coordinates is None:
         coordinates = config["coords"]
     if origin_shift is None:
@@ -199,7 +200,7 @@ if coordinates not in valid_coords:
     sys.exit()
 
 # Initialize output file
-out_file = open(os.path.join(measurement_dir, "output.txt"))
+out_file = open(os.path.join(measurement_dir, "output.txt"), "w+")
 output(out_file, "Starting alignment procedure for measurement at: " + measurement_dir)
 output(out_file, "Using coordinate system: " + coordinates)
 output(out_file, "Using origin shift: " + str(origin_shift))
