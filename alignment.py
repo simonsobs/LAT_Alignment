@@ -92,13 +92,13 @@ def align_panels(
             x_dir = "right"
         output(
             out_file,
-            "Move panel " + str(dx) + " ± " + str(dx_err) + " mm to the " + x_dir,
+            "\tMove panel " + str(dx) + " ± " + str(dx_err) + " mm to the " + x_dir,
         )
         if dy < 0:
             y_dir = "down"
         else:
             y_dir = "up"
-        output(out_file, "Move panel " + str(dy) + " ± " + str(dy_err) + " mm " + y_dir)
+        output(out_file, "\tMove panel " + str(dy) + " ± " + str(dy_err) + " mm " + y_dir)
 
         for i in range(len(d_adj)):
             d = d_adj[i]
@@ -109,7 +109,7 @@ def align_panels(
                 d_dir = "out"
             output(
                 out_file,
-                "Move adjustor "
+                "\tMove adjustor "
                 + str(i)
                 + " "
                 + str(d)
