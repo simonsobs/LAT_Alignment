@@ -230,6 +230,7 @@ out_file = open(os.path.join(measurement_dir, "output.txt"), "w+")
 output(out_file, "Starting alignment procedure for measurement at: " + measurement_dir)
 output(out_file, "Using coordinate system: " + coordinates)
 output(out_file, "Using origin shift: " + str(origin_shift))
+output(out_file, "Applying compensation: " + str(compensation) + " mm")
 
 # Initialize cannonical adjustor positions
 can_adj = {}
