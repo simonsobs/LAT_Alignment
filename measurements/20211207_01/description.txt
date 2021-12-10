@@ -1,0 +1,5 @@
+Measurement taken of reject panel during FARO training.
+Panel was mounted on table with holes drilled in it.
+SMR was handled by Michele and computer by Anna.
+Coordinate system was the cad coordinate system but was aligned by the panel corners which is not ideal.
+Some concerns about how things are compensated. Unclear how the polyline compensation works, also the corner points were uncompensated by an inch.
