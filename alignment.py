@@ -82,8 +82,9 @@ def align_panels(
 
         # Transform points to mirror coordinates and compensate
         points = coord_trans(points, origin_shift)
-        points = ct.compensate(points, compensation)
-
+        if compensation != 0.:
+            points = ct.compensate(points, compensation)
+                        
         # Fit to mirror surface
         popt, rms = mf.mirror_fit(
             points[:, 0],
