@@ -63,11 +63,13 @@ def align_panels(
             )
             output(out_file, "Moving on to next panel")
             continue
-        adjustors = can_adj[panel_name]
         if int(panel_name[5]) == 1:
             mirror_a = mf.a_primary
+            mirror_trans = ct.cad_to_primary
         else:
             mirror_a = mf.a_secondary
+            mirror_trans = ct.cad_to_secondary
+        adjustors = mirror_trans(can_adj[panel_name], 0)
         can_z = mf.mirror(adjustors[:, 0], adjustors[:, 1], mirror_a)
         can_points = np.hstack((adjustors[:, :2], can_z[:, np.newaxis]))
 
@@ -151,7 +153,7 @@ parser.add_argument(
     "-c",
     "--coordinates",
     help="Measurement coordinate system, overrides setting in config file.\
-    Valid options are: global, primary, secondary.",
+    Valid options are: cad, global, primary, secondary.",
 )
 parser.add_argument(
     "-s",
@@ -213,12 +215,12 @@ if len(origin_shift) != 3:
     sys.exit()
 
 # Check if coordinate system is valid
-valid_coords = ["global", "primary", "secondary"]
+valid_coords = ["cad", "global", "primary", "secondary"]
 if coordinates not in valid_coords:
     print(
         "Coordinate system '",
         coordinates,
-        "' not valid\n Please use one of the following instead: global, primary, secondary",
+        "' not valid\n Please use one of the following instead: cad, global, primary, secondary",
         sep="",
     )
     sys.exit()
@@ -239,7 +241,7 @@ if os.path.exists(primary_path):
 
     # Load cannonical adjustor points
     m1_can = "./can_points/M1.txt"
-    if ~os.path.exists(m1_can):
+    if not os.path.exists(m1_can):
         output(out_file, "Cannonical points for M1 not found")
         sys.exit()
     c_points = np.genfromtxt(m1_can, dtype=str)
@@ -253,7 +255,9 @@ if os.path.exists(primary_path):
         output(out_file, "No panels found for primary mirror")
 
     # Figure out which coordinate transform to use
-    if coordinates == "global":
+    if coordinates == "cad":
+        coord_trans = ct.cad_to_primary
+    elif coordinates == "global":
         coord_trans = ct.global_to_primary
     elif coordinates == "primary":
         coord_trans = ct.shift_coords
@@ -265,6 +269,7 @@ if os.path.exists(primary_path):
         panels,
         primary_path,
         out_file,
+        can_adj,
         coord_trans,
         origin_shift,
         compensation,
@@ -278,7 +283,7 @@ if os.path.exists(secondary_path):
 
     # Load cannonical adjustor points
     m2_can = "./can_points/M2.txt"
-    if ~os.path.exists(m2_can):
+    if not os.path.exists(m2_can):
         output(out_file, "Cannonical points for M2 not found")
         sys.exit()
     c_points = np.genfromtxt(m2_can, dtype=str)
@@ -292,7 +297,9 @@ if os.path.exists(secondary_path):
         output(out_file, "No panels found for secondary mirror")
 
     # Figure out which coordinate transform to use
-    if coordinates == "global":
+    if coordinates == "cad":
+        coord_trans = ct.cad_to_secondary
+    elif coordinates == "global":
         coord_trans = ct.global_to_secondary
     elif coordinates == "secondary":
         coord_trans = ct.shift_coords
@@ -304,6 +311,7 @@ if os.path.exists(secondary_path):
         panels,
         secondary_path,
         out_file,
+        can_adj,
         coord_trans,
         origin_shift,
         compensation,
