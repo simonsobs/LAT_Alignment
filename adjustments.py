@@ -104,7 +104,7 @@ def calc_adjustments(can_points, points, adjustors, **kwargs):
     @param can_points: The cannonical position of the points to align
     @param points: The measured positions of the points to align
     @param adjustors: The measured positions of the adjustors
-    @param **kwargs: Arguments to me passed to scipy.optimize.curve_fit
+    @param **kwargs: Arguments to be passed to scipy.optimize.minimize
 
     @return dx: The required translation of panel in x
     @return dy: The required translation of panel in y
@@ -114,7 +114,7 @@ def calc_adjustments(can_points, points, adjustors, **kwargs):
     @return d_adj_err: The error in the fit for d_adj
     """
     res = opt.minimize(
-        adjustment_fit_func, np.zeros(6), (can_points, points, adjustors)
+        adjustment_fit_func, np.zeros(6), (can_points, points, adjustors), **kwargs
     )
 
     dx, dy, dz, thetha_0, thetha_1, z_t = res.x
