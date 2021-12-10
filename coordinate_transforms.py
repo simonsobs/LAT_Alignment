@@ -179,4 +179,4 @@ def compensate(coords, compensation):
     # Get average unit normal vector at each point
     norms /= np.linalg.norm(norms, axis=1)[:, np.newaxis]
 
-    return coords + compensation * norms
+    return coords - compensation * norms
