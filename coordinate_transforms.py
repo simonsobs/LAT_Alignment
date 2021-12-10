@@ -25,7 +25,7 @@ def global_to_cad(coords, shift):
     shifted_coords = coords - shift
     m_coords = np.zeros(shifted_coords.shape)
     m_coords[:, 0] = shifted_coords[:, 1]
-    m_coords[:, 1] = -1 * shifted_coords[:, 0]
+    m_coords[:, 1] = 1 * shifted_coords[:, 0]
     m_coords[:, 2] = -1 * shifted_coords[:, 2]
     return m_coords
 
@@ -41,7 +41,7 @@ def cad_to_global(coords, shift):
     """
     shifted_coords = coords - shift
     m_coords = np.zeros(shifted_coords.shape)
-    m_coords[:, 0] = -1 * shifted_coords[:, 1]
+    m_coords[:, 0] = 1 * shifted_coords[:, 1]
     m_coords[:, 1] = shifted_coords[:, 0]
     m_coords[:, 2] = -1 * shifted_coords[:, 2]
     return m_coords
@@ -249,7 +249,6 @@ def compensate(coords, compensation):
 
     # Initialize array of normal vectors
     norms = np.zeros(coords.shape)
-
     for sim in simplices:
         # Since the input is 3D, each simplex is a tetrahedron
         # Calculate unit normal vector at each vertex
@@ -261,7 +260,7 @@ def compensate(coords, compensation):
             flip = np.sign((np.dot(norm_vec, vect_3)))
             norm_vec /= np.linalg.norm(norm_vec)
             norms[sim[i]] += flip * norm_vec
-
+    
     # Get average unit normal vector at each point
     norms /= np.linalg.norm(norms, axis=1)[:, np.newaxis]
 
