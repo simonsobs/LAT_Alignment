@@ -137,7 +137,7 @@ def mirror_fit(x, y, z, fit_func, **kwargs):
     @param fit_func: Function to fit against
                      For primary use primary_fit_func
                      For secondary use secondary_fit_func
-    @param **kwargs: Arguments to be passed to scipy.optimize.curve_fit
+    @param **kwargs: Arguments to be passed to scipy.optimize.minimize
 
     @return popt: The fit parameters, see docstring of the fit_func for details
     @return rms: The rms between the measured points and the fit model
