@@ -57,7 +57,7 @@ The file `config.txt` contains configuration options. Each option should be on a
 
 Currently the only supported options are:
 
-`coords`: The coordinate system that the measurement was taken in (see [Coordinate Systems](#coordinate-systems) for more information. Valid values are `global`, `primary`, and `secondary`.
+`coords`: The coordinate system that the measurement was taken in (see [Coordinate Systems](#coordinate-systems) for more information. Valid values are `cad`, `global`, `primary`, and `secondary`.
 
 `shift`: The shift in the origin from the coordinate system specified with `coords` in mm. Provide space separated values for the offsets in x, y, and z. Default value is `0 0 0`.
 
@@ -91,7 +91,15 @@ The relevant coordinate systems are marked in the diagram below:
 
 Where the orange circle marks the `global` coordinate system, the green circle marks the `primary` coordinate system, and the blue circle marks the `secondary` coordinate system.
 
-All measurements should be done in one of these three coordinate systems modulo a known shift in the origin.
+Additionally there is a `cad` coordinate system that is defined as the coordinate system from the SolidWorks model. It is given by the following transformation from the `global` coordinate system:
+```
+x -> y
+y -> x
+z -> -z
+```
+Note that the files in the `can_points` directory are in the `cad` coordinate system.
+
+All measurements should be done in one of these four coordinate systems modulo a known shift in the origin.
 
 ## Dependencies
 This code requires Python 3 to run, it will not work with Python 2. 
