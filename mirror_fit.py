@@ -142,6 +142,7 @@ def mirror_fit(x, y, z, fit_func, **kwargs):
     @return popt: The fit parameters, see docstring of the fit_func for details
     @return rms: The rms between the measured points and the fit model
     """
+
     def min_func(pars, x, y, z):
         _z = fit_func((x, y), *pars)
         return np.sqrt(np.mean((z - _z) ** 2))

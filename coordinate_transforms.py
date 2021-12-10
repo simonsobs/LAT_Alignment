@@ -261,7 +261,7 @@ def compensate(coords, compensation):
             norm_vec /= np.linalg.norm(norm_vec)
             # norms[sim[i]] += flip * norm_vec
             norms[sim[i]] += norm_vec
-    
+
     # Get average unit normal vector at each point
     norms /= np.linalg.norm(norms, axis=1)[:, np.newaxis]
 
