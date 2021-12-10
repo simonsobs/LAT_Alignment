@@ -13,6 +13,40 @@ a_m1 = -np.arctan(0.5)
 a_m2 = np.arctan(1.0 / 3.0) - np.pi / 2
 
 
+def global_to_cad(coords, shift):
+    """
+    Transform from global coordinates to cad coordinates
+
+    @param coords: Array of points to transform
+    @param shift: Origin shift in mm
+
+    @return m_coords:
+    """
+    shifted_coords = coords - shift
+    m_coords = np.zeros(shifted_coords.shape)
+    m_coords[:, 0] = shifted_coords[:, 1]
+    m_coords[:, 1] = -1 * shifted_coords[:, 0]
+    m_coords[:, 2] = -1 * shifted_coords[:, 2]
+    return m_coords
+
+
+def cad_to_global(coords, shift):
+    """
+    Transform from cad coordinates to global coordinates
+
+    @param coords: Array of points to transform
+    @param shift: Origin shift in mm
+
+    @return m_coords:
+    """
+    shifted_coords = coords - shift
+    m_coords = np.zeros(shifted_coords.shape)
+    m_coords[:, 0] = -1 * shifted_coords[:, 1]
+    m_coords[:, 1] = shifted_coords[:, 0]
+    m_coords[:, 2] = -1 * shifted_coords[:, 2]
+    return m_coords
+
+
 def global_to_mirror(coords, shift, v_m, a_m):
     """
     Transform from global coordinates to mirror coordinates
@@ -135,6 +169,58 @@ def secondary_to_primary(coords, shift):
     """
     global_coords = secondary_to_global(coords, shift)
     return global_to_primary(global_coords, 0)
+
+
+def cad_to_primary(coords, shift):
+    """
+    Transform from cad coordinates to primary mirror coordinates
+
+    @param coords: Array of points to transform
+    @param shift: Origin shift in mm (in addition to the standard one for the mirror)
+
+    @return m_coords: The points in primary mirror coords
+    """
+    global_coords = cad_to_global(coords, shift)
+    return global_to_primary(global_coords, 0)
+
+
+def cad_to_secondary(coords, shift):
+    """
+    Transform from cad coordinates to secondary mirror coordinates
+
+    @param coords: Array of points to transform
+    @param shift: Origin shift in mm (in addition to the standard one for the mirror)
+
+    @return m_coords: The points in secondary mirror coords
+    """
+    global_coords = cad_to_global(coords, shift)
+    return global_to_secondary(global_coords, 0)
+
+
+def primary_to_cad(coords, shift):
+    """
+    Transform from primary mirror coordinates to cad coordinates
+
+    @param coords: Array of points to transform
+    @param shift: Origin shift in mm (in addition to the standard one for the mirror)
+
+    @return m_coords: The points in cad mirror coords
+    """
+    global_coords = primary_to_global(coords, shift)
+    return global_to_cad(global_coords, 0)
+
+
+def secondary_to_cad(coords, shift):
+    """
+    Transform from primary mirror coordinates to cad coordinates
+
+    @param coords: Array of points to transform
+    @param shift: Origin shift in mm (in addition to the standard one for the mirror)
+
+    @return m_coords: The points in cad mirror coords
+    """
+    global_coords = secondary_to_global(coords, shift)
+    return global_to_cad(global_coords, 0)
 
 
 def shift_coords(coords, shift):
