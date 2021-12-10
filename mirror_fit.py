@@ -146,7 +146,7 @@ def mirror_fit(x, y, z, fit_func, **kwargs):
         _z = fit_func((x, y), *pars)
         return np.sqrt(np.mean((z - _z) ** 2))
 
-    res = opt.minimize(min_func, np.zeros(6), (x, y, z))
+    res = opt.minimize(min_func, np.zeros(6), (x, y, z), **kwargs)
     return res.x, res.fun
 
 
