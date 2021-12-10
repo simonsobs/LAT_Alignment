@@ -27,6 +27,7 @@ def align_panels(
     panels,
     mirror_path,
     out_file,
+    can_adj,
     coord_trans,
     origin_shift,
     compensation,
@@ -38,6 +39,7 @@ def align_panels(
     @param panels: The filenames for each panel in the mirror directory
     @param mirror_path: Path to the mirror directory
     @param out_file: The output file to write to
+    @param can_adj: Cannonical positions of adjustors
     @param coord_trans: The coordinate transform to apply to measured points
     @param origin_shift: The origin_shift to pass to coord_trans
     @param compensation: Compensation to apply to measurement
@@ -52,10 +54,22 @@ def align_panels(
         output(out_file, "Aligning panel " + panel_name)
 
         # Lookup cannonical alignment points and adjustor locations
-        # TODO: Make lookup tables for this
-        # Temporary for now
-        can_points = np.random.random((5, 3))
-        adjustors = np.random.random((5, 3))
+        if panel_name not in can_adj.keys():
+            output(
+                out_file,
+                "Panel "
+                + panel_name
+                + " not found in cannonical adjustor position spreadsheet",
+            )
+            output(out_file, "Moving on to next panel")
+            continue
+        adjustors = can_adj[panel_name]
+        if int(panel_name[5]) == 1:
+            mirror_a = mf.a_primary
+        else:
+            mirror_a = mf.a_secondary
+        can_z = mf.mirror(adjustors[:, 0], adjustors[:, 1], mirror_a)
+        can_points = np.hstack((adjustors[:, :2], can_z[:, np.newaxis]))
 
         # Load pointcloud from data
         # Will need to change genfromtxt args based on what FARO software outputs
@@ -215,10 +229,23 @@ output(out_file, "Starting alignment procedure for measurement at: " + measureme
 output(out_file, "Using coordinate system: " + coordinates)
 output(out_file, "Using origin shift: " + str(origin_shift))
 
+# Initialize cannonical adjustor positions
+can_adj = {}
+
 # Align primary mirror
 primary_path = os.path.join(measurement_dir, "M1")
 if os.path.exists(primary_path):
     output(out_file, "Aligning primary mirror")
+
+    # Load cannonical adjustor points
+    m1_can = "./can_points/M1.txt"
+    if ~os.path.exists(m1_can):
+        output(out_file, "Cannonical points for M1 not found")
+        sys.exit()
+    c_points = np.genfromtxt(m1_can, dtype=str)
+    for i in range(int(c_points.shape[0] / 5)):
+        pan_points = c_points[5 * i : 5 * (i + 1)]
+        can_adj[pan_points[0, 0]] = np.array(pan_points[:, 2:], dtype=float)
 
     # Get all panel files
     panels = os.listdir(primary_path)
@@ -248,6 +275,16 @@ if os.path.exists(primary_path):
 secondary_path = os.path.join(measurement_dir, "M2")
 if os.path.exists(secondary_path):
     output(out_file, "Aligning secondary mirror")
+
+    # Load cannonical adjustor points
+    m2_can = "./can_points/M2.txt"
+    if ~os.path.exists(m2_can):
+        output(out_file, "Cannonical points for M2 not found")
+        sys.exit()
+    c_points = np.genfromtxt(m2_can, dtype=str)
+    for i in range(int(c_points.shape[0] / 5)):
+        pan_points = c_points[5 * i : 5 * (i + 1)]
+        can_adj[pan_points[0, 0]] = np.array(pan_points[:, 2:], dtype=float)
 
     # Get all panel files
     panels = os.listdir(secondary_path)
