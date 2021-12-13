@@ -78,14 +78,11 @@ def mirror_fit_func(xy, x0, y0, z0, a1, a2, a3, a):
     xyz[:, 1] = y
     xyz[:, 2] = z
 
-    origin = np.array((x.max() + x.min(), y.max() + y.min(), z.max() + z.min())) / 2.0
-    xyz -= origin
-
     ax1 = rot.from_rotvec(a1 * np.array([1.0, 0.0, 0.0]))
     ax2 = rot.from_rotvec(a2 * np.array([0.0, 1.0, 0.0]))
     ax3 = rot.from_rotvec(a3 * np.array([0.0, 0.0, 1.0]))
     ax = ax1 * ax2 * ax3
-    xyz = ax.apply(xyz) + origin
+    xyz = ax.apply(xyz)
 
     return xyz[:, 2]
 
@@ -172,17 +169,13 @@ def transform_point(points, x0, y0, z0, a1, a2, a3):
 
     real_points = points - np.array([x0, y0, z0])
 
-    x = real_points[:, 0]
-    y = real_points[:, 1]
-    z = real_points[:, 2]
-    origin = np.array((x.max() + x.min(), y.max() + y.min(), z.max() + z.min())) / 2.0
-    real_points -= origin
-
     ax1 = rot.from_rotvec(a1 * np.array([1.0, 0.0, 0.0]))
     ax2 = rot.from_rotvec(a2 * np.array([0.0, 1.0, 0.0]))
     ax3 = rot.from_rotvec(a3 * np.array([0.0, 0.0, 1.0]))
     ax = ax1 * ax2 * ax3
-    real_points = ax.apply(real_points) + origin
+    rot_points = ax.apply(real_points)
+    
+    real_points[:, 2] = rot_points[:, 2]
 
     if ndims == 1:
         return real_points[0]
