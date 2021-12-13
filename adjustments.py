@@ -116,7 +116,7 @@ def calc_adjustments(can_points, points, adjustors, **kwargs):
     res = opt.minimize(
         adjustment_fit_func, np.zeros(6), (can_points, points, adjustors), **kwargs
     )
-
+    print(res.x)
     dx, dy, dz, thetha_0, thetha_1, z_t = res.x
     _points, _adjustors = translate_panel(points, adjustors, dx, dy, dz)
     _points, _adjustors = rotate_panel(_points, _adjustors, thetha_0, thetha_1)
@@ -133,4 +133,4 @@ def calc_adjustments(can_points, points, adjustors, **kwargs):
     _adjustors[-1, -1] += z_t_err
     d_adj_err = _adjustors - adjustors
 
-    return dx, dy, d_adj[:, 2] + dz, dx_err, dy_err, d_adj_err[:, 2] + dz_err
+    return dx, dy, d_adj[:, 2], dx_err, dy_err, d_adj_err[:, 2]
