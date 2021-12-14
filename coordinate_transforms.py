@@ -9,6 +9,7 @@ import scipy.spatial as spat
 
 v_m1 = (0, 0, 3600)  # mm
 v_m2 = (0, -4800, 0)  # mm
+v_c = (-200, 0, 0)
 a_m1 = -np.arctan(0.5)
 a_m2 = np.arctan(1.0 / 3.0) - np.pi / 2
 
@@ -27,7 +28,7 @@ def global_to_cad(coords, shift):
     m_coords[:, 0] = shifted_coords[:, 1]
     m_coords[:, 1] = 1 * shifted_coords[:, 0]
     m_coords[:, 2] = -1 * shifted_coords[:, 2]
-    return m_coords
+    return m_coords + v_c
 
 
 def cad_to_global(coords, shift):
@@ -39,7 +40,7 @@ def cad_to_global(coords, shift):
 
     @return m_coords:
     """
-    shifted_coords = coords - shift
+    shifted_coords = coords - shift - v_c
     m_coords = np.zeros(shifted_coords.shape)
     m_coords[:, 0] = 1 * shifted_coords[:, 1]
     m_coords[:, 1] = shifted_coords[:, 0]
