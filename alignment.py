@@ -78,7 +78,7 @@ def align_panels(
         # NOTE: This is for copy pasted files, for files exported with report
         #       use usecols=(5, 6, 7) instead
         # TODO: Figure out a way to be agnostic to this
-        points = np.genfromtxt(panel_path, skip_header=1, usecols=(5, 6, 7), dtype=str)
+        points = np.genfromtxt(panel_path, skip_header=1, usecols=(4, 5, 6), dtype=str)
         points = np.array(
             list(map(lambda p: p.replace(",", ""), points.flatten())), dtype=float
         ).reshape(points.shape)
@@ -94,6 +94,10 @@ def align_panels(
             points[:, 1],
             points[:, 2],
             mirror_fit_func,
+            bounds=[(-50, 50), (-50, 50), (-50, 50),
+                    (-np.pi/18., np.pi/18.), (-np.pi/18., np.pi/18.),
+                    (-np.pi/18., np.pi/18.)]
+
         )
         output(out_file, "RMS of surface is: " + str(rms))
 
