@@ -51,12 +51,45 @@ def mirror(x, y, a):
     return z
 
 
-def mirror_fit_func(xy, x0, y0, z0, a1, a2, a3, a):
+def mirror_norm(x, y, a):
+    """
+    Analytic form of mirror normal vector
+
+    @param x: x positions to calculate at
+    @param y: y positions to calculate at
+    @param a: Coeffecients of the mirror function
+              Use a_primary for the primary mirror
+              Use a_secondary for the secondary mirror
+
+    @return normals: Unit vector normal to mirror at each xy
+    """
+    Rn = 3000.0
+
+    x_n = 0
+    y_n = 0
+    z_n = -1
+    for i in range(a.shape[0]):
+        for j in range(a.shape[1]):
+            if i != 0:
+                x_n += a[i, j] * (x ** (i - 1)) / (Rn ** i) * (y / Rn) ** j
+            if j != 0:
+                y_n += a[i, j] * (x / Rn) ** i * (y ** (j - 1)) / (Rn ** j)
+
+    if type(x_n) is np.ndarray:
+        z_n = -1 * np.ones(x_n.shape)
+    normals = np.array((x_n, y_n, z_n)).T
+    normals /= np.linalg.norm(normals, axis=-1)[:, np.newaxis]
+    return normals
+
+
+def mirror_fit_func(xy, compensate, x0, y0, z0, a1, a2, a3, a):
     """
     Function to fit against for primary mirror
     Note that since each panel adjusts independantly it is reccomended to fit on a per panel basis
 
     @param xy: Tuple where first element is array of x points and second is y
+    @param compensate: Amount to compensate for Faro measurement
+                       Should be the radius of the SMR
     @param x0: x offset
     @param y0: y offset
     @param z0: z offset
@@ -73,6 +106,12 @@ def mirror_fit_func(xy, x0, y0, z0, a1, a2, a3, a):
     y = xy[1] - y0
     z = mirror(x, y, a) - z0
 
+    if compensate != 0.0:
+        compensation = compensate * mirror_norm(x, y, a)
+        x -= compensation[:, 0]
+        y -= compensation[:, 1]
+        z -= compensation[:, 2]
+
     xyz = np.zeros(x.shape + (3,))
     xyz[:, 0] = x
     xyz[:, 1] = y
@@ -87,12 +126,14 @@ def mirror_fit_func(xy, x0, y0, z0, a1, a2, a3, a):
     return xyz[:, 2]
 
 
-def primary_fit_func(xy, x0, y0, z0, a1, a2, a3):
+def primary_fit_func(xy, compensate, x0, y0, z0, a1, a2, a3):
     """
     Function to fit against for primary mirror
     Note that since each panel adjusts independantly it is reccomended to fit on a per panel basis
 
     @param xy: Tuple where first element is array of x points and second is y
+    @param compensate: Amount to compensate for Faro measurement
+                       Should be the radius of the SMR
     @param x0: x offset
     @param y0: y offset
     @param z0: z offset
@@ -102,15 +143,17 @@ def primary_fit_func(xy, x0, y0, z0, a1, a2, a3):
 
     @return z: The z position of the mirror at each xy
     """
-    return mirror_fit_func(xy, x0, y0, z0, a1, a2, a3, a_primary)
+    return mirror_fit_func(xy, compensate, x0, y0, z0, a1, a2, a3, a_primary)
 
 
-def secondary_fit_func(xy, x0, y0, z0, a1, a2, a3):
+def secondary_fit_func(xy, compensate, x0, y0, z0, a1, a2, a3):
     """
     Function to fit against for secondary mirror
     Note that since each panel adjusts independantly it is reccomended to fit on a per panel basis
 
     @param xy: Tuple where first element is array of x points and second is y
+    @param compensate: Amount to compensate for Faro measurement
+                       Should be the radius of the SMR
     @param x0: x offset
     @param y0: y offset
     @param z0: z offset
@@ -120,10 +163,10 @@ def secondary_fit_func(xy, x0, y0, z0, a1, a2, a3):
 
     @return z: The z position of the mirror at each xy
     """
-    return mirror_fit_func(xy, x0, y0, z0, a1, a2, a3, a_secondary)
+    return mirror_fit_func(xy, compensate, x0, y0, z0, a1, a2, a3, a_secondary)
 
 
-def mirror_fit(x, y, z, fit_func, **kwargs):
+def mirror_fit(x, y, z, compensate, fit_func, **kwargs):
     """
     Fit a cloud of points to mirror surface
     Note that since each panel adjusts independantly it is reccomended to fit on a per panel basis
@@ -131,6 +174,8 @@ def mirror_fit(x, y, z, fit_func, **kwargs):
     @param x: x position of each point
     @param y: y position of each point
     @param z: z position of each point
+    @param compensate: Amount to compensate for Faro measurement
+                       Should be the radius of the SMR
     @param fit_func: Function to fit against
                      For primary use primary_fit_func
                      For secondary use secondary_fit_func
@@ -140,11 +185,11 @@ def mirror_fit(x, y, z, fit_func, **kwargs):
     @return rms: The rms between the measured points and the fit model
     """
 
-    def min_func(pars, x, y, z):
-        _z = fit_func((x, y), *pars)
+    def min_func(pars, x, y, z, compensate):
+        _z = fit_func((x, y), compensate, *pars)
         return np.sqrt(np.mean((z - _z) ** 2))
 
-    res = opt.minimize(min_func, np.zeros(6), (x, y, z), **kwargs)
+    res = opt.minimize(min_func, np.zeros(6), (x, y, z, compensate), **kwargs)
     return res.x, res.fun
 
 
@@ -174,7 +219,7 @@ def transform_point(points, x0, y0, z0, a1, a2, a3):
     ax3 = rot.from_rotvec(a3 * np.array([0.0, 0.0, 1.0]))
     ax = ax1 * ax2 * ax3
     rot_points = ax.apply(real_points)
-    
+
     real_points[:, 2] = rot_points[:, 2]
 
     if ndims == 1:

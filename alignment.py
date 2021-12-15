@@ -83,16 +83,15 @@ def align_panels(
             list(map(lambda p: p.replace(",", ""), points.flatten())), dtype=float
         ).reshape(points.shape)
 
-        # Transform points to mirror coordinates and compensate
+        # Transform points to mirror coordinates
         points = coord_trans(points, origin_shift)
-        if compensation != 0.0:
-            points = ct.compensate(points, compensation)
 
         # Fit to mirror surface
         popt, rms = mf.mirror_fit(
             points[:, 0],
             points[:, 1],
             points[:, 2],
+            compensation,
             mirror_fit_func,
             bounds=[(-50, 50), (-50, 50), (-50, 50),
                     (-np.pi/18., np.pi/18.), (-np.pi/18., np.pi/18.),
