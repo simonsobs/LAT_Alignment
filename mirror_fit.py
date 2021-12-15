@@ -33,7 +33,7 @@ a_secondary = np.array([
 
 def mirror(x, y, a):
     """
-    Analyitic form for the mirror
+    Analytic form for the mirror
 
     @param x: x positions to calculate at
     @param y: y positions to calculate at
