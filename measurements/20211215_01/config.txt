@@ -1,0 +1,3 @@
+coords	cad
+shift	18.0729 0 -6.0226
+compensation	0
