@@ -108,9 +108,9 @@ def mirror_fit_func(xy, compensate, x0, y0, z0, a1, a2, a3, a):
 
     if compensate != 0.0:
         compensation = compensate * mirror_norm(x, y, a)
-        x -= compensation[:, 0]
-        y -= compensation[:, 1]
-        z -= compensation[:, 2]
+        x += compensation[:, 0]
+        y += compensation[:, 1]
+        z += compensation[:, 2]
 
     xyz = np.zeros(x.shape + (3,))
     xyz[:, 0] = x
@@ -163,7 +163,7 @@ def secondary_fit_func(xy, compensate, x0, y0, z0, a1, a2, a3):
 
     @return z: The z position of the mirror at each xy
     """
-    return mirror_fit_func(xy, compensate, x0, y0, z0, a1, a2, a3, a_secondary)
+    return mirror_fit_func(xy, -1 * compensate, x0, y0, z0, a1, a2, a3, a_secondary)
 
 
 def mirror_fit(x, y, z, compensate, fit_func, **kwargs):
