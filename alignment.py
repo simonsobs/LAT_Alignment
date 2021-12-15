@@ -93,12 +93,16 @@ def align_panels(
             points[:, 2],
             compensation,
             mirror_fit_func,
-            bounds=[(-50, 50), (-50, 50), (-50, 50),
-                    (-np.pi/18., np.pi/18.), (-np.pi/18., np.pi/18.),
-                    (-np.pi/18., np.pi/18.)]
-
+            bounds=[
+                (-50, 50),
+                (-50, 50),
+                (-50, 50),
+                (-np.pi / 18.0, np.pi / 18.0),
+                (-np.pi / 18.0, np.pi / 18.0),
+                (-np.pi / 18.0, np.pi / 18.0),
+            ],
         )
-        output(out_file, "RMS of surface is: " + str(rms))
+        output(out_file, "RMS of surface is: " + str(round(rms, 3)))
 
         # Transform cannonical alignment points and adjustors to measurement basis
         points = mf.transform_point(can_points, *popt)
@@ -116,9 +120,9 @@ def align_panels(
         output(
             out_file,
             "\tMove panel "
-            + str(abs(dx))
+            + str(abs(round(dx, 3)))
             + " ± "
-            + str(abs(dx_err))
+            + str(abs(round(dx_err, 3)))
             + " mm to the "
             + x_dir,
         )
@@ -128,7 +132,12 @@ def align_panels(
             y_dir = "up"
         output(
             out_file,
-            "\tMove panel " + str(abs(dy)) + " ± " + str(abs(dy_err)) + " mm " + y_dir,
+            "\tMove panel "
+            + str(abs(round(dy, 3)))
+            + " ± "
+            + str(abs(round(dy_err, 3)))
+            + " mm "
+            + y_dir,
         )
 
         for i in range(len(d_adj)):
@@ -141,11 +150,11 @@ def align_panels(
             output(
                 out_file,
                 "\tMove adjustor "
-                + str(i)
+                + str(i + 1)
                 + " "
-                + str(abs(d))
+                + str(abs(round(d, 3)))
                 + " ± "
-                + str(abs(d_err))
+                + str(abs(round(d_err, 3)))
                 + " mm "
                 + d_dir,
             )
