@@ -32,6 +32,7 @@ def align_panels(
     origin_shift,
     compensation,
     mirror_fit_func,
+    cm_sub=False,
 ):
     """
     Align panels of mirror
@@ -44,6 +45,7 @@ def align_panels(
     @param origin_shift: The origin_shift to pass to coord_trans
     @param compensation: Compensation to apply to measurement
     @param mirror_fit_func: The function used to fit the mirror
+    @param cm_sub: Set to True for common mode subtracted adjustments
     """
     for p in panels:
         panel_path = os.path.join(mirror_path, p)
@@ -110,7 +112,7 @@ def align_panels(
 
         # Calculate adjustments
         dx, dy, d_adj, dx_err, dy_err, d_adj_err = adj.calc_adjustments(
-            can_points, points, adjustors
+            can_points, points, adjustors, cm_sub
         )
         # TODO: Convert these into turns of the adjustor rods
         if dx < 0:
@@ -184,12 +186,19 @@ parser.add_argument(
     help="FARO compensation in mm to apply",
     type=float,
 )
+parser.add_argument(
+    "-cm",
+    "--commonmode",
+    help="Pass to subtract common mode from adjustments",
+    action="store_true",
+)
 args = parser.parse_args()
 
 measurement_dir = args.measurement_dir
 coordinates = args.coordinates
 origin_shift = args.shift
 compensation = args.compensation
+cm_sub = args.commonmode
 
 # Check that measurement directory exists
 if not os.path.exists(measurement_dir):
@@ -247,6 +256,7 @@ output(out_file, "Starting alignment procedure for measurement at: " + measureme
 output(out_file, "Using coordinate system: " + coordinates)
 output(out_file, "Using origin shift: " + str(origin_shift))
 output(out_file, "Applying compensation: " + str(compensation) + " mm")
+output(out_file, "Common mode subtraction set to: " + str(cm_sub))
 
 # Initialize cannonical adjustor positions
 can_adj = {}
@@ -291,6 +301,7 @@ if os.path.exists(primary_path):
         origin_shift,
         compensation,
         mf.primary_fit_func,
+        cm_sub,
     )
 
 # Align secondary mirror
@@ -333,4 +344,5 @@ if os.path.exists(secondary_path):
         origin_shift,
         compensation,
         mf.secondary_fit_func,
+        cm_sub,
     )

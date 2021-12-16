@@ -97,13 +97,14 @@ def adjustment_fit_func(pars, can_points, points, adjustors):
     return np.linalg.norm(can_points - points)
 
 
-def calc_adjustments(can_points, points, adjustors, **kwargs):
+def calc_adjustments(can_points, points, adjustors, cm_sub=False, **kwargs):
     """
     Calculate adjustments needed to align panel
 
     @param can_points: The cannonical position of the points to align
     @param points: The measured positions of the points to align
     @param adjustors: The measured positions of the adjustors
+    @param cm_sub: Set to True for common mode subtracted adjustments
     @param **kwargs: Arguments to be passed to scipy.optimize.minimize
 
     @return dx: The required translation of panel in x
@@ -133,4 +134,6 @@ def calc_adjustments(can_points, points, adjustors, **kwargs):
     _adjustors[-1, -1] += z_t_err
     d_adj_err = _adjustors - adjustors
 
+    if cm_sub:
+        return 0, 0, d_adj[:, 2] - dz, 0, 0, d_adj_err[:, 2] - dz_err
     return dx, dy, d_adj[:, 2], dx_err, dy_err, d_adj_err[:, 2]
