@@ -10,6 +10,7 @@ import numpy as np
 import adjustments as adj
 import coordinate_transforms as ct
 import mirror_fit as mf
+import matplotlib.pyplot as plt
 
 
 def output(file, string):
@@ -33,6 +34,7 @@ def align_panels(
     compensation,
     mirror_fit_func,
     cm_sub=False,
+    plots=False,
 ):
     """
     Align panels of mirror
@@ -105,6 +107,28 @@ def align_panels(
             ],
         )
         output(out_file, "RMS of surface is: " + str(round(rms, 3)))
+
+        if plots:
+            b_path, m_path = os.path.split(os.path.normpath(mirror_path))
+            plot_path = os.path.join(b_path, "plots", m_path)
+            plt.tricontourf(points[:, 0], points[:, 1], points[:, 2])
+            plt.title("Surface of " + panel_name)
+            plt.savefig(os.path.join(plot_path, panel_name + "_surface.png"))
+            plt.close()
+
+            ps, ps_dists = mf.res_power_spect(
+                points[:, 0],
+                points[:, 1],
+                points[:, 2],
+                compensation,
+                mirror_fit_func,
+                *popt
+            )
+            plt.plot(ps_dists, ps)
+            plt.xlabel("Scale (mm)")
+            plt.title("Power spectrum of " + panel_name)
+            plt.savefig(os.path.join(plot_path, panel_name + "_ps.png"))
+            plt.close()
 
         # Transform cannonical alignment points and adjustors to measurement basis
         points = mf.transform_point(can_points, *popt)
@@ -192,6 +216,12 @@ parser.add_argument(
     help="Pass to subtract common mode from adjustments",
     action="store_true",
 )
+parser.add_argument(
+    "-p",
+    "--plots",
+    help="Generate plots of panel surfaces and power spectra",
+    action="store_true",
+)
 args = parser.parse_args()
 
 measurement_dir = args.measurement_dir
@@ -199,6 +229,7 @@ coordinates = args.coordinates
 origin_shift = args.shift
 compensation = args.compensation
 cm_sub = args.commonmode
+plots = args.plots
 
 # Check that measurement directory exists
 if not os.path.exists(measurement_dir):
@@ -266,6 +297,10 @@ primary_path = os.path.join(measurement_dir, "M1")
 if os.path.exists(primary_path):
     output(out_file, "Aligning primary mirror")
 
+    # Make plot directory
+    if plots:
+        os.makedirs(os.path.join(measurement_dir, "plots", "M1"), exist_ok=True)
+
     # Load cannonical adjustor points
     m1_can = "./can_points/M1.txt"
     if not os.path.exists(m1_can):
@@ -302,12 +337,17 @@ if os.path.exists(primary_path):
         compensation,
         mf.primary_fit_func,
         cm_sub,
+        plots,
     )
 
 # Align secondary mirror
 secondary_path = os.path.join(measurement_dir, "M2")
 if os.path.exists(secondary_path):
     output(out_file, "Aligning secondary mirror")
+
+    # Make plot directory
+    if plots:
+        os.makedirs(os.path.join(measurement_dir, "plots", "M2"), exist_ok=True)
 
     # Load cannonical adjustor points
     m2_can = "./can_points/M2.txt"
@@ -345,4 +385,5 @@ if os.path.exists(secondary_path):
         compensation,
         mf.secondary_fit_func,
         cm_sub,
+        plots,
     )
