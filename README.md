@@ -93,10 +93,12 @@ Where the orange circle marks the `global` coordinate system, the green circle m
 
 Additionally there is a `cad` coordinate system that is defined as the coordinate system from the SolidWorks model. It is given by the following transformation from the `global` coordinate system:
 ```
-x -> y
+x -> y - 200 mm
 y -> x
 z -> -z
 ```
+It is currently unclear why the 200 mm offset exists.
+
 Note that the files in the `can_points` directory are in the `cad` coordinate system.
 
 All measurements should be done in one of these four coordinate systems modulo a known shift in the origin.
@@ -107,6 +109,7 @@ The following python libraries are dependencies:
 * `numpy`
 * `scipy`
 * `argparse`
+* `matplotlib`
 
 ## Bugs and Feature Requests
 For low priority bugs and feature requests submit an issue on the [git repo](https://github.com/simonsobs/LAT_Alignment).
