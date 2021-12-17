@@ -6,6 +6,7 @@ Author: Saianeesh Keshav Haridas
 import numpy as np
 import scipy.optimize as opt
 from scipy.spatial.transform import Rotation as rot
+from scipy.stats import binned_statistic
 
 # fmt: off
 a_primary = np.array([
@@ -246,3 +247,49 @@ def get_delta(points, x0, y0, z0, a1, a2, a3):
     """
     real_points = transform_point(points, x0, y0, z0, a1, a2, a3)
     return points - real_points
+
+
+def res_power_spect(x, y, z, compensate, fit_func, x0, y0, z0, a1, a2, a3):
+    """
+    Compute power spectrum of residuals from fit
+    Note that this is technically not the PSD,
+    to convert to the PSD just divide by the range of distances in the output
+
+    @param x: x position of each point
+    @param y: y position of each point
+    @param z: z position of each point
+    @param compensate: Amount to compensate for Faro measurement
+                       Should be the radius of the SMR
+    @param fit_func: Function to fit against
+                     For primary use primary_fit_func
+                     For secondary use secondary_fit_func
+    @param x0: x offset
+    @param y0: y offset
+    @param z0: z offset
+    @param a1: Rotation about x axis
+    @param a2: Rotation about y axis
+    @param a3: Rotation about z axis
+
+    @return ps: Power spectrum, really just the deviations in mm at each distance scale
+    @return ps_dists: Distance scale of each value in ps
+    """
+
+    _z = fit_func((x, y), compensate, x0, y0, z0, a1, a2, a3)
+    residuals = np.array((x, y, z - _z)).T
+    dists = np.zeros((len(residuals), len(residuals)))
+    res_diff = np.zeros((len(residuals), len(residuals)))
+
+    for i in range(len(residuals)):
+        res1 = residuals[i]
+        for j in range(i):
+            res2 = residuals[j]
+            dist = np.linalg.norm((res1[0] - res2[0], res1[1] - res2[1]))
+            dists[i, j] = dist
+            res_diff[i, j] = abs(res1[2] - res2[2])
+    tri_i = np.tril_indices(len(residuals), k=-1)
+    dists = dists[tri_i]
+    res_diff = res_diff[tri_i]
+    ps, bin_e, bin_n = binned_statistic(dists, res_diff, bins=100)
+    ps_dists = bin_e[:-1] + np.diff(bin_e) / 2.0
+
+    return ps, ps_dists
