@@ -1,0 +1,17 @@
+Enabled	Feature              	ID	x         	y       	z       	i	j	k	Dev From Fit	Device Position  	Probe	Device Name
+Checked	16PointAdjusted Cloud	1 	-5,072.742	285.737 	-284.775	 	 	 	0.000       	Device Position 2	38.1 	V20003907682
+Checked	16PointAdjusted Cloud	2 	-5,069.139	92.440  	-270.728	 	 	 	0.000       	Device Position 2	38.1 	V20003907682
+Checked	16PointAdjusted Cloud	3 	-5,064.187	-111.911	-255.671	 	 	 	0.000       	Device Position 2	38.1 	V20003907682
+Checked	16PointAdjusted Cloud	4 	-5,066.576	-273.894	-265.610	 	 	 	0.000       	Device Position 2	38.1 	V20003907682
+Checked	16PointAdjusted Cloud	5 	-5,016.745	-286.956	-114.131	 	 	 	0.000       	Device Position 2	38.1 	V20003907682
+Checked	16PointAdjusted Cloud	6 	-5,020.826	-80.969 	-123.454	 	 	 	0.000       	Device Position 2	38.1 	V20003907682
+Checked	16PointAdjusted Cloud	7 	-5,037.714	75.031  	-174.679	 	 	 	0.000       	Device Position 2	38.1 	V20003907682
+Checked	16PointAdjusted Cloud	8 	-5,010.677	167.602 	-93.667 	 	 	 	0.000       	Device Position 2	38.1 	V20003907682
+Checked	16PointAdjusted Cloud	9 	-4,980.080	286.675 	-3.800  	 	 	 	0.000       	Device Position 2	38.1 	V20003907682
+Checked	16PointAdjusted Cloud	10	-4,971.207	132.433 	25.463  	 	 	 	0.000       	Device Position 2	38.1 	V20003907682
+Checked	16PointAdjusted Cloud	11	-4,962.462	-18.473 	52.316  	 	 	 	0.000       	Device Position 2	38.1 	V20003907682
+Checked	16PointAdjusted Cloud	12	-4,974.579	-244.505	13.671  	 	 	 	0.000       	Device Position 2	38.1 	V20003907682
+Checked	16PointAdjusted Cloud	13	-4,911.453	-284.983	200.422 	 	 	 	0.000       	Device Position 2	38.1 	V20003907682
+Checked	16PointAdjusted Cloud	14	-4,899.261	-112.281	239.048 	 	 	 	0.000       	Device Position 2	38.1 	V20003907682
+Checked	16PointAdjusted Cloud	15	-4,926.272	59.964  	159.741 	 	 	 	0.000       	Device Position 2	38.1 	V20003907682
+Checked	16PointAdjusted Cloud	16	-4,892.293	234.217 	257.822 	 	 	 	0.000       	Device Position 2	38.1 	V20003907682

@@ -1,4 +1,4 @@
-Starting alignment procedure for measurement at: ./measurements/20211215_02
+Starting alignment procedure for measurement at: ./measurements/20211216_01
 Using coordinate system: cad
 Using origin shift: [0. 0. 0.]
 Applying compensation: 19.05 mm
@@ -11,8 +11,8 @@ Aligning panel 01-012551
 RMS of surface is: 0.015
 	Move panel 0 ± 0 mm to the right
 	Move panel 0 ± 0 mm up
-	Move adjustor 1 0.012 ± 0.0 mm in
-	Move adjustor 2 0.021 ± 0.0 mm in
-	Move adjustor 3 0.015 ± 0.0 mm out
-	Move adjustor 4 0.006 ± 0.0 mm out
-	Move adjustor 5 0.003 ± 0.0 mm in
+	Move adjustor 1 0.008 ± 0.0 mm out
+	Move adjustor 2 0.048 ± 0.0 mm out
+	Move adjustor 3 0.029 ± 0.0 mm in
+	Move adjustor 4 0.01 ± 0.0 mm out
+	Move adjustor 5 0.009 ± 0.0 mm out

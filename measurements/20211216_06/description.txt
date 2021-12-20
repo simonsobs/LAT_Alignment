@@ -1,0 +1,3 @@
+Adjusted ~25 point sparse polyline surface measurement taken by Anna and Michele on the real mirror panel at Vertex.
+SMR was handled by Michele and computer by Anna.
+Coordinate system was the global coordinate system provided by the vertex solid works model for the mirror. A 200 cm offset is still seen in the x-axis positions of the adjusters.
