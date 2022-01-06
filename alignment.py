@@ -114,7 +114,7 @@ def align_panels(
             plt.savefig(os.path.join(plot_path, panel_name + "_surface.png"))
             plt.close()
 
-            ps, ps_dists = mf.res_power_spect(
+            residuals = mf.calc_residuals(
                 points[:, 0],
                 points[:, 1],
                 points[:, 2],
@@ -122,6 +122,7 @@ def align_panels(
                 mirror_fit_func,
                 *popt
             )
+            ps, ps_dists = mf.res_power_spect(residuals)
             plt.plot(ps_dists, ps)
             plt.xlabel("Scale (mm)")
             plt.title("Power spectrum of " + panel_name)

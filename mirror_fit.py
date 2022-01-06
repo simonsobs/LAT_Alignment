@@ -249,11 +249,9 @@ def get_delta(points, x0, y0, z0, a1, a2, a3):
     return points - real_points
 
 
-def res_power_spect(x, y, z, compensate, fit_func, x0, y0, z0, a1, a2, a3):
+def calc_residuals(x, y, z, compensate, fit_func, x0, y0, z0, a1, a2, a3):
     """
-    Compute power spectrum of residuals from fit
-    Note that this is technically not the PSD,
-    to convert to the PSD just divide by the range of distances in the output
+    Calculate residuals from fit
 
     @param x: x position of each point
     @param y: y position of each point
@@ -270,12 +268,23 @@ def res_power_spect(x, y, z, compensate, fit_func, x0, y0, z0, a1, a2, a3):
     @param a2: Rotation about y axis
     @param a3: Rotation about z axis
 
+    @return residuals: The residuals
+    """
+    _z = fit_func((x, y), compensate, x0, y0, z0, a1, a2, a3)
+    return np.array((x, y, z - _z)).T
+
+
+def res_power_spect(residuals):
+    """
+    Compute power spectrum of residuals from fit
+    Note that this is technically not the PSD,
+    to convert to the PSD just divide by the range of distances in the output
+
+    @param residuals: Residuals to compute power spectrum from
+
     @return ps: Power spectrum, really just the deviations in mm at each distance scale
     @return ps_dists: Distance scale of each value in ps
     """
-
-    _z = fit_func((x, y), compensate, x0, y0, z0, a1, a2, a3)
-    residuals = np.array((x, y, z - _z)).T
     dists = np.zeros((len(residuals), len(residuals)))
     res_diff = np.zeros((len(residuals), len(residuals)))
 
