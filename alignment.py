@@ -122,6 +122,11 @@ def align_panels(
                 mirror_fit_func,
                 *popt
             )
+            plt.hist(residuals[:, 2])
+            plt.xlabel("Residual (mm)")
+            plt.title("Residual distribution of " + panel_name)
+            plt.savefig(os.path.join(plot_path, panel_name + "_hist.png"))
+
             ps, ps_dists = mf.res_power_spect(residuals)
             plt.plot(ps_dists, ps)
             plt.xlabel("Scale (mm)")
