@@ -78,11 +78,9 @@ def align_panels(
         can_points = np.hstack((adjustors[:, :2], can_z[:, np.newaxis]))
 
         # Load pointcloud from data
-        # Will need to change genfromtxt args based on what FARO software outputs
-        # NOTE: This is for copy pasted files, for files exported with report
-        #       use usecols=(5, 6, 7) instead
-        # TODO: Figure out a way to be agnostic to this
-        points = np.genfromtxt(panel_path, skip_header=1, usecols=(4, 5, 6), dtype=str)
+        points = np.genfromtxt(
+            panel_path, skip_header=1, usecols=(3, 4, 5), dtype=str, delimiter="\t"
+        )
         points = np.array(
             list(map(lambda p: p.replace(",", ""), points.flatten())), dtype=float
         ).reshape(points.shape)
