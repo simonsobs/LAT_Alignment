@@ -106,6 +106,24 @@ def align_panels(
         )
         output(out_file, "RMS of surface is: " + str(round(rms, 3)))
 
+        residuals = mf.calc_residuals(
+            points[:, 0],
+            points[:, 1],
+            points[:, 2],
+            compensation,
+            mirror_fit_func,
+            *popt
+        )
+        res_med = np.median(residuals[:, 2])
+        res_std = np.std(residuals[:, 2])
+        outlim_l = res_med - 3 * res_std
+        outlim_r = res_med + 3 * res_std
+        outliers = np.where(
+            (residuals[:, 2] < outlim_l) | (residuals[:, 2] > outlim_r)
+        )[0]
+        for outl in outliers:
+            output(out_file, "WARNING: Potential outlier at point " + str(outl))
+
         if plots:
             b_path, m_path = os.path.split(os.path.normpath(mirror_path))
             plot_path = os.path.join(b_path, "plots", m_path)
@@ -114,14 +132,6 @@ def align_panels(
             plt.savefig(os.path.join(plot_path, panel_name + "_surface.png"))
             plt.close()
 
-            residuals = mf.calc_residuals(
-                points[:, 0],
-                points[:, 1],
-                points[:, 2],
-                compensation,
-                mirror_fit_func,
-                *popt
-            )
             plt.hist(residuals[:, 2])
             plt.xlabel("Residual (mm)")
             plt.title("Residual distribution of " + panel_name)
