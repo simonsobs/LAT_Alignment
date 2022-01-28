@@ -262,9 +262,9 @@ if (coordinates is None) or (origin_shift is None) or (compensation is None):
     if coordinates is None and "coords" in config.keys():
         coordinates = config["coords"]
     if origin_shift is None and "shift" in config.keys() :
-        origin_shift = config["shift"].split()
+        origin_shift = np.array(config["shift"].split(), dtype=float)
     if compensation is None and "compensation" in config.keys():
-        compensation = config["compensation"]
+        compensation = float(config["compensation"])
     if cm_sub is False and "cm_sub" in config.keys():
         compensation = bool(config["cm_sub"])
     if plots is False and "plots" in config.keys():
@@ -278,10 +278,6 @@ if origin_shift is None:
     origin_shift = np.zeros(3, dtype=float)
 if compensation is None:
     compensation = 0.0
-
-# Cast config options
-origin_shift = np.array(origin_shift, dtype=float)
-compensation = float(compensation)
 
 # Make sure that shift is correct shape
 if len(origin_shift) != 3:
