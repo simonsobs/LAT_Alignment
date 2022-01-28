@@ -265,6 +265,10 @@ if (coordinates is None) or (origin_shift is None) or (compensation is None):
         origin_shift = config["shift"].split()
     if compensation is None and "compensation" in config.keys():
         compensation = config["compensation"]
+    if cm_sub is False and "cm_sub" in config.keys():
+        compensation = bool(config["cm_sub"])
+    if plots is False and "plots" in config.keys():
+        compensation = bool(config["plots"])
 
 
 # Set some defaults
