@@ -114,11 +114,12 @@ Files containing the point cloud measurements for a given panel. Should live in 
 * Seventh digit is the panel column
 * Eight digit is the panel number (current, spare, replacement, etc.)
 
-##### Plot Directory
+#### Plot Directory
 If the `plots` option is set to `True` then the root measurement will contain a directory called `plots`. Within this directory will be directories for each mirror measured, `M1` for the primary and `M2` for the secondary. Each of these will contain three plots per panel measured:
 * `XX-XXXXXX_surface.png`, a plot of the panel's surface in the mirror's coordinate system.
 * `XX-XXXXXX_hist.png`, a histogram of the residuals from the panel's fit.
 * `XX-XXXXXX_ps.png`, a plot of the power spectrum of the residuals from the panel's fit.
+
 Where `XX-XXXXXX` is the panel number.
 
 ## Coordinate Systems
