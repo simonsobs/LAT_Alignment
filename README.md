@@ -27,9 +27,22 @@ measurements
 |   |   |...
 |   |
 |   └───M2
-|       |XX-XXXXXX.txt
-|       |XX-XXXXXX.txt
-|       |...
+|   |   |XX-XXXXXX.txt
+|   |   |XX-XXXXXX.txt
+|   |   |...
+|   |
+|   └───plots
+|       └───M1
+|       |   |XX-XXXXXX_surface.png
+|       |   |XX-XXXXXX_hist.png
+|       |   |XX-XXXXXX_ps.png
+|       |   |...
+|       |
+|       └───M2
+|           |XX-XXXXXX_surface.png
+|           |XX-XXXXXX_hist.png
+|           |XX-XXXXXX_ps.png
+|           |...
 |       
 └───YYYYMMDD_num
 |   |config.txt
@@ -44,6 +57,19 @@ measurements
 |       |XX-XXXXXX.txt
 |       |XX-XXXXXX.txt
 |       |...
+|   |
+|   └───plots
+|       └───M1
+|       |   |XX-XXXXXX_surface.png
+|       |   |XX-XXXXXX_hist.png
+|       |   |XX-XXXXXX_ps.png
+|       |   |...
+|       |
+|       └───M2
+|           |XX-XXXXXX_surface.png
+|           |XX-XXXXXX_hist.png
+|           |XX-XXXXXX_ps.png
+|           |...
 |...
 ```
 
@@ -57,11 +83,15 @@ The file `config.txt` contains configuration options. Each option should be on a
 
 Currently the only supported options are:
 
-`coords`: The coordinate system that the measurement was taken in (see [Coordinate Systems](#coordinate-systems) for more information. Valid values are `cad`, `global`, `primary`, and `secondary`.
+`coords`: The coordinate system that the measurement was taken in (see [Coordinate Systems](#coordinate-systems) for more information. Valid values are `cad`, `global`, `primary`, and `secondary`. Default value is `cad`.
 
 `shift`: The shift in the origin from the coordinate system specified with `coords` in mm. Provide space separated values for the offsets in x, y, and z. Default value is `0 0 0`.
 
 `compensation`: The compensation in mm to apply to the measurement data. This is the value that the FARO would typically apply to its measurements to account for the SMR. Value should be equal to the radius of the SMR. Default value is `0`.
+
+`cm_sub`: Whether or not the common mode should be subtracted for each panel's adjustments. Note that whatever is given here will be cast to a `bool`, so passing any value here will set it to `True`. Default value is `False`.
+
+`plots`: Whether or not plots should be generated. Note that whatever is given here will be cast to a `bool`, so passing any value here will set it to `True`. Default value is `False`.
 
 Note that the values in `config.txt` are overridden by command line arguments passed to `alignment.py`.
 
@@ -83,6 +113,13 @@ Files containing the point cloud measurements for a given panel. Should live in 
 * Sixth digit is the panel row
 * Seventh digit is the panel column
 * Eight digit is the panel number (current, spare, replacement, etc.)
+
+##### Plot Directory
+If the `plots` option is set to `True` then the root measurement will contain a directory called `plots`. Within this directory will be directories for each mirror measured, `M1` for the primary and `M2` for the secondary. Each of these will contain three plots per panel measured:
+* `XX-XXXXXX_surface.png`, a plot of the panel's surface in the mirror's coordinate system.
+* `XX-XXXXXX_hist.png`, a histogram of the residuals from the panel's fit.
+* `XX-XXXXXX_ps.png`, a plot of the power spectrum of the residuals from the panel's fit.
+Where `XX-XXXXXX` is the panel number.
 
 ## Coordinate Systems
 The relevant coordinate systems are marked in the diagram below:
