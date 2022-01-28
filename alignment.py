@@ -259,12 +259,13 @@ if (coordinates is None) or (origin_shift is None) or (compensation is None):
         )
         sys.exit()
     config = dict(np.genfromtxt(confpath, dtype=str, delimiter="\t"))
-    if coordinates is None:
+    if coordinates is None and "coords" in config.keys():
         coordinates = config["coords"]
-    if origin_shift is None:
+    if origin_shift is None and "shift" in config.keys() :
         origin_shift = config["shift"].split()
-    if compensation is None:
+    if compensation is None and "compensation" in config.keys():
         compensation = config["compensation"]
+
 
 # Set some defaults
 if origin_shift is None:
