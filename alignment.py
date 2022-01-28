@@ -268,6 +268,8 @@ if (coordinates is None) or (origin_shift is None) or (compensation is None):
 
 
 # Set some defaults
+if coordinates is None:
+    coordinates = "cad"
 if origin_shift is None:
     origin_shift = np.zeros(3, dtype=float)
 if compensation is None:
