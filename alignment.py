@@ -124,6 +124,23 @@ def align_panels(
         for outl in outliers:
             output(out_file, "WARNING: Potential outlier at point " + str(outl))
 
+        # Fit for tension
+        tension = 0
+        popt_t, rms_t = mf.tension_fit(
+            residuals,
+            bounds=[
+                (-50, 50),
+                (-50, 50),
+                (-50, 50),
+                (0, np.inf),
+                (0, np.inf),
+            ],
+        )
+
+        # If the fit tension improves rms, use it
+        if rms_t < rms:
+            tension = popt_t[2]
+
         if plots:
             b_path, m_path = os.path.split(os.path.normpath(mirror_path))
             plot_path = os.path.join(b_path, "plots", m_path)
@@ -147,6 +164,10 @@ def align_panels(
         # Transform cannonical alignment points and adjustors to measurement basis
         points = mf.transform_point(can_points, *popt)
         adjustors = mf.transform_point(adjustors, *popt)
+
+        # Apply tension to center of panel
+        points[-1, -1] += tension
+        adjustors[-1, -1] += tension
 
         # Calculate adjustments
         dx, dy, d_adj, dx_err, dy_err, d_adj_err = adj.calc_adjustments(
@@ -261,7 +282,7 @@ if (coordinates is None) or (origin_shift is None) or (compensation is None):
     config = dict(np.genfromtxt(confpath, dtype=str, delimiter="\t"))
     if coordinates is None and "coords" in config.keys():
         coordinates = config["coords"]
-    if origin_shift is None and "shift" in config.keys() :
+    if origin_shift is None and "shift" in config.keys():
         origin_shift = np.array(config["shift"].split(), dtype=float)
     if compensation is None and "compensation" in config.keys():
         compensation = float(config["compensation"])
