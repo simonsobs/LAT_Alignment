@@ -106,6 +106,7 @@ def align_panels(
         )
         output(out_file, "RMS of surface is: " + str(round(rms, 3)))
 
+        # Calculate residuals
         residuals = mf.calc_residuals(
             points[:, 0],
             points[:, 1],
@@ -114,6 +115,8 @@ def align_panels(
             mirror_fit_func,
             *popt
         )
+
+        # Look for outlier points
         res_med = np.median(residuals[:, 2])
         res_std = np.std(residuals[:, 2])
         outlim_l = res_med - 3 * res_std
@@ -141,6 +144,7 @@ def align_panels(
         if rms_t < rms:
             tension = popt_t[2]
 
+        # Generate plots
         if plots:
             b_path, m_path = os.path.split(os.path.normpath(mirror_path))
             plot_path = os.path.join(b_path, "plots", m_path)
