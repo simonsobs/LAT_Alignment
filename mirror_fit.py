@@ -194,6 +194,52 @@ def mirror_fit(x, y, z, compensate, fit_func, **kwargs):
     return res.x, res.fun
 
 
+def tension_fit_func(residuals, x0, y0, t, a, b):
+    """
+    Function to fit for incorrect panel tensioning from residuals
+    Currently the model used is a radial power law
+
+    @param residuals: Residuals between measured point cloud and fit model
+                      Nominally generated with calc_residuals
+    @param x0: Offset to center mean subtracted x coordinates
+    @param y0: Offset to center mean subtracted y coordinates
+    @param t: Difference due to tensioning in the center of panel
+    @param a: Base of power law
+    @param b: Exponential scale factor of power law
+
+    @return z: Power law model at each xy
+    """
+    # Get average x and y position
+    x_cm = residuals[:, 0].mean()
+    y_cm = residuals[:, 1].mean()
+
+    # Compute radius at each point
+    r = np.sqrt((residuals[:, 0] - x_cm - x0) ** 2 + (residuals[:, 1] - y_cm - y0) ** 2)
+
+    # Return power law
+    return t * (a ** (-b * r))
+
+
+def tension_fit(residuals, **kwargs):
+    """
+    Fit a power law model of tension to a point cloud of residuals
+
+    @param residuals: Residuals between measured point cloud and fit model
+                      Nominally generated with calc_residuals
+    @param **kwargs: Arguments to be passed to scipy.optimize.minimize
+
+    @return popt: The fit parameters, see docstring of tension_fit_func for details
+    @return rms: The rms between the measured points and the fit model
+    """
+
+    def min_func(pars, residuals):
+        _z = tension_fit_func(residuals, *pars)
+        return np.sqrt(np.mean((residuals[:, 2] - _z) ** 2))
+
+    res = opt.minimize(min_func, np.zeros(5), (residuals,), **kwargs)
+    return res.x, res.fun
+
+
 def transform_point(points, x0, y0, z0, a1, a2, a3):
     """
     Transform points from model space to real (measured) space
