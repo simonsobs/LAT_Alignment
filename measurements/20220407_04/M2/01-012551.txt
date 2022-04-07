@@ -1,0 +1,26 @@
+Enabled	Feature   	ID	x        	y      	z      	i	j	k	Dev From Fit	Device Position  	Probe	Device Name
+Checked	Polyline25	1 	-5,069.14	-269.14	-273.53	 	 	 	0.00        	Device Position 2	38.1 	V20003907682
+Checked	Polyline25	2 	-5,011.90	-235.25	-98.56 	 	 	 	0.00        	Device Position 2	38.1 	V20003907682
+Checked	Polyline25	3 	-4,953.04	-276.33	77.27  	 	 	 	0.00        	Device Position 2	38.1 	V20003907682
+Checked	Polyline25	4 	-4,920.31	-209.12	175.65 	 	 	 	0.00        	Device Position 2	38.1 	V20003907682
+Checked	Polyline25	5 	-4,888.87	-265.06	267.10 	 	 	 	0.00        	Device Position 2	38.1 	V20003907682
+Checked	Polyline25	6 	-4,886.31	-97.11 	277.14 	 	 	 	0.00        	Device Position 2	38.1 	V20003907682
+Checked	Polyline25	7 	-4,954.12	-89.00 	76.77  	 	 	 	0.00        	Device Position 2	38.1 	V20003907682
+Checked	Polyline25	8 	-5,006.94	-104.76	-81.79 	 	 	 	0.00        	Device Position 2	38.1 	V20003907682
+Checked	Polyline25	9 	-5,043.64	-54.69 	-192.69	 	 	 	0.00        	Device Position 2	38.1 	V20003907682
+Checked	Polyline25	10	-5,074.96	-91.20 	-288.63	 	 	 	0.00        	Device Position 2	38.1 	V20003907682
+Checked	Polyline25	11	-5,075.28	48.75  	-289.33	 	 	 	0.00        	Device Position 2	38.1 	V20003907682
+Checked	Polyline25	12	-5,017.63	50.69  	-113.68	 	 	 	0.00        	Device Position 2	38.1 	V20003907682
+Checked	Polyline25	13	-4,985.65	165.12 	-18.31 	 	 	 	0.00        	Device Position 2	38.1 	V20003907682
+Checked	Polyline25	14	-4,944.71	108.86 	104.62 	 	 	 	0.00        	Device Position 2	38.1 	V20003907682
+Checked	Polyline25	15	-4,906.94	119.95 	216.30 	 	 	 	0.00        	Device Position 2	38.1 	V20003907682
+Checked	Polyline25	16	-4,880.94	171.65 	292.03 	 	 	 	0.00        	Device Position 2	38.1 	V20003907682
+Checked	Polyline25	17	-4,936.92	215.14 	126.40 	 	 	 	0.00        	Device Position 2	38.1 	V20003907682
+Checked	Polyline25	18	-4,962.96	290.21 	47.36  	 	 	 	0.00        	Device Position 2	38.1 	V20003907682
+Checked	Polyline25	19	-4,991.70	239.07 	-37.72 	 	 	 	0.00        	Device Position 2	38.1 	V20003907682
+Checked	Polyline25	20	-5,022.78	281.18 	-132.48	 	 	 	0.00        	Device Position 2	38.1 	V20003907682
+Checked	Polyline25	21	-5,054.42	221.28 	-227.53	 	 	 	0.00        	Device Position 2	38.1 	V20003907682
+Checked	Polyline25	22	-5,081.66	244.63 	-311.36	 	 	 	0.00        	Device Position 2	38.1 	V20003907682
+Checked	Polyline25	23	-5,049.97	317.71 	-216.08	 	 	 	0.00        	Device Position 2	38.1 	V20003907682
+Checked	Polyline25	24	-4,990.27	313.72 	-35.17 	 	 	 	0.00        	Device Position 2	38.1 	V20003907682
+Checked	Polyline25	25	-4,935.33	310.87 	129.09 	 	 	 	0.00        	Device Position 2	38.1 	V20003907682
