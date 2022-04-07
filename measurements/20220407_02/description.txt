@@ -1,0 +1,3 @@
+Full panel surface area, 25 point polyline surface measurement taken by Anna and Saianeesh on the CCAT center mirror panel at Vertex.
+SMR was handled by Anna and computer by Saianeesh.
+Coordinate system was the global coordinate system provided by the vertex solid works model for the mirror.

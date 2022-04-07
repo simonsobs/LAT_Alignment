@@ -1,0 +1,17 @@
+Enabled	Feature      	ID	x         	y       	z       	i	j	k	Dev From Fit	Device Position  	Probe	Device Name
+Checked	Polyline_16pt	1 	-4,903.889	-226.457	227.909 	 	 	 	0.000       	Device Position 1	38.1 	V20003907682
+Checked	Polyline_16pt	2 	-4,953.457	-173.627	79.226  	 	 	 	0.000       	Device Position 1	38.1 	V20003907682
+Checked	Polyline_16pt	3 	-5,017.314	-129.398	-114.535	 	 	 	0.000       	Device Position 1	38.1 	V20003907682
+Checked	Polyline_16pt	4 	-5,051.985	-147.313	-221.562	 	 	 	0.000       	Device Position 1	38.1 	V20003907682
+Checked	Polyline_16pt	5 	-5,025.086	-30.235 	-136.543	 	 	 	0.000       	Device Position 1	38.1 	V20003907682
+Checked	Polyline_16pt	6 	-5,047.516	115.448 	-203.057	 	 	 	0.000       	Device Position 1	38.1 	V20003907682
+Checked	Polyline_16pt	7 	-5,017.175	192.932 	-112.031	 	 	 	0.000       	Device Position 1	38.1 	V20003907682
+Checked	Polyline_16pt	8 	-4,983.386	98.679  	-10.677 	 	 	 	0.000       	Device Position 1	38.1 	V20003907682
+Checked	Polyline_16pt	9 	-4,922.551	206.421 	166.272 	 	 	 	0.000       	Device Position 1	38.1 	V20003907682
+Checked	Polyline_16pt	10	-4,965.639	40.147  	42.618  	 	 	 	0.000       	Device Position 1	38.1 	V20003907682
+Checked	Polyline_16pt	11	-4,992.993	-48.442 	-39.409 	 	 	 	0.000       	Device Position 1	38.1 	V20003907682
+Checked	Polyline_16pt	12	-4,921.002	-86.484 	176.501 	 	 	 	0.000       	Device Position 1	38.1 	V20003907682
+Checked	Polyline_16pt	13	-4,899.984	45.458  	236.478 	 	 	 	0.000       	Device Position 1	38.1 	V20003907682
+Checked	Polyline_16pt	14	-4,955.800	211.634 	69.007  	 	 	 	0.000       	Device Position 1	38.1 	V20003907682
+Checked	Polyline_16pt	15	-5,012.623	-17.283 	-98.527 	 	 	 	0.000       	Device Position 1	38.1 	V20003907682
+Checked	Polyline_16pt	16	-4,900.360	-179.167	238.413 	 	 	 	0.000       	Device Position 1	38.1 	V20003907682
