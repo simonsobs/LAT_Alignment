@@ -209,6 +209,10 @@ def tension_fit_func(residuals, x0, y0, t, a, b):
 
     @return z: Power law model at each xy
     """
+    # Avoid divide by 0 error
+    if a == 0:
+        return 0
+
     # Get average x and y position
     x_cm = residuals[:, 0].mean()
     y_cm = residuals[:, 1].mean()
