@@ -157,6 +157,7 @@ def align_panels(
             plt.xlabel("Residual (mm)")
             plt.title("Residual distribution of " + panel_name)
             plt.savefig(os.path.join(plot_path, panel_name + "_hist.png"))
+            plt.close()
 
             ps, ps_dists = mf.res_power_spect(residuals)
             plt.plot(ps_dists, ps)
