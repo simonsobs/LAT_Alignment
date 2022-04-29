@@ -6,6 +6,8 @@ Author: Saianeesh Keshav Haridas
 """
 import numpy as np
 import scipy.spatial as spat
+from numpy import float64, ndarray
+from typing import List, Tuple, Union
 
 v_m1 = (0, 0, 3600)  # mm
 v_m2 = (0, -4800, 0)  # mm
@@ -31,7 +33,7 @@ def global_to_cad(coords, shift):
     return m_coords + v_c
 
 
-def cad_to_global(coords, shift):
+def cad_to_global(coords: ndarray, shift: Union[List[float], int]) -> ndarray:
     """
     Transform from cad coordinates to global coordinates
 
@@ -48,7 +50,9 @@ def cad_to_global(coords, shift):
     return m_coords
 
 
-def global_to_mirror(coords, shift, v_m, a_m):
+def global_to_mirror(
+    coords: ndarray, shift: int, v_m: Tuple[int, int, int], a_m: float64
+) -> ndarray:
     """
     Transform from global coordinates to mirror coordinates
 
@@ -85,7 +89,7 @@ def global_to_primary(coords, shift):
     return global_to_mirror(coords, shift, v_m1, a_m1)
 
 
-def global_to_secondary(coords, shift):
+def global_to_secondary(coords: ndarray, shift: int) -> ndarray:
     """
     Transform from global coordinates to secondary mirror coordinates
 
@@ -185,7 +189,7 @@ def cad_to_primary(coords, shift):
     return global_to_primary(global_coords, 0)
 
 
-def cad_to_secondary(coords, shift):
+def cad_to_secondary(coords: ndarray, shift: Union[List[float], int]) -> ndarray:
     """
     Transform from cad coordinates to secondary mirror coordinates
 

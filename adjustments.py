@@ -6,9 +6,13 @@ Author: Saianeesh Keshav Haridas
 import numpy as np
 import scipy.optimize as opt
 from scipy.spatial.transform import Rotation as rot
+from numpy import float64, ndarray
+from typing import Tuple
 
 
-def rotate(point, end_point1, end_point2, thetha):
+def rotate(
+    point: ndarray, end_point1: ndarray, end_point2: ndarray, thetha: float64
+) -> ndarray:
     """
     Rotate a point about an axis
 
@@ -27,7 +31,9 @@ def rotate(point, end_point1, end_point2, thetha):
     return point_0 + origin
 
 
-def rotate_panel(points, adjustors, thetha_0, thetha_1):
+def rotate_panel(
+    points: ndarray, adjustors: ndarray, thetha_0: float64, thetha_1: float64
+) -> Tuple[ndarray, ndarray]:
     """
     Rotate panel about axes created by adjustors
 
@@ -56,7 +62,9 @@ def rotate_panel(points, adjustors, thetha_0, thetha_1):
     return rot_points, rot_adjustors
 
 
-def translate_panel(points, adjustors, dx, dy, dz):
+def translate_panel(
+    points: ndarray, adjustors: ndarray, dx: float64, dy: float64, dz: float64
+) -> Tuple[ndarray, ndarray]:
     """
     Translate panel
 
@@ -73,7 +81,9 @@ def translate_panel(points, adjustors, dx, dy, dz):
     return points + translation, adjustors + translation
 
 
-def adjustment_fit_func(pars, can_points, points, adjustors):
+def adjustment_fit_func(
+    pars: ndarray, can_points: ndarray, points: ndarray, adjustors: ndarray
+) -> float64:
     """
     Function to minimize when calculating adjustments
 
@@ -97,7 +107,13 @@ def adjustment_fit_func(pars, can_points, points, adjustors):
     return np.linalg.norm(can_points - points)
 
 
-def calc_adjustments(can_points, points, adjustors, cm_sub=False, **kwargs):
+def calc_adjustments(
+    can_points: ndarray,
+    points: ndarray,
+    adjustors: ndarray,
+    cm_sub: bool = False,
+    **kwargs
+) -> Tuple[float64, float64, ndarray, float64, float64, ndarray]:
     """
     Calculate adjustments needed to align panel
 

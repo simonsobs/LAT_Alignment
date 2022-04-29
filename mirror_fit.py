@@ -7,6 +7,8 @@ import numpy as np
 import scipy.optimize as opt
 from scipy.spatial.transform import Rotation as rot
 from scipy.stats import binned_statistic
+from numpy import float64, ndarray
+from typing import Callable, Tuple, Union
 
 # fmt: off
 a_primary = np.array([
@@ -32,7 +34,7 @@ a_secondary = np.array([
 # fmt: on
 
 
-def mirror(x, y, a):
+def mirror(x: ndarray, y: ndarray, a: ndarray) -> ndarray:
     """
     Analytic form for the mirror
 
@@ -52,7 +54,7 @@ def mirror(x, y, a):
     return z
 
 
-def mirror_norm(x, y, a):
+def mirror_norm(x: ndarray, y: ndarray, a: ndarray) -> ndarray:
     """
     Analytic form of mirror normal vector
 
@@ -83,7 +85,17 @@ def mirror_norm(x, y, a):
     return normals
 
 
-def mirror_fit_func(xy, compensate, x0, y0, z0, a1, a2, a3, a):
+def mirror_fit_func(
+    xy: Tuple[ndarray, ndarray],
+    compensate: float,
+    x0: float64,
+    y0: float64,
+    z0: float64,
+    a1: float64,
+    a2: float64,
+    a3: float64,
+    a: ndarray,
+) -> ndarray:
     """
     Function to fit against for primary mirror
     Note that since each panel adjusts independantly it is reccomended to fit on a per panel basis
@@ -147,7 +159,16 @@ def primary_fit_func(xy, compensate, x0, y0, z0, a1, a2, a3):
     return mirror_fit_func(xy, compensate, x0, y0, z0, a1, a2, a3, a_primary)
 
 
-def secondary_fit_func(xy, compensate, x0, y0, z0, a1, a2, a3):
+def secondary_fit_func(
+    xy: Tuple[ndarray, ndarray],
+    compensate: float,
+    x0: float64,
+    y0: float64,
+    z0: float64,
+    a1: float64,
+    a2: float64,
+    a3: float64,
+) -> ndarray:
     """
     Function to fit against for secondary mirror
     Note that since each panel adjusts independantly it is reccomended to fit on a per panel basis
@@ -167,7 +188,9 @@ def secondary_fit_func(xy, compensate, x0, y0, z0, a1, a2, a3):
     return mirror_fit_func(xy, -1 * compensate, x0, y0, z0, a1, a2, a3, a_secondary)
 
 
-def mirror_fit(x, y, z, compensate, fit_func, **kwargs):
+def mirror_fit(
+    x: ndarray, y: ndarray, z: ndarray, compensate: float, fit_func: Callable, **kwargs
+) -> Tuple[ndarray, float64]:
     """
     Fit a cloud of points to mirror surface
     Note that since each panel adjusts independantly it is reccomended to fit on a per panel basis
@@ -194,7 +217,9 @@ def mirror_fit(x, y, z, compensate, fit_func, **kwargs):
     return res.x, res.fun
 
 
-def tension_fit_func(residuals, x0, y0, t, a, b):
+def tension_fit_func(
+    residuals: ndarray, x0: float64, y0: float64, t: float64, a: float64, b: float64
+) -> Union[int, ndarray]:
     """
     Function to fit for incorrect panel tensioning from residuals
     Currently the model used is a radial power law
@@ -224,7 +249,7 @@ def tension_fit_func(residuals, x0, y0, t, a, b):
     return t * (a ** (-b * r))
 
 
-def tension_fit(residuals, **kwargs):
+def tension_fit(residuals: ndarray, **kwargs) -> Tuple[ndarray, float64]:
     """
     Fit a power law model of tension to a point cloud of residuals
 
@@ -244,7 +269,15 @@ def tension_fit(residuals, **kwargs):
     return res.x, res.fun
 
 
-def transform_point(points, x0, y0, z0, a1, a2, a3):
+def transform_point(
+    points: ndarray,
+    x0: float64,
+    y0: float64,
+    z0: float64,
+    a1: float64,
+    a2: float64,
+    a3: float64,
+) -> ndarray:
     """
     Transform points from model space to real (measured) space
 
@@ -299,7 +332,19 @@ def get_delta(points, x0, y0, z0, a1, a2, a3):
     return points - real_points
 
 
-def calc_residuals(x, y, z, compensate, fit_func, x0, y0, z0, a1, a2, a3):
+def calc_residuals(
+    x: ndarray,
+    y: ndarray,
+    z: ndarray,
+    compensate: float,
+    fit_func: Callable,
+    x0: float64,
+    y0: float64,
+    z0: float64,
+    a1: float64,
+    a2: float64,
+    a3: float64,
+) -> ndarray:
     """
     Calculate residuals from fit
 
