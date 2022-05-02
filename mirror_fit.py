@@ -46,7 +46,7 @@ def mirror(x: ndarray, y: ndarray, a: ndarray) -> ndarray:
 
     @return z: z position of the mirror at each xy
     """
-    z = 0.0
+    z = np.zeros_like(x)
     Rn = 3000.0
     for i in range(a.shape[0]):
         for j in range(a.shape[1]):
@@ -68,9 +68,9 @@ def mirror_norm(x: ndarray, y: ndarray, a: ndarray) -> ndarray:
     """
     Rn = 3000.0
 
-    x_n = 0
-    y_n = 0
-    z_n = -1
+    x_n = np.zeros_like(x)
+    y_n = np.zeros_like(y)
+    z_n = -1*np.ones_like(x)
     for i in range(a.shape[0]):
         for j in range(a.shape[1]):
             if i != 0:
@@ -78,8 +78,7 @@ def mirror_norm(x: ndarray, y: ndarray, a: ndarray) -> ndarray:
             if j != 0:
                 y_n += a[i, j] * (x / Rn) ** i * (y ** (j - 1)) / (Rn ** j)
 
-    if type(x_n) is np.ndarray:
-        z_n = -1 * np.ones(x_n.shape)
+    z_n = -1 * np.ones_like(x_n)
     normals = np.array((x_n, y_n, z_n)).T
     normals /= np.linalg.norm(normals, axis=-1)[:, np.newaxis]
     return normals

@@ -151,5 +151,8 @@ def calc_adjustments(
     d_adj_err = _adjustors - adjustors
 
     if cm_sub:
-        return 0, 0, d_adj[:, 2] - dz, 0, 0, d_adj_err[:, 2] - dz_err
+        d_adj_cm: ndarray = d_adj[:, 2] - dz
+        d_adj_err_cm: ndarray = d_adj_err[:, 2] - dz_err
+        cm_0: float64 = np.float64(0)
+        return cm_0, cm_0, d_adj_cm, cm_0, cm_0, d_adj_err_cm
     return dx, dy, d_adj[:, 2], dx_err, dy_err, d_adj_err[:, 2]
