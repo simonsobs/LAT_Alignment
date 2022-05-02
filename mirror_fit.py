@@ -70,7 +70,6 @@ def mirror_norm(x: ndarray, y: ndarray, a: ndarray) -> ndarray:
 
     x_n = np.zeros_like(x)
     y_n = np.zeros_like(y)
-    z_n = -1*np.ones_like(x)
     for i in range(a.shape[0]):
         for j in range(a.shape[1]):
             if i != 0:
