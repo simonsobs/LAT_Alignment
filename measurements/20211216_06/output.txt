@@ -1,18 +1,16 @@
-Starting alignment procedure for measurement at: ./measurements/20211216_06
+Starting alignment procedure for measurement at: C:\Users\Nathnael\Documents\GitHub\LAT_Alignment\measurements\20211216_06
 Using coordinate system: cad
 Using origin shift: [0. 0. 0.]
 Applying compensation: 19.05 mm
-Common mode subtraction set to: True
+Common mode subtraction set to: False
 Aligning secondary mirror
-Aligning panel .DS_Store
-Panel .DS_Store not found in cannonical adjustor position spreadsheet
-Moving on to next panel
 Aligning panel 01-012551
 RMS of surface is: 0.007
-	Move panel 0 Â± 0 mm to the right
-	Move panel 0 Â± 0 mm up
-	Move adjustor 1 0.014 Â± 0.0 mm out
-	Move adjustor 2 0.016 Â± 0.0 mm out
-	Move adjustor 3 0.013 Â± 0.0 mm in
-	Move adjustor 4 0.011 Â± 0.0 mm in
-	Move adjustor 5 0.002 Â± 0.0 mm out
+WARNING: Potential outlier at point 9
+	Move panel 0.0 ± 0.0 mm to the right
+	Move panel 0.005 ± 0.0 mm up
+	Move adjustor 1 0.035 ± 0.0 mm out
+	Move adjustor 2 0.037 ± 0.0 mm out
+	Move adjustor 3 0.008 ± 0.0 mm out
+	Move adjustor 4 0.01 ± 0.0 mm out
+	Move adjustor 5 0.022 ± 0.0 mm out

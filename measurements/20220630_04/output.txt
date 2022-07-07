@@ -1,0 +1,9 @@
+Starting alignment procedure for measurement at: C:\Users\Nathnael\Documents\GitHub\LAT_Alignment\measurements\20220630_04
+Using coordinate system: cad
+Using origin shift: [0. 0. 0.]
+Applying compensation: 0.0 mm
+Common mode subtraction set to: False
+Aligning primary mirror
+Aligning panel Polyline_5x5_4x4_interlace
+Panel Polyline_5x5_4x4_interlace not found in cannonical adjustor position spreadsheet
+Moving on to next panel

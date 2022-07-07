@@ -1,0 +1,17 @@
+Enabled	Feature     	ID	x         	y       	z       	i	j	k	Dev From Fit	Device Position  	Probe	Device Name
+Checked	Polyline 4X4	1 	-4,889.978	295.303 	317.163 	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 4X4	2 	-4,945.688	291.018 	151.436 	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 4X4	3 	-5,041.134	269.822 	-134.088	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 4X4	4 	-5,099.878	261.445 	-311.446	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 4X4	5 	-5,106.518	86.432  	-330.061	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 4X4	6 	-5,105.532	-130.225	-327.139	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 4X4	7 	-5,105.965	-298.143	-329.493	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 4X4	8 	-5,033.616	-310.173	-110.828	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 4X4	9 	-4,944.839	-304.182	155.053 	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 4X4	10	-4,891.022	-303.480	314.947 	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 4X4	11	-4,900.286	-172.514	288.355 	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 4X4	12	-4,897.046	149.586 	297.705 	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 4X4	13	-4,936.253	128.378 	181.172 	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 4X4	14	-5,067.123	155.558 	-211.081	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 4X4	15	-5,076.385	-188.692	-239.124	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 4X4	16	-4,950.114	-177.498	140.276 	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656

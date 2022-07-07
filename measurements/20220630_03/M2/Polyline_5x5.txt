@@ -1,0 +1,26 @@
+Enabled	Feature     	ID	x         	y       	z       	i	j	k	Dev From Fit	Device Position  	Probe	Device Name
+Checked	Polyline 5X5	1 	-4,889.348	298.495 	318.994 	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 5X5	2 	-4,889.122	178.732 	320.964 	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 5X5	3 	-4,890.666	-3.882  	317.285 	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 5X5	4 	-4,888.487	-192.661	323.389 	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 5X5	5 	-4,890.870	-311.086	315.509 	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 5X5	6 	-4,943.900	-316.108	157.782 	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 5X5	7 	-4,949.635	-154.060	141.658 	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 5X5	8 	-4,949.339	-42.168 	142.649 	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 5X5	9 	-4,946.156	153.288 	151.315 	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 5X5	10	-4,948.269	277.607 	143.798 	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 5X5	11	-5,003.149	299.166 	-20.444 	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 5X5	12	-5,000.858	161.033 	-12.387 	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 5X5	13	-4,996.874	9.045   	0.296   	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 5X5	14	-4,996.508	-162.312	1.422   	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 5X5	15	-4,999.890	-310.300	-9.526  	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 5X5	16	-5,054.261	-310.196	-173.025	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 5X5	17	-5,058.306	-169.639	-184.392	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 5X5	18	-5,061.509	-22.752 	-193.856	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 5X5	19	-5,066.220	136.901 	-208.666	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 5X5	20	-5,067.892	291.598 	-215.144	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 5X5	21	-5,108.589	297.344 	-337.975	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 5X5	22	-5,109.757	151.102 	-340.197	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 5X5	23	-5,108.266	0.739   	-335.227	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 5X5	24	-5,108.379	-188.864	-336.059	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656
+Checked	Polyline 5X5	25	-5,102.571	-305.270	-319.285	 	 	 	0.000       	Device Position 1	3    	E09-05-16-14656

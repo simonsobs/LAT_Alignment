@@ -1,0 +1,1 @@
+First measurement by Nathnael on FARO Edge Arm. Grid measurement pattern consists of 5x5 grid pattern.
