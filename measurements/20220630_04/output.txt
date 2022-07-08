@@ -4,6 +4,12 @@ Using origin shift: [0. 0. 0.]
 Applying compensation: 0.0 mm
 Common mode subtraction set to: False
 Aligning primary mirror
-Aligning panel Polyline_5x5_4x4_interlace
-Panel Polyline_5x5_4x4_interlace not found in cannonical adjustor position spreadsheet
-Moving on to next panel
+Aligning panel 01-011411
+RMS of surface is: 4726.822
+	Move panel 119.436 ± 0.0 mm to the right
+	Move panel 169.538 ± 0.0 mm up
+	Move adjustor 1 137.656 ± 0.0 mm in
+	Move adjustor 2 199.617 ± 0.0 mm in
+	Move adjustor 3 237.561 ± 0.0 mm in
+	Move adjustor 4 299.521 ± 0.0 mm in
+	Move adjustor 5 218.57 ± 0.0 mm in
