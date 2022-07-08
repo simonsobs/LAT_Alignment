@@ -76,6 +76,8 @@ def align_panels(
         adjustors = mirror_trans(can_adj[panel_name], 0)
         can_z = mf.mirror(adjustors[:, 0], adjustors[:, 1], mirror_a)
         can_points = np.hstack((adjustors[:, :2], can_z[:, np.newaxis]))
+        print(adjustors)
+        print(can_points)
 
         # Load pointcloud from data
         points = np.genfromtxt(
@@ -85,6 +87,7 @@ def align_panels(
             list(map(lambda p: p.replace(",", ""), points.flatten())), dtype=float
         ).reshape(points.shape)
 
+        #points = points[::3]
         # Transform points to mirror coordinates
         points = coord_trans(points, origin_shift)
 
@@ -160,6 +163,14 @@ def align_panels(
             plt.close()
 
             ps, ps_dists = mf.res_power_spect(residuals)
+            ps_array = np.array(ps)
+            ps_dists_array = np.array(ps_dists)
+            datum = np.column_stack([ps_array, ps_dists_array])
+            datafile_path = measurement_dir +'\ps.txt'
+            np.savetxt(datafile_path , datum, fmt='%f')
+            print(plot_path)
+
+
             plt.plot(ps_dists, ps)
             plt.xlabel("Scale (mm)")
             plt.title("Power spectrum of " + panel_name)
