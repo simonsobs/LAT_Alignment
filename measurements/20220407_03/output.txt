@@ -6,8 +6,8 @@ Common mode subtraction set to: True
 Aligning secondary mirror
 Aligning panel 01-012551
 RMS of surface is: 0.009
-	Move panel 0 ± 0 mm to the right
-	Move panel 0 ± 0 mm up
+	Move panel 0.0 ± 0.0 mm to the right
+	Move panel 0.0 ± 0.0 mm up
 	Move adjustor 1 0.002 ± 0.0 mm out
 	Move adjustor 2 0.001 ± 0.0 mm out
 	Move adjustor 3 0.001 ± 0.0 mm in
