@@ -76,8 +76,6 @@ def align_panels(
         adjustors = mirror_trans(can_adj[panel_name], 0)
         can_z = mf.mirror(adjustors[:, 0], adjustors[:, 1], mirror_a)
         can_points = np.hstack((adjustors[:, :2], can_z[:, np.newaxis]))
-        print(adjustors)
-        print(can_points)
 
         # Load pointcloud from data
         points = np.genfromtxt(
