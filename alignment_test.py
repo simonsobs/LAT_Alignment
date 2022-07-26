@@ -74,6 +74,9 @@ def align_panels(
             mirror_a = mf.a_secondary
             mirror_trans = ct.cad_to_secondary
         adjustors = mirror_trans(can_adj[panel_name], 0)
+
+        output(out_file, str(adjustors)) #TEST EXPORT ADJUSTORS!!
+
         can_z = mf.mirror(adjustors[:, 0], adjustors[:, 1], mirror_a)
         can_points = np.hstack((adjustors[:, :2], can_z[:, np.newaxis]))
 
@@ -81,9 +84,13 @@ def align_panels(
         points = np.genfromtxt(
             panel_path, skip_header=1, usecols=(3, 4, 5), dtype=str, delimiter="\t"
         )
+
+        output(out_file, str(points))
         points = np.array(
             list(map(lambda p: p.replace(",", ""), points.flatten())), dtype=float
         ).reshape(points.shape)
+        output(out_file, str(points))
+
 
         #points = points[::3]
         # Transform points to mirror coordinates
