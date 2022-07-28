@@ -89,8 +89,6 @@ def align_panels(
         points = np.array(
             list(map(lambda p: p.replace(",", ""), points.flatten())), dtype=float
         ).reshape(points.shape)
-        output(out_file, str(points))
-
 
         #points = points[::3]
         # Transform points to mirror coordinates
