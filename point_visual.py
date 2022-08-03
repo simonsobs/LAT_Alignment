@@ -5,6 +5,7 @@ Author: Nathnael Kahassai
 """
 import sys
 import os
+import math
 import matplotlib.pyplot as plt
 import numpy as np
 import adjustments as adj
@@ -28,10 +29,12 @@ print(panel_path)
 if int(panel_name[5]) == 1:
     adj_path = 'can_points/M1.txt'
     cord_trans = ct.cad_to_primary
+    flip_cad = ct.primary_to_cad
     mira = 'M1'
 else:
     adj_path = 'can_points/M2.txt'
     cord_trans = ct.cad_to_secondary
+    flip_cad = ct.secondary_to_cad
     mira = 'M2'
 
 #Import txt
@@ -46,8 +49,6 @@ adj_location = []
 for sublist in adj_table:
     if sublist[0] == panel_name:
         adj_location.append(sublist)
-
-print(adj_location)
 
 #Adjuster Locations
 adjx = [p[2] for p in adj_location]
@@ -85,45 +86,73 @@ tran_points = cord_trans(point_array.T, 0).T
 #Transform Adjusters
 adj_array = np.array((adjx,adjy,adjz), dtype=float)
 tran_adj = cord_trans(adj_array.T, 0).T
+#print(tran_adj[0][0:5])
+
+###########
+#Sectioning
+
+locality = True # Locality settings
+proximity = 100 #millimeters in proximity
+
+
+#Adjuster locality
+
+def adj_local(x, y, z, adj, lim):
+    adj_x = adj[0][0:5]
+    #res = sorted(zip(adj_x, adj_y), key=lambda k: [k[1], k[0]])
+
+    out_x = []
+    out_y = []
+    out_z = []
+
+    j = 0
+    while j <= (len(adj_x)-1):
+        i = 0
+        while i <= (len(x)-1):
+            a = math.dist((x[i],y[i]),(tran_adj[0][j],tran_adj[1][j]))
+            if a <= lim:
+                out_x.append(x[i])
+                out_y.append(y[i])
+                out_z.append(z[i])
+            i += 1
+        j += 1
+
+    return out_x, out_y, out_z
+
+close_points = adj_local(tran_points[0],tran_points[1], tran_points[2],tran_adj,proximity)
 
 #########
 #Plotting
+
 fig, ax = plt.subplots()
-ax.plot(tran_points[0], tran_points[1], 'o', color='black')
+
+if locality == True:
+    ax.plot(close_points[0], close_points[1], 'o', color='blue')
+else:
+    ax.plot(tran_points[0], tran_points[1], 'o', color='black')
+
 ax.plot(tran_adj[0], tran_adj[1], '*', color='red')
 ax.set_title('FARO Measurement Points for Panel ' + panel_name)
 ax.set_xlabel('X')
 ax.set_ylabel('Y')
 ax.set_aspect('equal')
 plt.show()
-
-###########
-#Sectioning
-
-def split_sort(ex, wy, divd):
-    lenx = np.max(wy)-np.min(wy)
-    leny = np.max(ex)-np.min(ex)
-
-    x_bin = lenx/divd
-    y_bin = leny/divd
-
-    res = sorted(zip(ex, wy), key=lambda k: [k[1], k[0]])
-
-    '''
-    lists = []
-    for p in range(divd):
-        lists.append([])
-    '''
-    return res, x_bin, y_bin
-
-#print(split_sort(newx,newy,6))
+#plt.savefig('spatial.png', dpi=300)
 
 #######
 #Saving 
 
 #Compile txt
-blank = [0] * len(newx)
-datum = np.column_stack([blank,blank,blank,newx,newy,newz])
+if locality == True:
+    blank = [0] * len(close_points[0])
+    
+    #Retransform to compatible coordinates
+    adj_retran = np.array((close_points[0],close_points[1],close_points[2]), dtype=float)
+    final_retran = flip_cad(adj_retran.T, 0).T
+    datum = np.column_stack([blank,blank,blank,final_retran[0],final_retran[1],final_retran[2]])
+else:
+    blank = [0] * len(newx)
+    datum = np.column_stack([blank,blank,blank,newx,newy,newz])
 
 #Folder Creation
 today = date.today()
