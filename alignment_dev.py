@@ -105,7 +105,7 @@ def align_panels(
                 (-np.pi / 18.0, np.pi / 18.0),
             ],
         )
-        output(out_file, "RMS of surface is: " + str(round(rms, 3)))
+        output(out_file, "RMS of surface is: " + str(round(rms, 5)))
 
         # Calculate residuals
         residuals = mf.calc_residuals(

@@ -3,23 +3,24 @@ Visualize and generate test measurement patterns
 Author: Nathnael Kahassai
 
 """
+
 import sys
 import os
 import math
+import shutil
 import matplotlib.pyplot as plt
 import numpy as np
-import adjustments as adj
 import coordinate_transforms as ct
-import mirror_fit as mf
 import matplotlib.pyplot as plt
 from datetime import date
 
 #program, panel path, factor to reduce points by
-[program, panel_path, factor] = sys.argv
+[program, panel_path, factor, locality] = sys.argv
+
+locality = int(locality)
 
 # XX-XXXXXXXX.txt
 panel_name = panel_path[-13:-4] 
-print(panel_name)
 print(panel_path)
 
 ########################
@@ -54,7 +55,6 @@ for sublist in adj_table:
 adjx = [p[2] for p in adj_location]
 adjy = [p[3] for p in adj_location]
 adjz = [p[4] for p in adj_location]
-
 
 #########################
 #Extract FARO Test Points
@@ -91,11 +91,9 @@ tran_adj = cord_trans(adj_array.T, 0).T
 ###########
 #Sectioning
 
-locality = True # Locality settings
-proximity = 100 #millimeters in proximity
+proximity = 50 #millimeters in proximity
 
-
-#Adjuster locality
+#Adjuster Locality
 
 def adj_local(x, y, z, adj, lim):
     adj_x = adj[0][0:5]
@@ -109,7 +107,7 @@ def adj_local(x, y, z, adj, lim):
     while j <= (len(adj_x)-1):
         i = 0
         while i <= (len(x)-1):
-            a = math.dist((x[i],y[i]),(tran_adj[0][j],tran_adj[1][j]))
+            a = math.dist((x[i],y[i]),(adj[0][j],adj[1][j]))
             if a <= lim:
                 out_x.append(x[i])
                 out_y.append(y[i])
@@ -119,37 +117,56 @@ def adj_local(x, y, z, adj, lim):
 
     return out_x, out_y, out_z
 
-close_points = adj_local(tran_points[0],tran_points[1], tran_points[2],tran_adj,proximity)
+#Inverse Adjuster Locality
+
+def adj_far(x, y, z, adj, lim):
+    anti = adj_local(x, y, z, adj, lim)
+
+    out_x = [p for p in x if p not in anti[0]]
+    out_y = [p for p in y if p not in anti[1]]
+    out_z = [p for p in z if p not in anti[2]]
+
+    return out_x, out_y, out_z
+
 
 #########
 #Plotting
 
 fig, ax = plt.subplots()
 
-if locality == True:
-    ax.plot(close_points[0], close_points[1], 'o', color='blue')
-else:
+#Pointcloud Settings
+# 0 for Normal, 1 for Cerca Adjusters, 2 for Lejos Adjusters
+
+if locality == 0:
     ax.plot(tran_points[0], tran_points[1], 'o', color='black')
+elif locality == 1:
+    proxima_points = adj_local(tran_points[0],tran_points[1],tran_points[2],tran_adj,proximity)
+    print(len(proxima_points[0]),len(proxima_points[0]),len(tran_points[0]))
+    ax.plot(proxima_points[0], proxima_points[1], 'o', color='blue')
+
+elif locality == 2:
+    proxima_points = adj_far(tran_points[0],tran_points[1],tran_points[2],tran_adj,proximity)
+    print(len(proxima_points[0]),len(proxima_points[0]),len(tran_points[0]))
+    ax.plot(proxima_points[0], proxima_points[1], 'o', color='green')
 
 ax.plot(tran_adj[0], tran_adj[1], '*', color='red')
 ax.set_title('FARO Measurement Points for Panel ' + panel_name)
 ax.set_xlabel('X')
 ax.set_ylabel('Y')
 ax.set_aspect('equal')
-plt.show()
-#plt.savefig('spatial.png', dpi=300)
 
 #######
 #Saving 
 
 #Compile txt
-if locality == True:
-    blank = [0] * len(close_points[0])
-    
+if locality == 1 or locality == 2:
+    blank = [0] * len(proxima_points[0])
+
     #Retransform to compatible coordinates
-    adj_retran = np.array((close_points[0],close_points[1],close_points[2]), dtype=float)
+    adj_retran = np.array((proxima_points[0],proxima_points[1],proxima_points[2]), dtype=float)
     final_retran = flip_cad(adj_retran.T, 0).T
     datum = np.column_stack([blank,blank,blank,final_retran[0],final_retran[1],final_retran[2]])
+
 else:
     blank = [0] * len(newx)
     datum = np.column_stack([blank,blank,blank,newx,newy,newz])
@@ -157,7 +174,7 @@ else:
 #Folder Creation
 today = date.today()
 d1 = today.strftime("%Y%m%d")
-folder_name = d1 + '_0' + factor
+folder_name = d1 + '_0' + factor + '_' + str(locality) + '_50'
 os.makedirs(os.path.join('measurements', folder_name, mira))
 
 #Save txt
@@ -165,14 +182,19 @@ savefile_path = 'measurements/' + folder_name + "/" + mira
 savefile_name = savefile_path + '/' + panel_path
 np.savetxt(savefile_name, datum, delimiter='\t', fmt='%f')
 
-#Create config file
+#Copy config file
 config_path = 'measurements/' + folder_name + '/config.txt'
-c1 = ['coords','shift','compensation']
-c2 = ['cad', '0 0 0', '19.05']
-ctotal = np.column_stack([c1,c2])
-np.savetxt(config_path, ctotal, delimiter='\t')
+shutil.copyfile('config.txt', config_path)
 
-#Create description file\
+#Save plot figure
+plot_path = 'measurements/' + folder_name + '/spatial.png'
+plt.savefig(plot_path, dpi=300, bbox_inches='tight')
+plt.show()
+
+'''
+#Create description file
 descrip_path = 'measurements/' + folder_name + '/description.txt'
 descrip = ['Test pattern reduced by a factor of' + factor]
 np.savetxt(descrip_path, descrip, delimiter='\t')
+#add future prompt for description
+'''

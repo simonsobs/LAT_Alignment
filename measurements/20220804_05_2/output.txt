@@ -1,0 +1,15 @@
+Starting alignment procedure for measurement at: measurements\20220804_05_2
+Using coordinate system: cad
+Using origin shift: [0. 0. 0.]
+Applying compensation: 19.05 mm
+Common mode subtraction set to: False
+Aligning secondary mirror
+Aligning panel 01-012551
+RMS of surface is: 0.007
+	Move panel 0.0 ± 0.0 mm to the right
+	Move panel 0.006 ± 0.0 mm up
+	Move adjustor 1 0.051 ± 0.0 mm out
+	Move adjustor 2 0.054 ± 0.0 mm out
+	Move adjustor 3 0.014 ± 0.0 mm out
+	Move adjustor 4 0.017 ± 0.0 mm out
+	Move adjustor 5 0.034 ± 0.0 mm out
