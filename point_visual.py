@@ -38,6 +38,7 @@ else:
     flip_cad = ct.secondary_to_cad
     mira = 'M2'
 
+
 #Import txt
 adj_coord = np.char.split(np.genfromtxt(adj_path, usecols=(0), dtype=str, delimiter="\n"))
 
@@ -55,6 +56,13 @@ for sublist in adj_table:
 adjx = [p[2] for p in adj_location]
 adjy = [p[3] for p in adj_location]
 adjz = [p[4] for p in adj_location]
+
+for i in range(len(adjx)):
+    adjx[i] = float(adjx[i]) - float(163.24548606)
+
+print(adjy)
+print(adjx)
+
 
 #########################
 #Extract FARO Test Points
@@ -86,12 +94,13 @@ tran_points = cord_trans(point_array.T, 0).T
 #Transform Adjusters
 adj_array = np.array((adjx,adjy,adjz), dtype=float)
 tran_adj = cord_trans(adj_array.T, 0).T
-#print(tran_adj[0][0:5])
+
+print(tran_adj)
 
 ###########
 #Sectioning
 
-proximity = 50 #millimeters in proximity
+proximity = 150 #millimeters in proximity
 
 #Adjuster Locality
 
@@ -106,12 +115,14 @@ def adj_local(x, y, z, adj, lim):
     j = 0
     while j <= (len(adj_x)-1):
         i = 0
+        p = 0 #max points near adjusters = p
         while i <= (len(x)-1):
             a = math.dist((x[i],y[i]),(adj[0][j],adj[1][j]))
-            if a <= lim:
+            if a <= lim and p < 6:
                 out_x.append(x[i])
                 out_y.append(y[i])
                 out_z.append(z[i])
+                p += 1
             i += 1
         j += 1
 
@@ -154,10 +165,11 @@ ax.set_title('FARO Measurement Points for Panel ' + panel_name)
 ax.set_xlabel('X')
 ax.set_ylabel('Y')
 ax.set_aspect('equal')
+plt.show()
 
 #######
 #Saving 
-
+'''
 #Compile txt
 if locality == 1 or locality == 2:
     blank = [0] * len(proxima_points[0])
@@ -174,7 +186,7 @@ else:
 #Folder Creation
 today = date.today()
 d1 = today.strftime("%Y%m%d")
-folder_name = d1 + '_0' + factor + '_' + str(locality) + '_50'
+folder_name = d1 + '_0' + factor + '_' + str(locality) + '_150s_'
 os.makedirs(os.path.join('measurements', folder_name, mira))
 
 #Save txt
@@ -191,10 +203,11 @@ plot_path = 'measurements/' + folder_name + '/spatial.png'
 plt.savefig(plot_path, dpi=300, bbox_inches='tight')
 plt.show()
 
-'''
+
 #Create description file
 descrip_path = 'measurements/' + folder_name + '/description.txt'
 descrip = ['Test pattern reduced by a factor of' + factor]
 np.savetxt(descrip_path, descrip, delimiter='\t')
 #add future prompt for description
+
 '''
