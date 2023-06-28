@@ -24,7 +24,7 @@ def output(file, string):
     print(string)
 
 
-def align_panels(
+def get_panel_points(
     panels,
     mirror_path,
     out_file,
@@ -33,11 +33,10 @@ def align_panels(
     origin_shift,
     compensation,
     mirror_fit_func,
-    cm_sub=False,
     plots=False,
 ):
     """
-    Align panels of mirror
+    Get critical points for a panel.
 
     @param panels: The filenames for each panel in the mirror directory
     @param mirror_path: Path to the mirror directory
@@ -48,14 +47,17 @@ def align_panels(
     @param compensation: Compensation to apply to measurement
     @param mirror_fit_func: The function used to fit the mirror
     @param cm_sub: Set to True for common mode subtracted adjustments
+
+    @returns panel_points: A dict with structure {panel_name: (can_points, points, adjustors)}
     """
+    panel_points = {}
     for p in panels:
         panel_path = os.path.join(mirror_path, p)
         if not os.path.isfile(panel_path):
             output(out_file, panel_path + " does not seem to be a panel")
             continue
         panel_name = os.path.splitext(p)[0]
-        output(out_file, "Aligning panel " + panel_name)
+        output(out_file, "Fitting panel " + panel_name)
 
         # Lookup cannonical alignment points and adjustor locations
         if panel_name not in can_adj.keys():
@@ -113,7 +115,7 @@ def align_panels(
             points[:, 2],
             compensation,
             mirror_fit_func,
-            *popt
+            *popt,
         )
 
         # Look for outlier points
@@ -174,10 +176,45 @@ def align_panels(
         points[-1, -1] += tension
         adjustors[-1, -1] += tension
 
+        panel_points["panel_name"] = (can_points, points, adjustors)
+
+    return panel_points
+
+
+def mirror_cm_sub(panel_points, out_file):
+    """
+    Remove common mode from panel points.
+
+    @param panel_points: Dict from get_panel_points
+    @param out_file: File to output to
+
+    @returns panel_points: Points with common mode removed.
+    """
+    diff = []
+    for points in panel_points.values():
+        points.append(points[0] - points[1])
+    diff = np.vstack(diff)
+    cm = np.median(diff, axis=0)
+    output(out_file, f"Removing a common mode of {cm}.")
+    panel_points = {
+        name: (points[0] - cm, points[1], points[2] - cm)
+        for name, points in panel_points.items()
+    }
+
+    return panel_points
+
+
+def get_adjustments(panel_points, out_file):
+    """
+    Calculate adjustments for all panels in a mirror.
+
+    @param panel_points: Dict from get_panel_points
+    @param out_file: File to output to
+    """
+    for name, panel in panel_points.items():
+        output(out_file, f"Aligning panel {name}")
         # Calculate adjustments
-        dx, dy, d_adj, dx_err, dy_err, d_adj_err = adj.calc_adjustments(
-            can_points, points, adjustors, cm_sub
-        )
+        dx, dy, d_adj, dx_err, dy_err, d_adj_err = adj.calc_adjustments(*panel)
         # TODO: Convert these into turns of the adjustor rods
         if dx < 0:
             x_dir = "left"
@@ -370,7 +407,7 @@ if os.path.exists(primary_path):
         coord_trans = ct.secondary_to_primary
 
     # Align panels
-    align_panels(
+    primary = get_panel_points(
         panels,
         primary_path,
         out_file,
@@ -379,9 +416,13 @@ if os.path.exists(primary_path):
         origin_shift,
         compensation,
         mf.primary_fit_func,
-        cm_sub,
         plots,
     )
+
+    if cm_sub:
+        mirror_cm_sub(primary, out_file)
+
+    get_adjustments(primary, out_file)
 
 # Align secondary mirror
 secondary_path = os.path.join(measurement_dir, "M2")
@@ -418,7 +459,7 @@ if os.path.exists(secondary_path):
         coord_trans = ct.primary_to_secondary
 
     # Align panels
-    align_panels(
+    secondary = get_panel_points(
         panels,
         secondary_path,
         out_file,
@@ -427,6 +468,9 @@ if os.path.exists(secondary_path):
         origin_shift,
         compensation,
         mf.secondary_fit_func,
-        cm_sub,
         plots,
     )
+    if cm_sub:
+        mirror_cm_sub(secondary, out_file)
+
+    get_adjustments(secondary, out_file)

@@ -111,7 +111,6 @@ def calc_adjustments(
     can_points: ndarray,
     points: ndarray,
     adjustors: ndarray,
-    cm_sub: bool = False,
     **kwargs
 ) -> Tuple[float64, float64, ndarray, float64, float64, ndarray]:
     """
@@ -120,7 +119,6 @@ def calc_adjustments(
     @param can_points: The cannonical position of the points to align
     @param points: The measured positions of the points to align
     @param adjustors: The measured positions of the adjustors
-    @param cm_sub: Set to True for common mode subtracted adjustments
     @param **kwargs: Arguments to be passed to scipy.optimize.minimize
 
     @return dx: The required translation of panel in x
@@ -150,9 +148,4 @@ def calc_adjustments(
     _adjustors[-1, -1] += z_t_err
     d_adj_err = _adjustors - adjustors
 
-    if cm_sub:
-        d_adj_cm: ndarray = d_adj[:, 2] - dz
-        d_adj_err_cm: ndarray = d_adj_err[:, 2] - dz_err
-        cm_0: float64 = np.float64(0)
-        return cm_0, cm_0, d_adj_cm, cm_0, cm_0, d_adj_err_cm
     return dx, dy, d_adj[:, 2], dx_err, dy_err, d_adj_err[:, 2]
