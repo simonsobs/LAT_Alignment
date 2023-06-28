@@ -7,10 +7,11 @@ import os
 import sys
 import argparse as ap
 import numpy as np
+import matplotlib.pyplot as plt
+import yaml
 import adjustments as adj
 import coordinate_transforms as ct
 import mirror_fit as mf
-import matplotlib.pyplot as plt
 
 
 def output(file, string):
@@ -263,84 +264,26 @@ def get_adjustments(panel_points, out_file):
             )
 
 
-# Parse command line arguments
+# Parse command line arguments and load config
 parser = ap.ArgumentParser(
     description="Compute alignment for LAT mirrors, see README for more details"
 )
-parser.add_argument("measurement_dir", help="Root directory for measurement to use")
-parser.add_argument(
-    "-c",
-    "--coordinates",
-    help="Measurement coordinate system, overrides setting in config file.\
-    Valid options are: cad, global, primary, secondary.",
-)
-parser.add_argument(
-    "-s",
-    "--shift",
-    nargs=3,
-    help="Origin shift to apply in mm, overrides setting in config file",
-    type=float,
-)
-parser.add_argument(
-    "-f",
-    "--compensation",
-    help="FARO compensation in mm to apply",
-    type=float,
-)
-parser.add_argument(
-    "-cm",
-    "--commonmode",
-    help="Pass to subtract common mode from adjustments",
-    action="store_true",
-)
-parser.add_argument(
-    "-p",
-    "--plots",
-    help="Generate plots of panel surfaces and power spectra",
-    action="store_true",
-)
+parser.add_argument("config", help="Path to configuration file, should be a yaml")
 args = parser.parse_args()
 
-measurement_dir = args.measurement_dir
-coordinates = args.coordinates
-origin_shift = args.shift
-compensation = args.compensation
-cm_sub = args.commonmode
-plots = args.plots
+with open(args.config, "r") as file:
+    cfg = yaml.safe_load(file)
+measurement_dir = cfg["measurement_dir"]
+coordinates = cfg.get("coordinates", "cad")
+origin_shift = np.array(cfg.get("shift", np.zeros(3, dtype=float)), float)
+compensation = cfg.get("compensation", 0.0)
+cm_sub = cfg.get("cm_sub", False)
+plots = cfg.get("plots", False)
 
 # Check that measurement directory exists
 if not os.path.exists(measurement_dir):
     print("Supplied measurement directory does not exist. Please double check the path")
     sys.exit()
-
-# Load in config file if needed
-if (coordinates is None) or (origin_shift is None) or (compensation is None):
-    confpath = os.path.join(measurement_dir, "config.txt")
-    if not os.path.exists(confpath):
-        print(
-            "Config file doesn't exist and equivalent command line arguments were not given"
-        )
-        sys.exit()
-    config = dict(np.genfromtxt(confpath, dtype=str, delimiter="\t"))
-    if coordinates is None and "coords" in config.keys():
-        coordinates = config["coords"]
-    if origin_shift is None and "shift" in config.keys():
-        origin_shift = np.array(config["shift"].split(), dtype=float)
-    if compensation is None and "compensation" in config.keys():
-        compensation = float(config["compensation"])
-    if cm_sub is False and "cm_sub" in config.keys():
-        compensation = bool(config["cm_sub"])
-    if plots is False and "plots" in config.keys():
-        compensation = bool(config["plots"])
-
-
-# Set some defaults
-if coordinates is None:
-    coordinates = "cad"
-if origin_shift is None:
-    origin_shift = np.zeros(3, dtype=float)
-if compensation is None:
-    compensation = 0.0
 
 # Make sure that shift is correct shape
 if len(origin_shift) != 3:
