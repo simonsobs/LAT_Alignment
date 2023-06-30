@@ -235,157 +235,162 @@ def get_adjustments(panel_points):
             )
 
 
-# Parse command line arguments and load config
-parser = ap.ArgumentParser(
-    description="Compute alignment for LAT mirrors, see README for more details"
-)
-parser.add_argument("config", help="Path to configuration file, should be a yaml")
-args = parser.parse_args()
-
-with open(args.config, "r") as file:
-    cfg = yaml.safe_load(file)
-measurement_dir = cfg["measurement_dir"]
-coordinates = cfg.get("coordinates", "cad")
-origin_shift = np.array(cfg.get("shift", np.zeros(3, dtype=float)), float)
-compensation = cfg.get("compensation", 0.0)
-cm_sub = cfg.get("cm_sub", False)
-plots = cfg.get("plots", False)
-
-# Check that measurement directory exists
-if not os.path.exists(measurement_dir):
-    logger.error(
-        "Supplied measurement directory does not exist. Please double check the path"
+def main():
+    # Parse command line arguments and load config
+    parser = ap.ArgumentParser(
+        description="Compute alignment for LAT mirrors, see README for more details"
     )
-    sys.exit()
+    parser.add_argument("config", help="Path to configuration file, should be a yaml")
+    args = parser.parse_args()
 
-# Make sure that shift is correct shape
-if len(origin_shift) != 3:
-    logger.error(
-        "Coordinate origin shift invalid shape. \
-        Please supply values for x, y, and z in mm."
-    )
-    sys.exit()
+    with open(args.config, "r") as file:
+        cfg = yaml.safe_load(file)
+    measurement_dir = cfg["measurement_dir"]
+    coordinates = cfg.get("coordinates", "cad")
+    origin_shift = np.array(cfg.get("shift", np.zeros(3, dtype=float)), float)
+    compensation = cfg.get("compensation", 0.0)
+    cm_sub = cfg.get("cm_sub", False)
+    plots = cfg.get("plots", False)
 
-# Check if coordinate system is valid
-valid_coords = ["cad", "global", "primary", "secondary"]
-if coordinates not in valid_coords:
-    logger.error(
-        "Coordinate system '%s' not valid\n Please use one of the following instead: cad, global, primary, secondary",
-        coordinates,
-    )
-    sys.exit()
-
-# Initialize output file
-log_file = cfg.get("log", os.path.join(measurement_dir, "log.txt"))
-if log_file is not None:
-    fileHandler = logging.FileHandler(log_file)
-    logger.addHandler(fileHandler)
-logger.info("Starting alignment procedure for measurement at: %s", measurement_dir)
-logger.info("Using coordinate system: %s", coordinates)
-logger.info("Using origin shift: %s", str(origin_shift))
-logger.info("Applying compensation: %f mm", compensation)
-logger.info("Common mode subtraction set to: %s" + str(cm_sub))
-
-# Initialize cannonical adjustor positions
-can_adj = {}
-
-# Align primary mirror
-primary_path = os.path.join(measurement_dir, "M1")
-if os.path.exists(primary_path):
-    logger.info("Aligning primary mirror")
-
-    # Make plot directory
-    if plots:
-        os.makedirs(os.path.join(measurement_dir, "plots", "M1"), exist_ok=True)
-
-    # Load cannonical adjustor points
-    m1_can = "./can_points/M1.txt"
-    if not os.path.exists(m1_can):
-        logger.error("Cannonical points for M1 not found")
+    # Check that measurement directory exists
+    if not os.path.exists(measurement_dir):
+        logger.error(
+            "Supplied measurement directory does not exist. Please double check the path"
+        )
         sys.exit()
-    c_points = np.genfromtxt(m1_can, dtype=str)
-    for i in range(int(c_points.shape[0] / 5)):
-        pan_points = c_points[5 * i : 5 * (i + 1)]
-        can_adj[pan_points[0, 0]] = np.array(pan_points[:, 2:], dtype=float)
 
-    # Get all panel files
-    panels = os.listdir(primary_path)
-    if len(panels) == 0:
-        logger.warning("No panels found for primary mirror")
-
-    # Figure out which coordinate transform to use
-    if coordinates == "cad":
-        coord_trans = ct.cad_to_primary
-    elif coordinates == "global":
-        coord_trans = ct.global_to_primary
-    elif coordinates == "primary":
-        coord_trans = ct.shift_coords
-    else:
-        coord_trans = ct.secondary_to_primary
-
-    # Align panels
-    primary = get_panel_points(
-        panels,
-        primary_path,
-        can_adj,
-        coord_trans,
-        origin_shift,
-        compensation,
-        mf.primary_fit_func,
-        plots,
-    )
-
-    if cm_sub:
-        mirror_cm_sub(primary)
-
-    get_adjustments(primary)
-
-# Align secondary mirror
-secondary_path = os.path.join(measurement_dir, "M2")
-if os.path.exists(secondary_path):
-    logger.info("Aligning secondary mirror")
-
-    # Make plot directory
-    if plots:
-        os.makedirs(os.path.join(measurement_dir, "plots", "M2"), exist_ok=True)
-
-    # Load cannonical adjustor points
-    m2_can = "./can_points/M2.txt"
-    if not os.path.exists(m2_can):
-        logger.error("Cannonical points for M2 not found")
+    # Make sure that shift is correct shape
+    if len(origin_shift) != 3:
+        logger.error(
+            "Coordinate origin shift invalid shape. \
+            Please supply values for x, y, and z in mm."
+        )
         sys.exit()
-    c_points = np.genfromtxt(m2_can, dtype=str)
-    for i in range(int(c_points.shape[0] / 5)):
-        pan_points = c_points[5 * i : 5 * (i + 1)]
-        can_adj[pan_points[0, 0]] = np.array(pan_points[:, 2:], dtype=float)
 
-    # Get all panel files
-    panels = os.listdir(secondary_path)
-    if len(panels) == 0:
-        logger.warning("No panels found for secondary mirror")
+    # Check if coordinate system is valid
+    valid_coords = ["cad", "global", "primary", "secondary"]
+    if coordinates not in valid_coords:
+        logger.error(
+            "Coordinate system '%s' not valid\n Please use one of the following instead: cad, global, primary, secondary",
+            coordinates,
+        )
+        sys.exit()
 
-    # Figure out which coordinate transform to use
-    if coordinates == "cad":
-        coord_trans = ct.cad_to_secondary
-    elif coordinates == "global":
-        coord_trans = ct.global_to_secondary
-    elif coordinates == "secondary":
-        coord_trans = ct.shift_coords
-    else:
-        coord_trans = ct.primary_to_secondary
+    # Initialize output file
+    log_file = cfg.get("log", os.path.join(measurement_dir, "log.txt"))
+    if log_file is not None:
+        fileHandler = logging.FileHandler(log_file)
+        logger.addHandler(fileHandler)
+    logger.info("Starting alignment procedure for measurement at: %s", measurement_dir)
+    logger.info("Using coordinate system: %s", coordinates)
+    logger.info("Using origin shift: %s", str(origin_shift))
+    logger.info("Applying compensation: %f mm", compensation)
+    logger.info("Common mode subtraction set to: %s" + str(cm_sub))
 
-    # Align panels
-    secondary = get_panel_points(
-        panels,
-        secondary_path,
-        can_adj,
-        coord_trans,
-        origin_shift,
-        compensation,
-        mf.secondary_fit_func,
-        plots,
-    )
-    if cm_sub:
-        mirror_cm_sub(secondary)
+    # Initialize cannonical adjustor positions
+    can_adj = {}
 
-    get_adjustments(secondary)
+    # Align primary mirror
+    primary_path = os.path.join(measurement_dir, "M1")
+    if os.path.exists(primary_path):
+        logger.info("Aligning primary mirror")
+
+        # Make plot directory
+        if plots:
+            os.makedirs(os.path.join(measurement_dir, "plots", "M1"), exist_ok=True)
+
+        # Load cannonical adjustor points
+        m1_can = "./can_points/M1.txt"
+        if not os.path.exists(m1_can):
+            logger.error("Cannonical points for M1 not found")
+            sys.exit()
+        c_points = np.genfromtxt(m1_can, dtype=str)
+        for i in range(int(c_points.shape[0] / 5)):
+            pan_points = c_points[5 * i : 5 * (i + 1)]
+            can_adj[pan_points[0, 0]] = np.array(pan_points[:, 2:], dtype=float)
+
+        # Get all panel files
+        panels = os.listdir(primary_path)
+        if len(panels) == 0:
+            logger.warning("No panels found for primary mirror")
+
+        # Figure out which coordinate transform to use
+        if coordinates == "cad":
+            coord_trans = ct.cad_to_primary
+        elif coordinates == "global":
+            coord_trans = ct.global_to_primary
+        elif coordinates == "primary":
+            coord_trans = ct.shift_coords
+        else:
+            coord_trans = ct.secondary_to_primary
+
+        # Align panels
+        primary = get_panel_points(
+            panels,
+            primary_path,
+            can_adj,
+            coord_trans,
+            origin_shift,
+            compensation,
+            mf.primary_fit_func,
+            plots,
+        )
+
+        if cm_sub:
+            mirror_cm_sub(primary)
+
+        get_adjustments(primary)
+
+    # Align secondary mirror
+    secondary_path = os.path.join(measurement_dir, "M2")
+    if os.path.exists(secondary_path):
+        logger.info("Aligning secondary mirror")
+
+        # Make plot directory
+        if plots:
+            os.makedirs(os.path.join(measurement_dir, "plots", "M2"), exist_ok=True)
+
+        # Load cannonical adjustor points
+        m2_can = "./can_points/M2.txt"
+        if not os.path.exists(m2_can):
+            logger.error("Cannonical points for M2 not found")
+            sys.exit()
+        c_points = np.genfromtxt(m2_can, dtype=str)
+        for i in range(int(c_points.shape[0] / 5)):
+            pan_points = c_points[5 * i : 5 * (i + 1)]
+            can_adj[pan_points[0, 0]] = np.array(pan_points[:, 2:], dtype=float)
+
+        # Get all panel files
+        panels = os.listdir(secondary_path)
+        if len(panels) == 0:
+            logger.warning("No panels found for secondary mirror")
+
+        # Figure out which coordinate transform to use
+        if coordinates == "cad":
+            coord_trans = ct.cad_to_secondary
+        elif coordinates == "global":
+            coord_trans = ct.global_to_secondary
+        elif coordinates == "secondary":
+            coord_trans = ct.shift_coords
+        else:
+            coord_trans = ct.primary_to_secondary
+
+        # Align panels
+        secondary = get_panel_points(
+            panels,
+            secondary_path,
+            can_adj,
+            coord_trans,
+            origin_shift,
+            compensation,
+            mf.secondary_fit_func,
+            plots,
+        )
+        if cm_sub:
+            mirror_cm_sub(secondary)
+
+        get_adjustments(secondary)
+
+
+if __name__ == "__main__":
+    main()
