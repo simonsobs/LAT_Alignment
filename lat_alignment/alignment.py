@@ -245,7 +245,19 @@ def main():
 
     with open(args.config, "r") as file:
         cfg = yaml.safe_load(file)
-    measurement_dir = cfg["measurement_dir"]
+    measurement_dir = cfg.get(
+        "measurement_dir", os.path.dirname(os.path.abspath(args.config))
+    )
+    can_dir = cfg.get(
+        "cannonical_points",
+        os.path.abspath(
+            os.path.join(
+                os.path.dirname(os.path.realpath(__file__)),
+                os.path.pardir,
+                "can_points",
+            )
+        ),
+    )
     coordinates = cfg.get("coordinates", "cad")
     origin_shift = np.array(cfg.get("shift", np.zeros(3, dtype=float)), float)
     compensation = cfg.get("compensation", 0.0)
@@ -256,6 +268,13 @@ def main():
     if not os.path.exists(measurement_dir):
         logger.error(
             "Supplied measurement directory does not exist. Please double check the path"
+        )
+        sys.exit()
+
+    # Check that cannonical points directory exists
+    if not os.path.exists(can_dir):
+        logger.error(
+            "Supplied cannonical points directory does not exist. Please double check the path"
         )
         sys.exit()
 
@@ -300,7 +319,7 @@ def main():
             os.makedirs(os.path.join(measurement_dir, "plots", "M1"), exist_ok=True)
 
         # Load cannonical adjustor points
-        m1_can = "./can_points/M1.txt"
+        m1_can = os.path.join(can_dir, "M1.txt")
         if not os.path.exists(m1_can):
             logger.error("Cannonical points for M1 not found")
             sys.exit()
@@ -351,7 +370,7 @@ def main():
             os.makedirs(os.path.join(measurement_dir, "plots", "M2"), exist_ok=True)
 
         # Load cannonical adjustor points
-        m2_can = "./can_points/M2.txt"
+        m2_can = os.path.join(can_dir, "M2.txt")
         if not os.path.exists(m2_can):
             logger.error("Cannonical points for M2 not found")
             sys.exit()
