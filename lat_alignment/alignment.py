@@ -10,9 +10,9 @@ import logging
 import matplotlib.pyplot as plt
 import numpy as np
 import yaml
-import adjustments as adj
-import coordinate_transforms as ct
-import mirror_fit as mf
+from . import adjustments as adj
+from . import coordinate_transforms as ct
+from . import mirror_fit as mf
 
 
 logger = logging.getLogger()
