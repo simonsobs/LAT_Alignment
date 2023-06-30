@@ -1,15 +1,25 @@
 # LAT Alignment
 Tools for LAT mirror alignment
 
+## Installation
+Technically after cloning this repository you can just run `python lat_alignment/alignment.py PATH/TO/CONFIG`,
+but it is recommended that you install this as a package instead.
+
+To do this just run: `pip install -e .` from the root of this repository.
+
+This has two main benefits over running the script directly:
+1. It will handle dependencies for you.
+2. This sets up an entrypoint called `lat_alignment` so that you can call the code from anywhere.
+This is nice because now you can call the code from the measurement directory where you are most likely editing files,
+saving you the hassle of having to `cd` or wrangle long file paths.
+
 ## Usage
 1. Create the appropriate directory structure for your measurement (see [File Structure](#file-structure) for details).
 2. Place the measurement files in the appropriate place in your created directory (see [Measurement Files](#measurement-files) for details).
 3. Create a file with any information about the measurement that could prove useful (see [Description File](#description-file) for details).
-4. If required create a config file, alternatively pass these options as command line arguments (see [Config File](#config-file) for details).
-5. Run the alignment script with `python alignment.py /PATH/TO/MEASUREMENT/DIRECTORY`
+4. Create a config file for your measurement (see [Config File](#config-file) for details).
+5. Run the alignment script with `lat_alignment /PATH/TO/CONFIG`
 6. Follow the instructions in the output to align panels. This output will both be printed in the terminal and written to an output file (see [Output File](#output-file))
-
-Run `python alignment.py -h` for details on the command line arguments, including optional ones.
 
 ### File Structure
 Measurements should be organized in the following file structure
@@ -79,29 +89,49 @@ Each directory `YYYYMMDD_num` refers to a specific measurement session. Where `Y
 This is the file path that should be provided to `alignment.py` as the `measurement_dir` argument.
 
 #### Config File
-The file `config.txt` contains configuration options. Each option should be on a new line and the delimiter between the option and its value is a tab.
+The file `config.yaml` contains configuration options. Below is an annotated example with all possible options.
 
-Currently the only supported options are:
+```yaml
+# The measurement directory
+# If not provided the dirctory containing the config will be used
+measurement_dir: PATH/TO/MEASUREMENT
 
-`coords`: The coordinate system that the measurement was taken in (see [Coordinate Systems](#coordinate-systems) for more information. Valid values are `cad`, `global`, `primary`, and `secondary`. Default value is `cad`.
+# The path the the dirctory containing the cannonical adjustor locations
+# If not provided the can_points directory in the root of this repository is used
+cannonical_points: PATH/TO/CAN/POINTS
 
-`shift`: The shift in the origin from the coordinate system specified with `coords` in mm. Provide space separated values for the offsets in x, y, and z. Default value is `0 0 0`.
+# Coordinate system of measurements
+# Possible vaules are ["cad", "global", "primary", "secondary"]
+coordinates: cad # default value
 
-`compensation`: The compensation in mm to apply to the measurement data. This is the value that the FARO would typically apply to its measurements to account for the SMR. Value should be equal to the radius of the SMR. Default value is `0`.
+# Amount to shift the origin of the measurements by
+# Should be a 3 element list
+origin_shift: [0, 0, 0] # default value
 
-`cm_sub`: Whether or not the common mode should be subtracted for each panel's adjustments. Note that whatever is given here will be cast to a `bool`, so passing any value here will set it to `True`. Default value is `False`.
+# FARO compensation
+compensation: 0.0 # default value
 
-`plots`: Whether or not plots should be generated. Note that whatever is given here will be cast to a `bool`, so passing any value here will set it to `True`. Default value is `False`.
+# Set to True to apply common mode subtraction
+cm_sub: False # default value
 
-Note that the values in `config.txt` are overridden by command line arguments passed to `alignment.py`.
+# Set to True to make plots if panels 
+plots: False # default value
+
+# Where to save log
+# If not provided log is saved to a file called output.txt in the measurement_dir
+log_file: null # Set to null to only print output and not save
+```
+
+If you are using all default values make a blank config with `touch config.yaml`
 
 #### Description File
 Each measurement directory should contain a file `description.txt` with information on the measurement. Any information that could provide useful context when looking at the measurement/alignment after the fact should be included here (ie: who performed the measurement, where the measurement was taken, etc.).
 
 #### Output File
 Output generated by `alignment.py`.
+By default this is saved at `measurement_dir/output.txt`
 
-Note that this file gets overwritten when `alignment.py` is run, so if you want to store multiple copies with different configs or something rename them before rerunning `alignment.py`.
+Note that this file gets overwritten when `lat_alignment` is run, so if you want to store multiple copies with different configs or something rename them or change the `log_file` in the config.
 
 #### Mirror Directories
 Directories containing the measurements files within each root measurement directory. `M1` contains the measurements for the primary mirror and `M2` contains the measurements for the secondary mirror. If you don't have measurements for one of the mirrors you do not need to create an empty directory for it.
@@ -140,14 +170,6 @@ It is currently unclear why the 200 mm offset exists.
 Note that the files in the `can_points` directory are in the `cad` coordinate system.
 
 All measurements should be done in one of these four coordinate systems modulo a known shift in the origin.
-
-## Dependencies
-This code requires Python 3 to run, it will not work with Python 2. 
-The following python libraries are dependencies:
-* `numpy`
-* `scipy`
-* `argparse`
-* `matplotlib`
 
 ## Bugs and Feature Requests
 For low priority bugs and feature requests submit an issue on the [git repo](https://github.com/simonsobs/LAT_Alignment).
