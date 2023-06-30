@@ -174,7 +174,7 @@ def get_panel_points(
         points[-1, -1] += tension
         adjustors[-1, -1] += tension
 
-        panel_points["panel_name"] = (can_points, points, adjustors)
+        panel_points[panel_name] = (can_points, points, adjustors)
 
     return panel_points
 
@@ -189,10 +189,10 @@ def mirror_cm_sub(panel_points):
     """
     diff = []
     for points in panel_points.values():
-        points.append(points[0] - points[1])
+        diff.append(points[0] - points[1])
     diff = np.vstack(diff)
     cm = np.median(diff, axis=0)
-    logger.info("Removing a common mode of %s.", str(cm))
+    logger.info("Removing a common mode of %s mm.", str(cm))
     panel_points = {
         name: (points[0] - cm, points[1], points[2] - cm)
         for name, points in panel_points.items()
@@ -230,9 +230,7 @@ def get_adjustments(panel_points):
                 d_dir = "in"
             else:
                 d_dir = "out"
-            logger.info(
-                "\tMove adjustor %d %.3f ± %.3f mm to the %s", i + 1, d, d_err, d_dir
-            )
+            logger.info("\tMove adjustor %d %.3f ± %.3f mm %s", i + 1, d, d_err, d_dir)
 
 
 def main():
@@ -296,15 +294,15 @@ def main():
         sys.exit()
 
     # Initialize output file
-    log_file = cfg.get("log", os.path.join(measurement_dir, "log.txt"))
+    log_file = cfg.get("log", os.path.join(measurement_dir, "output.txt"))
     if log_file is not None:
-        fileHandler = logging.FileHandler(log_file)
+        fileHandler = logging.FileHandler(log_file, "w+")
         logger.addHandler(fileHandler)
     logger.info("Starting alignment procedure for measurement at: %s", measurement_dir)
     logger.info("Using coordinate system: %s", coordinates)
     logger.info("Using origin shift: %s", str(origin_shift))
     logger.info("Applying compensation: %f mm", compensation)
-    logger.info("Common mode subtraction set to: %s" + str(cm_sub))
+    logger.info("Common mode subtraction set to: %s", str(cm_sub))
 
     # Initialize cannonical adjustor positions
     can_adj = {}
