@@ -1,0 +1,8 @@
+? !!python/object/apply:numpy.core.multiarray.scalar
+- !!python/object/apply:numpy.dtype
+  args: [U1, false, true]
+  state: !!python/tuple [3, <, null, null, null, 4, 4, 8]
+- !!binary |
+  MAAAAA==
+: [-0.00011221809836570174, 0.0015231111319735646, 0.004846864379942417, 0.004287863615900278,
+  -0.004287679214030504, -0.004846680443733931, -9.24798882806499e-07]
