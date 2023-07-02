@@ -206,12 +206,97 @@ def get_adjustments(panel_points):
     Calculate adjustments for all panels in a mirror.
 
     @param panel_points: Dict from get_panel_points
+
+    @return adjustments: Dict of adjustments and errors
     """
+    adjustments = {}
     for name, panel in panel_points.items():
-        logger.info("Aligning panel %s", name)
         # Calculate adjustments
         dx, dy, d_adj, dx_err, dy_err, d_adj_err = adj.calc_adjustments(*panel)
         # TODO: Convert these into turns of the adjustor rods
+
+        adjustments[name] = np.hstack(((dx, dy), d_adj, (dx_err, dy_err), d_adj_err))
+
+    return adjustments
+
+
+def optimize_adjustors(adjustments, adjustors, low, high):
+    """
+    Optimize adjustments to keep things in bounds.
+
+    @param adjustments: Dict of adjustments and errors.
+    @param adjustors: Dict of current adjusttor positions.
+    @param low: Low end of adjustment range.
+    @param high: High end of adjustor range.
+
+    @returns adjustments: Updated adjustments.
+    """
+    positions = np.zeros(len(adjustments) * 5)
+    names = list(adjustments.keys())
+    for i, panel in enumerate(names):
+        positions[i * 5 : (i + 1) * 5] = np.add(
+            adjustments[panel][2:7], adjustors.get(panel, np.zeros(7))[2:7]
+        )
+
+    def _out_of_range(offset):
+        new = positions - offset
+        under = low - new[new < low]
+        over = new[new > high] - high
+
+        return np.sum(under) + np.sum(over)
+
+    oor = _out_of_range(0)
+    if oor == 0:
+        logger.info("No adjustors out of range")
+        return adjustments
+    # An ugly brute force solution
+    # But the scope is small and the solution range is flat
+    coarse, step = np.linspace(low - high, high - low, retstep=True)
+    oor = np.array([_out_of_range(off) for off in coarse])
+    min_i = np.argmin(oor)
+    min_oor = oor[min_i]
+    min_off = coarse[min_i]
+    fine = np.linspace(min_off - (np.sign(min_off) * step), min_off)
+    oor = np.array([_out_of_range(off) for off in fine])
+    min_i = np.where(oor <= min_oor)[0][0]
+    offset = fine[min_i]
+
+    logger.info("Applying an offset of %f to all z adjustors", offset)
+    positions -= offset
+
+    under = np.where(positions < low)[0]
+    for i in under:
+        logger.warning(
+            "Adjustor %d of panel %s under range by %f",
+            i % 5 + 1,
+            names[i // 5],
+            low - positions[i],
+        )
+    over = np.where(positions > high)[0]
+    for i in over:
+        logger.warning(
+            "Adjustor %d of panel %s over range by %f",
+            i % 5 + 1,
+            names[i // 5],
+            positions[i] - high,
+        )
+
+    for i, panel in enumerate(names):
+        adjustments[panel][2:7] = positions[i * 5 : (i + 1) * 5]
+
+    return adjustments
+
+
+def log_adjustments(adjustments):
+    """
+    Log perscibed adjustments.
+
+    @param adjustments: Dict of adjustments and errors.
+    """
+    for name, adjustment in adjustments.items():
+        logger.info("Aligning panel %s", name)
+        dx, dy, *d_adj = adjustment[:7]
+        dx_err, dy_err, *d_adj_err = adjustment[7:]
         if dx < 0:
             x_dir = "left"
         else:
@@ -231,6 +316,23 @@ def get_adjustments(panel_points):
             else:
                 d_dir = "out"
             logger.info("\tMove adjustor %d %.3f ± %.3f mm %s", i + 1, d, d_err, d_dir)
+
+
+def update_adjustors(adjustments, adjustors):
+    """
+    Update adjustor postions.
+
+    @param adjustments: Dict of adjustments and errors.
+    @param adjustors: Dict of current adjusttor positions.
+
+    @returns adjustors: Updated adjustor positions.
+    """
+    for panel in adjustments.keys():
+        adjustors[panel] = np.add(
+                adjustments[panel][:7], adjustors.get(panel, np.zeros(7))
+        ).tolist()
+
+    return adjustors
 
 
 def main():
@@ -261,6 +363,10 @@ def main():
     compensation = cfg.get("compensation", 0.0)
     cm_sub = cfg.get("cm_sub", False)
     plots = cfg.get("plots", False)
+    adj_low = cfg.get("adj_low", -1.0)
+    adj_high = cfg.get("adj_low", 1.0)
+    adj_path = cfg.get("adj_path", None)
+    adj_out = cfg.get("adj_out", os.path.join(measurement_dir, "adjustors.yaml"))
 
     # Check that measurement directory exists
     if not os.path.exists(measurement_dir):
@@ -306,6 +412,16 @@ def main():
 
     # Initialize cannonical adjustor positions
     can_adj = {}
+
+    # Load adjustor position
+    if adj_path is None:
+        adjustors = {}
+    else:
+        if not os.path.isfile(adj_path):
+            logger.error("Provided adjustor postion file doesn't seem to exist")
+            sys.exit()
+        with open(adj_path, "r") as file:
+            adjustors = yaml.safe_load(file)
 
     # Align primary mirror
     primary_path = os.path.join(measurement_dir, "M1")
@@ -356,7 +472,10 @@ def main():
         if cm_sub:
             mirror_cm_sub(primary)
 
-        get_adjustments(primary)
+        adjustments = get_adjustments(primary)
+        adjustments = optimize_adjustors(adjustments, adjustors, adj_low, adj_high)
+        log_adjustments(adjustments)
+        adjustors = update_adjustors(adjustments, adjustors)
 
     # Align secondary mirror
     secondary_path = os.path.join(measurement_dir, "M2")
@@ -406,7 +525,14 @@ def main():
         if cm_sub:
             mirror_cm_sub(secondary)
 
-        get_adjustments(secondary)
+        adjustments = get_adjustments(secondary)
+        adjustments = optimize_adjustors(adjustments, adjustors, adj_low, adj_high)
+        log_adjustments(adjustments)
+        adjustors = update_adjustors(adjustments, adjustors)
+
+    # Save adjustor postions
+    with open(adj_out, "w") as file:
+        yaml.dump(adjustors, file, default_flow_style=None)
 
 
 if __name__ == "__main__":
