@@ -43,8 +43,9 @@ def _plot_panel(mirror_path, panel_name, points, residuals):
     plt.close()
 
 
+@np.vectorize(otypes="Ufff", excluded=[1, 2, 3, 4, 5, 6, 7], signature="()->(),(5,3),(5,3),(5,3)")
 def get_panel_points(
-    panels,
+    panel,
     mirror_path,
     can_adj,
     coord_trans,
@@ -56,7 +57,7 @@ def get_panel_points(
     """
     Get critical points for a panel.
 
-    @param panels: The filenames for each panel in the mirror directory
+    @param panel: The filenames for panel in panel in the mirror directory
     @param mirror_path: Path to the mirror directory
     @param out_file: The output file to write to
     @param can_adj: Cannonical positions of adjusters
@@ -66,161 +67,154 @@ def get_panel_points(
     @param mirror_fit_func: The function used to fit the mirror
     @param cm_sub: Set to True for common mode subtracted adjustments
 
-    @returns panel_points: A dict with structure {panel_name: (can_points, points, adjusters)}
+    @returns panel_name: The name of the panel.
+    @returns can_points: The cannonical points for the panel.
+    @returns points: The cannonical points in the measurement basis.
+    @returns adj_points: Locations of the adjusters in the measurement basis.
     """
-    panel_points = {}
-    for p in panels:
-        panel_path = os.path.join(mirror_path, p)
-        if not os.path.isfile(panel_path):
-            logger.warning(panel_path + " does not seem to be a panel")
-            continue
-        panel_name = os.path.splitext(p)[0]
-        logger.info("Fitting panel " + panel_name)
+    panel_path = os.path.join(mirror_path, panel)
+    if not os.path.isfile(panel_path):
+        logger.warning(panel_path + " does not seem to be a panel")
+        return
+    panel_name = os.path.splitext(panel)[0]
+    logger.info("Fitting panel " + panel_name)
 
-        # Lookup cannonical alignment points and adjuster locations
-        if panel_name not in can_adj.keys():
-            logger.warning(
-                "Panel %s not found in cannonical adjuster position spreadsheet",
-                panel_name,
-            )
-            logger.warning("Moving on to next panel")
-            continue
-        if int(panel_name[5]) == 1:
-            mirror_a = mf.a_primary
-            mirror_trans = ct.cad_to_primary
-        else:
-            mirror_a = mf.a_secondary
-            mirror_trans = ct.cad_to_secondary
-        adjusters = mirror_trans(can_adj[panel_name], 0)
-        can_z = mf.mirror(adjusters[:, 0], adjusters[:, 1], mirror_a)
-        can_points = np.hstack((adjusters[:, :2], can_z[:, np.newaxis]))
-
-        # Load pointcloud from data
-        points = np.genfromtxt(
-            panel_path, skip_header=1, usecols=(3, 4, 5), dtype=str, delimiter="\t"
+    # Lookup cannonical alignment points and adjuster locations
+    if panel_name not in can_adj.keys():
+        logger.warning(
+            "Panel %s not found in cannonical adjuster position spreadsheet",
+            panel_name,
         )
-        points = np.array(
-            list(map(lambda p: p.replace(",", ""), points.flatten())), dtype=float
-        ).reshape(points.shape)
+        logger.warning("Moving on to next panel")
+        return
+    if int(panel_name[5]) == 1:
+        mirror_a = mf.a_primary
+        mirror_trans = ct.cad_to_primary
+    else:
+        mirror_a = mf.a_secondary
+        mirror_trans = ct.cad_to_secondary
+    adj_points = mirror_trans(can_adj[panel_name], 0)
+    can_z = mf.mirror(adj_points[:, 0], adj_points[:, 1], mirror_a)
+    can_points = np.hstack((adj_points[:, :2], can_z[:, np.newaxis]))
 
-        # Transform points to mirror coordinates
-        points = coord_trans(points, origin_shift)
+    # Load pointcloud from data
+    points = np.genfromtxt(
+        panel_path, skip_header=1, usecols=(3, 4, 5), dtype=str, delimiter="\t"
+    )
+    points = np.array(
+        list(map(lambda p: p.replace(",", ""), points.flatten())), dtype=float
+    ).reshape(points.shape)
 
-        # Fit to mirror surface
-        popt, rms = mf.mirror_fit(
-            points[:, 0],
-            points[:, 1],
-            points[:, 2],
-            compensation,
-            mirror_fit_func,
-            bounds=[
-                (-50, 50),
-                (-50, 50),
-                (-50, 50),
-                (-np.pi / 18.0, np.pi / 18.0),
-                (-np.pi / 18.0, np.pi / 18.0),
-                (-np.pi / 18.0, np.pi / 18.0),
-            ],
-        )
-        logger.info("RMS of surface is: %.3f", rms)
+    # Transform points to mirror coordinates
+    points = coord_trans(points, origin_shift)
 
-        # Calculate residuals
-        residuals = mf.calc_residuals(
-            points[:, 0],
-            points[:, 1],
-            points[:, 2],
-            compensation,
-            mirror_fit_func,
-            *popt,
-        )
+    # Fit to mirror surface
+    popt, rms = mf.mirror_fit(
+        points[:, 0],
+        points[:, 1],
+        points[:, 2],
+        compensation,
+        mirror_fit_func,
+        bounds=[
+            (-50, 50),
+            (-50, 50),
+            (-50, 50),
+            (-np.pi / 18.0, np.pi / 18.0),
+            (-np.pi / 18.0, np.pi / 18.0),
+            (-np.pi / 18.0, np.pi / 18.0),
+        ],
+    )
+    logger.info("RMS of surface is: %.3f", rms)
 
-        # Look for outlier points
-        res_med = np.median(residuals[:, 2])
-        res_std = np.std(residuals[:, 2])
-        outlim_l = res_med - 3 * res_std
-        outlim_r = res_med + 3 * res_std
-        outliers = np.where(
-            (residuals[:, 2] < outlim_l) | (residuals[:, 2] > outlim_r)
-        )[0]
-        for outl in outliers:
-            logger.warning("Potential outlier at point %d", outl)
+    # Calculate residuals
+    residuals = mf.calc_residuals(
+        points[:, 0],
+        points[:, 1],
+        points[:, 2],
+        compensation,
+        mirror_fit_func,
+        *popt,
+    )
 
-        # Fit for tension
-        tension = 0
-        popt_t, rms_t = mf.tension_fit(
-            residuals,
-            bounds=[
-                (-50, 50),
-                (-50, 50),
-                (-50, 50),
-                (0, np.inf),
-                (0, np.inf),
-            ],
-        )
+    # Look for outlier points
+    res_med = np.median(residuals[:, 2])
+    res_std = np.std(residuals[:, 2])
+    outlim_l = res_med - 3 * res_std
+    outlim_r = res_med + 3 * res_std
+    outliers = np.where((residuals[:, 2] < outlim_l) | (residuals[:, 2] > outlim_r))[0]
+    for outl in outliers:
+        logger.warning("Potential outlier at point %d", outl)
 
-        # If the fit tension improves rms, use it
-        if rms_t < rms:
-            tension = popt_t[2]
+    # Fit for tension
+    tension = 0
+    popt_t, rms_t = mf.tension_fit(
+        residuals,
+        bounds=[
+            (-50, 50),
+            (-50, 50),
+            (-50, 50),
+            (0, np.inf),
+            (0, np.inf),
+        ],
+    )
 
-        # Generate plots
-        if plots:
-            _plot_panel(mirror_path, panel_name, points, residuals)
+    # If the fit tension improves rms, use it
+    if rms_t < rms:
+        tension = popt_t[2]
 
-        # Transform cannonical alignment points and adjusters to measurement basis
-        points = mf.transform_point(can_points, *popt)
-        adjusters = mf.transform_point(adjusters, *popt)
+    # Generate plots
+    if plots:
+        _plot_panel(mirror_path, panel_name, points, residuals)
 
-        # Apply tension to center of panel
-        points[-1, -1] += tension
-        adjusters[-1, -1] += tension
+    # Transform cannonical alignment points and adjusters to measurement basis
+    points = mf.transform_point(can_points, *popt)
+    adj_points = mf.transform_point(adj_points, *popt)
 
-        panel_points[panel_name] = (can_points, points, adjusters)
+    # Apply tension to center of panel
+    points[-1, -1] += tension
+    adj_points[-1, -1] += tension
 
-    return panel_points
+    return panel_name, can_points, points, adj_points
 
 
-def mirror_cm_sub(panel_points):
+def mirror_cm_sub(can_points, points):
     """
     Remove common mode from panel points.
 
-    @param panel_points: Dict from get_panel_points
+    @param can_points: The cannonical points for the panel.
+    @param points: The cannonical points in the measurement basis.
 
-    @returns panel_points: Points with common mode removed.
+    @returns can_points: The cannonical points with the common mode removed.
     """
-    diff = []
-    for points in panel_points.values():
-        diff.append(points[0] - points[1])
-    diff = np.vstack(diff)
+    diff = (can_points - points).reshape((-1, 3))
     cm = np.median(diff, axis=0)
     logger.info("Removing a common mode of %s mm.", str(cm))
-    panel_points = {
-        name: (points[0] - cm, points[1], points[2] - cm)
-        for name, points in panel_points.items()
-    }
 
-    return panel_points
+    return can_points - cm
 
 
-def get_adjustments(panel_points):
+@np.vectorize(otypes="f", signature="(5,3),(5,3),(5,3)->(14)")
+def get_adjustments(can_points, points, adj_points):
     """
-    Calculate adjustments for all panels in a mirror.
+    Calculate adjustments for panels in a mirror.
 
-    @param panel_points: Dict from get_panel_points
+    @param panel_name: The name of the panel.
+    @param can_points: The cannonical points for the panel.
+    @param points: The cannonical points in the measurement basis.
 
-    @return adjustments: Dict of adjustments and errors
+    @return adjustments: Array of adjustments and errors
     """
-    adjustments = {}
-    for name, panel in panel_points.items():
-        # Calculate adjustments
-        dx, dy, d_adj, dx_err, dy_err, d_adj_err = adj.calc_adjustments(*panel)
-        # TODO: Convert these into turns of the adjuster rods
-
-        adjustments[name] = np.hstack(((dx, dy), d_adj, (dx_err, dy_err), d_adj_err))
+    # Calculate adjustments
+    dx, dy, d_adj, dx_err, dy_err, d_adj_err = adj.calc_adjustments(
+        can_points, points, adj_points
+    )
+    # TODO: Convert these into turns of the adjuster rods
+    adjustments = np.hstack(((dx, dy), d_adj, (dx_err, dy_err), d_adj_err))
 
     return adjustments
 
 
-def optimize_adjusters(adjustments, adjusters, low, high):
+def optimize_adjusters(names, adjustments, adjusters, low, high):
     """
     Optimize adjustments to keep things in bounds.
 
@@ -228,14 +222,13 @@ def optimize_adjusters(adjustments, adjusters, low, high):
     @param adjusters: Dict of current adjusttor positions.
     @param low: Low end of adjustment range.
     @param high: High end of adjuster range.
-
-    @returns adjustments: Updated adjustments.
     """
+    names = np.atleast_1d(names)
+    adjustments = np.atleast_2d(adjustments)
     positions = np.zeros(len(adjustments) * 5)
-    names = list(adjustments.keys())
     for i, panel in enumerate(names):
         positions[i * 5 : (i + 1) * 5] = np.add(
-            adjustments[panel][2:7], adjusters.get(panel, np.zeros(7))[2:7]
+            adjustments[i][2:7], adjusters.get(panel, np.zeros(7))[2:7]
         )
 
     def _out_of_range(offset):
@@ -281,58 +274,53 @@ def optimize_adjusters(adjustments, adjusters, low, high):
             positions[i] - high,
         )
 
-    for i, panel in enumerate(names):
-        adjustments[panel][2:7] = positions[i * 5 : (i + 1) * 5]
+    adjustments[:, 2:7] = positions.reshape((len(adjustments), 5))
 
     return adjustments
 
 
-def log_adjustments(adjustments):
+@np.vectorize(signature="(),(14)->()")
+def log_adjustments(name, adjustment):
     """
     Log prescibed adjustments.
 
-    @param adjustments: Dict of adjustments and errors.
+    @param name: Name of the panel.
+    @param adjustments: Array of adjustments and errors.
     """
-    for name, adjustment in adjustments.items():
-        logger.info("Aligning panel %s", name)
-        dx, dy, *d_adj = adjustment[:7]
-        dx_err, dy_err, *d_adj_err = adjustment[7:]
-        if dx < 0:
-            x_dir = "left"
+    logger.info("Aligning panel %s", name)
+    dx, dy, *d_adj = adjustment[:7]
+    dx_err, dy_err, *d_adj_err = adjustment[7:]
+    if dx < 0:
+        x_dir = "left"
+    else:
+        x_dir = "right"
+    logger.info("\tMove panel %.3f ± %.3f mm to the %s", abs(dx), dx_err, x_dir)
+    if dy < 0:
+        y_dir = "down"
+    else:
+        y_dir = "up"
+    logger.info("\tMove panel %.3f ± %.3f mm %s", abs(dy), dy_err, y_dir)
+
+    for i in range(len(d_adj)):
+        d = abs(d_adj[i])
+        d_err = d_adj_err[i]
+        if d < 0:
+            d_dir = "in"
         else:
-            x_dir = "right"
-        logger.info("\tMove panel %.3f ± %.3f mm to the %s", dx, dx_err, x_dir)
-        if dy < 0:
-            y_dir = "down"
-        else:
-            y_dir = "up"
-        logger.info("\tMove panel %.3f ± %.3f mm to the %s", dy, dy_err, y_dir)
-
-        for i in range(len(d_adj)):
-            d = d_adj[i]
-            d_err = d_adj_err[i]
-            if d < 0:
-                d_dir = "in"
-            else:
-                d_dir = "out"
-            logger.info("\tMove adjuster %d %.3f ± %.3f mm %s", i + 1, d, d_err, d_dir)
+            d_dir = "out"
+        logger.info("\tMove adjuster %d %.3f ± %.3f mm %s", i + 1, d, d_err, d_dir)
 
 
-def update_adjusters(adjustments, adjusters):
+@np.vectorize(excluded=[2], signature="(),(14)->()")
+def update_adjusters(name, adjustment, adjusters):
     """
     Update adjuster postions.
 
-    @param adjustments: Dict of adjustments and errors.
+    @param name: Name of panel.
+    @param adjustment: Array of adjustments and errors.
     @param adjusters: Dict of current adjusttor positions.
-
-    @returns adjusters: Updated adjuster positions.
     """
-    for panel in adjustments.keys():
-        adjusters[panel] = np.add(
-                adjustments[panel][:7], adjusters.get(panel, np.zeros(7))
-        ).tolist()
-
-    return adjusters
+    adjusters[name] = np.add(adjustment[:7], adjusters.get(name, np.zeros(7))).tolist()
 
 
 def main():
@@ -458,7 +446,7 @@ def main():
             coord_trans = ct.secondary_to_primary
 
         # Align panels
-        primary = get_panel_points(
+        names, can_points, points, adj_points = get_panel_points(
             panels,
             primary_path,
             can_adj,
@@ -470,12 +458,14 @@ def main():
         )
 
         if cm_sub:
-            mirror_cm_sub(primary)
+            can_points = mirror_cm_sub(can_points, points)
 
-        adjustments = get_adjustments(primary)
-        adjustments = optimize_adjusters(adjustments, adjusters, adj_low, adj_high)
-        log_adjustments(adjustments)
-        adjusters = update_adjusters(adjustments, adjusters)
+        adjustments = get_adjustments(can_points, points, adj_points)
+        adjustments = optimize_adjusters(
+            names, adjustments, adjusters, adj_low, adj_high
+        )
+        log_adjustments(names, adjustments)
+        update_adjusters(names, adjustments, adjusters)
 
     # Align secondary mirror
     secondary_path = os.path.join(measurement_dir, "M2")
@@ -512,7 +502,7 @@ def main():
             coord_trans = ct.primary_to_secondary
 
         # Align panels
-        secondary = get_panel_points(
+        names, can_points, points, adj_points = get_panel_points(
             panels,
             secondary_path,
             can_adj,
@@ -522,13 +512,16 @@ def main():
             mf.secondary_fit_func,
             plots,
         )
-        if cm_sub:
-            mirror_cm_sub(secondary)
 
-        adjustments = get_adjustments(secondary)
-        adjustments = optimize_adjusters(adjustments, adjusters, adj_low, adj_high)
-        log_adjustments(adjustments)
-        adjusters = update_adjusters(adjustments, adjusters)
+        if cm_sub:
+            can_points = mirror_cm_sub(can_points, points)
+
+        adjustments = get_adjustments(can_points, points, adj_points)
+        adjustments = optimize_adjusters(
+            names, adjustments, adjusters, adj_low, adj_high
+        )
+        log_adjustments(names, adjustments)
+        update_adjusters(names, adjustments, adjusters)
 
     # Save adjuster postions
     with open(adj_out, "w") as file:
