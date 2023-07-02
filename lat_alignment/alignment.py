@@ -59,14 +59,14 @@ def get_panel_points(
     @param panels: The filenames for each panel in the mirror directory
     @param mirror_path: Path to the mirror directory
     @param out_file: The output file to write to
-    @param can_adj: Cannonical positions of adjustors
+    @param can_adj: Cannonical positions of adjusters
     @param coord_trans: The coordinate transform to apply to measured points
     @param origin_shift: The origin_shift to pass to coord_trans
     @param compensation: Compensation to apply to measurement
     @param mirror_fit_func: The function used to fit the mirror
     @param cm_sub: Set to True for common mode subtracted adjustments
 
-    @returns panel_points: A dict with structure {panel_name: (can_points, points, adjustors)}
+    @returns panel_points: A dict with structure {panel_name: (can_points, points, adjusters)}
     """
     panel_points = {}
     for p in panels:
@@ -77,10 +77,10 @@ def get_panel_points(
         panel_name = os.path.splitext(p)[0]
         logger.info("Fitting panel " + panel_name)
 
-        # Lookup cannonical alignment points and adjustor locations
+        # Lookup cannonical alignment points and adjuster locations
         if panel_name not in can_adj.keys():
             logger.warning(
-                "Panel %s not found in cannonical adjustor position spreadsheet",
+                "Panel %s not found in cannonical adjuster position spreadsheet",
                 panel_name,
             )
             logger.warning("Moving on to next panel")
@@ -91,9 +91,9 @@ def get_panel_points(
         else:
             mirror_a = mf.a_secondary
             mirror_trans = ct.cad_to_secondary
-        adjustors = mirror_trans(can_adj[panel_name], 0)
-        can_z = mf.mirror(adjustors[:, 0], adjustors[:, 1], mirror_a)
-        can_points = np.hstack((adjustors[:, :2], can_z[:, np.newaxis]))
+        adjusters = mirror_trans(can_adj[panel_name], 0)
+        can_z = mf.mirror(adjusters[:, 0], adjusters[:, 1], mirror_a)
+        can_points = np.hstack((adjusters[:, :2], can_z[:, np.newaxis]))
 
         # Load pointcloud from data
         points = np.genfromtxt(
@@ -166,15 +166,15 @@ def get_panel_points(
         if plots:
             _plot_panel(mirror_path, panel_name, points, residuals)
 
-        # Transform cannonical alignment points and adjustors to measurement basis
+        # Transform cannonical alignment points and adjusters to measurement basis
         points = mf.transform_point(can_points, *popt)
-        adjustors = mf.transform_point(adjustors, *popt)
+        adjusters = mf.transform_point(adjusters, *popt)
 
         # Apply tension to center of panel
         points[-1, -1] += tension
-        adjustors[-1, -1] += tension
+        adjusters[-1, -1] += tension
 
-        panel_points[panel_name] = (can_points, points, adjustors)
+        panel_points[panel_name] = (can_points, points, adjusters)
 
     return panel_points
 
@@ -213,21 +213,21 @@ def get_adjustments(panel_points):
     for name, panel in panel_points.items():
         # Calculate adjustments
         dx, dy, d_adj, dx_err, dy_err, d_adj_err = adj.calc_adjustments(*panel)
-        # TODO: Convert these into turns of the adjustor rods
+        # TODO: Convert these into turns of the adjuster rods
 
         adjustments[name] = np.hstack(((dx, dy), d_adj, (dx_err, dy_err), d_adj_err))
 
     return adjustments
 
 
-def optimize_adjustors(adjustments, adjustors, low, high):
+def optimize_adjusters(adjustments, adjusters, low, high):
     """
     Optimize adjustments to keep things in bounds.
 
     @param adjustments: Dict of adjustments and errors.
-    @param adjustors: Dict of current adjusttor positions.
+    @param adjusters: Dict of current adjusttor positions.
     @param low: Low end of adjustment range.
-    @param high: High end of adjustor range.
+    @param high: High end of adjuster range.
 
     @returns adjustments: Updated adjustments.
     """
@@ -235,7 +235,7 @@ def optimize_adjustors(adjustments, adjustors, low, high):
     names = list(adjustments.keys())
     for i, panel in enumerate(names):
         positions[i * 5 : (i + 1) * 5] = np.add(
-            adjustments[panel][2:7], adjustors.get(panel, np.zeros(7))[2:7]
+            adjustments[panel][2:7], adjusters.get(panel, np.zeros(7))[2:7]
         )
 
     def _out_of_range(offset):
@@ -247,7 +247,7 @@ def optimize_adjustors(adjustments, adjustors, low, high):
 
     oor = _out_of_range(0)
     if oor == 0:
-        logger.info("No adjustors out of range")
+        logger.info("No adjusters out of range")
         return adjustments
     # An ugly brute force solution
     # But the scope is small and the solution range is flat
@@ -261,13 +261,13 @@ def optimize_adjustors(adjustments, adjustors, low, high):
     min_i = np.where(oor <= min_oor)[0][0]
     offset = fine[min_i]
 
-    logger.info("Applying an offset of %f to all z adjustors", offset)
+    logger.info("Applying an offset of %f to all z adjusters", offset)
     positions -= offset
 
     under = np.where(positions < low)[0]
     for i in under:
         logger.warning(
-            "Adjustor %d of panel %s under range by %f",
+            "Adjuster %d of panel %s under range by %f",
             i % 5 + 1,
             names[i // 5],
             low - positions[i],
@@ -275,7 +275,7 @@ def optimize_adjustors(adjustments, adjustors, low, high):
     over = np.where(positions > high)[0]
     for i in over:
         logger.warning(
-            "Adjustor %d of panel %s over range by %f",
+            "Adjuster %d of panel %s over range by %f",
             i % 5 + 1,
             names[i // 5],
             positions[i] - high,
@@ -289,7 +289,7 @@ def optimize_adjustors(adjustments, adjustors, low, high):
 
 def log_adjustments(adjustments):
     """
-    Log perscibed adjustments.
+    Log prescibed adjustments.
 
     @param adjustments: Dict of adjustments and errors.
     """
@@ -315,24 +315,24 @@ def log_adjustments(adjustments):
                 d_dir = "in"
             else:
                 d_dir = "out"
-            logger.info("\tMove adjustor %d %.3f ± %.3f mm %s", i + 1, d, d_err, d_dir)
+            logger.info("\tMove adjuster %d %.3f ± %.3f mm %s", i + 1, d, d_err, d_dir)
 
 
-def update_adjustors(adjustments, adjustors):
+def update_adjusters(adjustments, adjusters):
     """
-    Update adjustor postions.
+    Update adjuster postions.
 
     @param adjustments: Dict of adjustments and errors.
-    @param adjustors: Dict of current adjusttor positions.
+    @param adjusters: Dict of current adjusttor positions.
 
-    @returns adjustors: Updated adjustor positions.
+    @returns adjusters: Updated adjuster positions.
     """
     for panel in adjustments.keys():
-        adjustors[panel] = np.add(
-                adjustments[panel][:7], adjustors.get(panel, np.zeros(7))
+        adjusters[panel] = np.add(
+                adjustments[panel][:7], adjusters.get(panel, np.zeros(7))
         ).tolist()
 
-    return adjustors
+    return adjusters
 
 
 def main():
@@ -366,7 +366,7 @@ def main():
     adj_low = cfg.get("adj_low", -1.0)
     adj_high = cfg.get("adj_low", 1.0)
     adj_path = cfg.get("adj_path", None)
-    adj_out = cfg.get("adj_out", os.path.join(measurement_dir, "adjustors.yaml"))
+    adj_out = cfg.get("adj_out", os.path.join(measurement_dir, "adjusters.yaml"))
 
     # Check that measurement directory exists
     if not os.path.exists(measurement_dir):
@@ -410,18 +410,18 @@ def main():
     logger.info("Applying compensation: %f mm", compensation)
     logger.info("Common mode subtraction set to: %s", str(cm_sub))
 
-    # Initialize cannonical adjustor positions
+    # Initialize cannonical adjuster positions
     can_adj = {}
 
-    # Load adjustor position
+    # Load adjuster position
     if adj_path is None:
-        adjustors = {}
+        adjusters = {}
     else:
         if not os.path.isfile(adj_path):
-            logger.error("Provided adjustor postion file doesn't seem to exist")
+            logger.error("Provided adjuster postion file doesn't seem to exist")
             sys.exit()
         with open(adj_path, "r") as file:
-            adjustors = yaml.safe_load(file)
+            adjusters = yaml.safe_load(file)
 
     # Align primary mirror
     primary_path = os.path.join(measurement_dir, "M1")
@@ -432,7 +432,7 @@ def main():
         if plots:
             os.makedirs(os.path.join(measurement_dir, "plots", "M1"), exist_ok=True)
 
-        # Load cannonical adjustor points
+        # Load cannonical adjuster points
         m1_can = os.path.join(can_dir, "M1.txt")
         if not os.path.exists(m1_can):
             logger.error("Cannonical points for M1 not found")
@@ -473,9 +473,9 @@ def main():
             mirror_cm_sub(primary)
 
         adjustments = get_adjustments(primary)
-        adjustments = optimize_adjustors(adjustments, adjustors, adj_low, adj_high)
+        adjustments = optimize_adjusters(adjustments, adjusters, adj_low, adj_high)
         log_adjustments(adjustments)
-        adjustors = update_adjustors(adjustments, adjustors)
+        adjusters = update_adjusters(adjustments, adjusters)
 
     # Align secondary mirror
     secondary_path = os.path.join(measurement_dir, "M2")
@@ -486,7 +486,7 @@ def main():
         if plots:
             os.makedirs(os.path.join(measurement_dir, "plots", "M2"), exist_ok=True)
 
-        # Load cannonical adjustor points
+        # Load cannonical adjuster points
         m2_can = os.path.join(can_dir, "M2.txt")
         if not os.path.exists(m2_can):
             logger.error("Cannonical points for M2 not found")
@@ -526,13 +526,13 @@ def main():
             mirror_cm_sub(secondary)
 
         adjustments = get_adjustments(secondary)
-        adjustments = optimize_adjustors(adjustments, adjustors, adj_low, adj_high)
+        adjustments = optimize_adjusters(adjustments, adjusters, adj_low, adj_high)
         log_adjustments(adjustments)
-        adjustors = update_adjustors(adjustments, adjustors)
+        adjusters = update_adjusters(adjustments, adjusters)
 
-    # Save adjustor postions
+    # Save adjuster postions
     with open(adj_out, "w") as file:
-        yaml.dump(adjustors, file, default_flow_style=None)
+        yaml.dump(adjusters, file, default_flow_style=None)
 
 
 if __name__ == "__main__":
