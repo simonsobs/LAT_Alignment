@@ -3,17 +3,19 @@ Perform alignment of LAT mirrors
 
 Author: Saianeesh Keshav Haridas
 """
-import os
-import sys
 import argparse as ap
 import logging
+import os
+import sys
+from functools import partial
+
 import matplotlib.pyplot as plt
 import numpy as np
 import yaml
+
 from . import adjustments as adj
 from . import coordinate_transforms as ct
 from . import mirror_fit as mf
-
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -43,7 +45,12 @@ def _plot_panel(mirror_path, panel_name, points, residuals):
     plt.close()
 
 
-@np.vectorize(otypes="Ufff", excluded=[1, 2, 3, 4, 5, 6, 7], signature="()->(),(5,3),(5,3),(5,3)")
+@partial(
+    np.vectorize,
+    otypes="Ufff",
+    excluded=[1, 2, 3, 4, 5, 6, 7],
+    signature="()->(),(5,3),(5,3),(5,3)",
+)
 def get_panel_points(
     panel,
     mirror_path,
@@ -98,12 +105,15 @@ def get_panel_points(
     can_points = np.hstack((adj_points[:, :2], can_z[:, np.newaxis]))
 
     # Load pointcloud from data
-    points = np.genfromtxt(
-        panel_path, skip_header=1, usecols=(3, 4, 5), dtype=str, delimiter="\t"
-    )
-    points = np.array(
-        list(map(lambda p: p.replace(",", ""), points.flatten())), dtype=float
-    ).reshape(points.shape)
+    try:
+        points = np.genfromtxt(
+            panel_path, skip_header=1, usecols=(3, 4, 5), dtype=str, delimiter="\t"
+        )
+        points = np.array(
+            list(map(lambda p: p.replace(",", ""), points.flatten())), dtype=float
+        ).reshape(points.shape)
+    except:
+        points = np.genfromtxt(panel_path)
 
     # Transform points to mirror coordinates
     points = coord_trans(points, origin_shift)
@@ -193,7 +203,7 @@ def mirror_cm_sub(can_points, points):
     return can_points - cm
 
 
-@np.vectorize(otypes="f", signature="(5,3),(5,3),(5,3)->(14)")
+@partial(np.vectorize, otypes="f", signature="(5,3),(5,3),(5,3)->(14)")
 def get_adjustments(can_points, points, adj_points):
     """
     Calculate adjustments for panels in a mirror.
@@ -279,7 +289,7 @@ def optimize_adjusters(names, adjustments, adjusters, low, high):
     return adjustments
 
 
-@np.vectorize(signature="(),(14)->()")
+@partial(np.vectorize, signature="(),(14)->()")
 def log_adjustments(name, adjustment):
     """
     Log prescibed adjustments.
@@ -311,7 +321,7 @@ def log_adjustments(name, adjustment):
         logger.info("\tMove adjuster %d %.3f ± %.3f mm %s", i + 1, d, d_err, d_dir)
 
 
-@np.vectorize(excluded=[2], signature="(),(14)->()")
+@partial(np.vectorize, excluded=[2], signature="(),(14)->()")
 def update_adjusters(name, adjustment, adjusters):
     """
     Update adjuster postions.
