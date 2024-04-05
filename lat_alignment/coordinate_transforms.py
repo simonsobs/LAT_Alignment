@@ -4,10 +4,16 @@ See README for descriptions of each coordinate system.
 
 Author: Saianeesh Keshav Haridas
 """
+from typing import List, Optional, Tuple, Union
+
+import megham.transform as mt
 import numpy as np
 import scipy.spatial as spat
 from numpy import float64, ndarray
-from typing import List, Tuple, Union
+from numpy.typing import NDArray
+
+import lat_alignment.fitting as lf
+import lat_alignment.mirror as mr
 
 v_m1 = (0, 0, 3600)  # mm
 v_m2 = (0, -4800, 0)  # mm
@@ -271,3 +277,98 @@ def compensate(coords, compensation):
     norms /= np.linalg.norm(norms, axis=1)[:, np.newaxis]
 
     return coords - compensation * norms
+
+
+def reference_align(
+    points: NDArray[np.floating],
+    source_names: NDArray[np.str_],
+    source_points: NDArray[np.str_],
+    target_names: NDArray[np.str_],
+    target_points: NDArray[np.floating],
+) -> NDArray[np.floating]:
+    """
+    Get an affine transform based on reference points.
+    Useful when you have a measurement in some arbitrary coordinates
+    and want to align them to known ones.
+
+    The names of the points are used to set the registration.
+
+    Parameters
+    ----------
+    points: NDArray[np.floating]
+        The points to take from the source to target coordinates.
+        Should have shape (ndim, ndim).
+    source_names : NDArray[np.str_]
+        The names of the source points.
+        Should be in the same order as source_points.
+        Should have shape (nsource,)
+    source_points : NDArray[np.floating]
+        The reference points in the source coordinates.
+        Should have shape (nsource, ndim).
+    target_names : NDArray[np.str_]
+        The names of the target points.
+        Should be in the same order as target_points.
+        Should have shape (ntarget,)
+    target_points : NDArray[np.floating]
+        The reference points in the target coordinates.
+        Should have shape (ntarget, ndim).
+
+    Returns
+    -------
+    transformed : NDArray[np.floating]
+        The points in the target coordinates.
+        Has shape (npoint, ndim).
+    """
+    _, idx_s, idx_t = np.intersect1d(source_names, target_names, return_indices=True)
+    aff, sft = mt.get_affine(source_points[idx_s], target_points[idx_t])
+
+    return points @ aff + sft
+
+
+def surface_align(
+    points: NDArray[np.floating],
+    a: NDArray[np.floating],
+    compensate: float = 0,
+    bounds: Optional[list[tuple[float, float]]] = None,
+    niter: int = 3,
+) -> NDArray[np.floating]:
+    """
+    Align points to the mirror surface.
+    This is useful if you think there is some systematic in your measurement
+    or you don't trust your alignment.
+
+    Paramaters
+    ----------
+    points : NDArray[np.floating]
+        Array of points to compare against the mirror.
+        Should have shape (npoint, 3).
+    a : NDArray[np.floating]
+        Coeffecients of the mirror function.
+        Use a_primary for the primary mirror and a_secondary for the secondary.
+    compensate : float, default: 0.0
+        Amount to compensate the mirror surface by.
+        This is useful to model things like the surface traced out by an SMR.
+    bounds: Optional[list[tuple[float, float]]], default: None
+        Bounds on the fit.
+        If None some reasonible defaults are used.
+    niter : int, default: 3
+        Number of iteration to do.
+        Between each iteration points that are a poor fit are thrown out.
+
+    Returns
+    -------
+    transformed : NDArray[np.floating]
+        The points in the target coordinates.
+        Has shape (ngoodpoint, ndim), where ngoodpoint <= npoint.
+    """
+    if bounds is None:
+        bounds = [(0.0, 2.0)] * 9 + [(-50.0, 50.0)] * 3
+    for i in niter:
+        t_pars, _ = lf.mirror_fit(points, a, compensate, bounds=bounds, to_points=False)
+        t_points = lf.mirror_transform(t_pars, points)
+        ares = np.abs(
+            mr.mirror(t_points[:, 0], t_points[:, 1], a, compensate) - t_points[:, 2]
+        )
+        msk = ares < np.median(ares) + 3 * np.std(ares)
+        points = t_points[msk]
+    return t_points
