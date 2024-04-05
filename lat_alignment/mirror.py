@@ -27,6 +27,8 @@ a_secondary = np.array([
             ])
 # fmt: on
 
+panel_dims = [(670.45, 750.5), (670.45, 750.5)]  # TODO: Get the actual secondary dims
+
 
 def mirror(
     x: float | NDArray[np.floating],
@@ -108,3 +110,50 @@ def mirror_norm(
     normals = np.array((x_n, y_n, z_n)).T
     normals /= np.linalg.norm(normals, axis=-1)[:, np.newaxis]
     return normals
+
+
+def get_panel_name(
+    x: float, y: float, mir_num: int, tel_num: str = "01-01", rev_num: str = "1"
+) -> str:
+    """
+    Get panel name from xy coords.
+    Careful when using this with measurement data,
+    measurements close to the edge may be misidentified due to a shift.
+
+    Paramaters
+    ----------
+    x : float
+        The x coord to get the panel for.
+    y : float
+        The y coord to get the pabel for.
+    mir_num : int
+        1 for primary and 2 for secondary.
+    tel_num : str, default: '01-01'
+        The telescope number, the SO LAT is 01-01.
+    rev_num : str, default: '1'
+        The revision number for the panel.
+
+    Returns
+    -------
+    panel_name : str
+        The name of the panel.
+    """
+    if mir_num not in (1, 2):
+        raise ValueEror("mir_num should be 1 (primary) or 2 (secondary)")
+    length, width = panel_dims[mir_num - 1]
+
+    # Set origin in corner of the mirror
+    x -= 4.5 * length
+    y -= 4.5 * width
+
+    # Figure out row/col, they are 1 indexed
+    # TODO: Figure out if I should project xy to a "flattened" mirror first
+    row = int(x // length + 1)
+    col = int(y // length + 1)
+    if row < 1 or row > 9:
+        raise ValueError("x value appears out of bounds")
+    if col < 1 or col > 9:
+        raise ValueError("y value appears out of bounds")
+
+    panel_name = f"{tel_num}{mir_num}{row}{col}{rev_num}"
+    return panel_name
