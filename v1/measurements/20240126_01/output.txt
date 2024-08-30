@@ -1,0 +1,42 @@
+Starting alignment procedure for measurement at: /home/lordskh/Documents/Research/SO/LAT_Alignment/measurements/20240126_01
+Using coordinate system: global
+Using origin shift: [0. 0. 0.]
+Applying compensation: 0.000000 mm
+Common mode subtraction set to: True
+Aligning primary mirror
+Fitting panel 01-011121
+RMS of surface is: 3096.388
+Fitting panel 01-011131
+RMS of surface is: 3539.516
+Fitting panel 01-011141
+RMS of surface is: 3963.150
+Fitting panel 01-011211
+RMS of surface is: 2815.344
+Fitting panel 01-011231
+RMS of surface is: 3732.211
+Fitting panel 01-011251
+RMS of surface is: 4603.312
+Fitting panel 01-011311
+RMS of surface is: 2965.131
+Fitting panel 01-011321
+RMS of surface is: 3436.083
+Fitting panel 01-011331
+RMS of surface is: 3897.646
+Fitting panel 01-011351
+RMS of surface is: 4773.839
+Fitting panel 01-011361
+RMS of surface is: 5185.245
+Fitting panel 01-011371
+RMS of surface is: 5575.853
+Fitting panel 01-011411
+RMS of surface is: 3104.443
+Fitting panel 01-011421
+RMS of surface is: 3577.903
+Fitting panel 01-011431
+RMS of surface is: 4041.726
+Fitting panel 01-011451
+RMS of surface is: 4937.301
+Fitting panel 01-011471
+RMS of surface is: 5763.929
+Fitting panel 01-011481
+RMS of surface is: 6147.317
