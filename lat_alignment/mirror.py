@@ -182,7 +182,7 @@ class Panel:
 
     @cached_property
     def _transform(self):
-        return get_rigid(self.model, self.measurements, center_dst=False)
+        return get_rigid(self.model, self.measurements, center_dst=True, method="mean")
 
     @property
     def rot(self):
