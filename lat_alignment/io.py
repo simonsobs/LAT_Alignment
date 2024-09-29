@@ -121,7 +121,7 @@ def load_adjusters(path: str, mirror: str) -> dict[tuple[int, int], NDArray[np.f
         raise ValueError(f"Invalid mirror: {mirror}")
     def _transform(coords):
         coords = np.atleast_2d(coords)
-        coords -= np.array([80, 0, 0]) # apply CAD shift
+        coords -= np.array([120, 0, 0]) # cancel out shift
         return coord_transform(coords, "va_global", f"opt_{mirror}")
 
     # TODO: cleaner transform call

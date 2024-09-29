@@ -47,7 +47,7 @@ def main():
 
     # init, fit, and plot panels
     meas = mir.remove_cm(meas, mirror, cfg.get("compensate", 0), **cfg.get("common_mode", {}))
-    panels = mir.gen_panels(mirror, meas, corners, adjusters, cfg.get("compensate", 0), cfg.get("adjuster_radius", 200))
+    panels = mir.gen_panels(mirror, meas, corners, adjusters, cfg.get("compensate", 0), cfg.get("adjuster_radius", 100))
     title_str = cfg["title"]
     fig = mir.plot_panels(panels, title_str, vmax = cfg.get("vmax", None))
     fig.savefig(os.path.join(cfgdir, f"{title_str.replace(' ', '_')}.png"))
