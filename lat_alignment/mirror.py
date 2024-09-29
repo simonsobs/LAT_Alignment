@@ -1,18 +1,20 @@
 """
 Functions to describe the mirror surface.
 """
-from dataclasses import dataclass
+from scipy.optimize import minimize
+from copy import deepcopy
+from dataclasses import dataclass, field
 from functools import cached_property
 import numpy as np
 from numpy.typing import NDArray
-from numpy import ndarray
-from megham.transform import apply_transform, get_rigid
+from megham.transform import apply_transform, get_rigid, decompose_rotation
 from collections import defaultdict
-from scipy.optimize import minimize
 import matplotlib.pyplot as plt
-from matplotlib.patches import PathPatch
-from matplotlib.path import Path
+from matplotlib.patches import Polygon
+import matplotlib.gridspec as gridspec
 from matplotlib.figure import Figure
+from typing import Optional
+from scipy.spatial.transform import Rotation
 
 # fmt: off
 a = {'primary' : 
@@ -40,17 +42,27 @@ a = {'primary' :
 # fmt: on
 
 
-def mirror_surface(x: ndarray, y: ndarray, a: ndarray) -> ndarray:
+def mirror_surface(x: NDArray[np.float32], y: NDArray[np.float32], a: NDArray[np.float32]) -> NDArray[np.float32]:
     """
-    Analytic form for the mirror
+    Analytic form of the mirror surface.
 
-    @param x: x positions to calculate at
-    @param y: y positions to calculate at
-    @param a: Coeffecients of the mirror function
-              Use a_primary for the primary mirror
-              Use a_secondary for the secondary mirror
+    Parameters
+    ----------
+    x : NDArray[np.float32]
+        X positions to calculate at in mm.
+    y : NDArray[np.float32]
+        Y positions to calculate at in mm.
+        Should have the same shape as `x`.
+    a : NDArray[np.float32]
+        Coeffecients of the mirror function.
+        Use `a_primary` for the primary mirror.
+        Use `a_secondary` for the secondary mirror.
 
-    @return z: z position of the mirror at each xy
+    Returns
+    -------
+    z : NDArray[np.float32]
+        Z position of the mirror at each input coordinate.
+        Has the same shape as `x`.
     """
     z = np.zeros_like(x)
     Rn = 3000.0
@@ -60,17 +72,27 @@ def mirror_surface(x: ndarray, y: ndarray, a: ndarray) -> ndarray:
     return z
 
 
-def mirror_norm(x: ndarray, y: ndarray, a: ndarray) -> ndarray:
+def mirror_norm(x: NDArray[np.float32], y: NDArray[np.float32], a: NDArray[np.float32]) -> NDArray[np.float32]:
     """
-    Analytic form of mirror normal vector
+    Analytic form of the vector normal to the mirror surface.
 
-    @param x: x positions to calculate at
-    @param y: y positions to calculate at
-    @param a: Coeffecients of the mirror function
-              Use a_primary for the primary mirror
-              Use a_secondary for the secondary mirror
+    Parameters
+    ----------
+    x : NDArray[np.float32]
+        X positions to calculate at in mm.
+    y : NDArray[np.float32]
+        Y positions to calculate at in mm.
+        Should have the same shape as `x`.
+    a : NDArray[np.float32]
+        Coeffecients of the mirror function.
+        Use `a_primary` for the primary mirror.
+        Use `a_secondary` for the secondary mirror.
 
-    @return normals: Unit vector normal to mirror at each xy
+    Returns
+    -------
+    normals : NDArray[np.float32]
+        Unit vector normal to the mirror surface at each input coordinate.
+        Has shape `shape(x) + (3,)`.
     """
     Rn = 3000.0
 
@@ -105,49 +127,76 @@ class Panel:
     corners : NDArray[np.float32]
         Array of panel corners.
         Should have shape `(4, 3)`.
-    measurments : NDArray[np.float32]
-        The measurment data for this panel.
+    measurements : NDArray[np.float32]
+        The measurement data for this panel.
         Should be in the mirror's internal coords.
         Should have shape `(npoint, 3)`.
-    model : NDArray[np.float32]
-        The modeled panelfor this panel.
-        This is in the nominal coordinates not the measured ones.
-        Should have same shape as `measurments`.
     nom_adj : NDArray[np.float32]
         The nominal position of the adjusters in the mirror internal coordinates.
         Should have shape `(5, 3)`.
-    rot : NDArray[np.float32]
-        Rotation matrix that takes the mirror model to the measurments.
-        Should have shape `(3, 3)`.
-    shift : NDArray[np.float32]
-        Shift that takes the mirror model to the measurments.
-        Should have shape `(3,)`.
+    compensate : float, default: 0
+        The amount (in mm) to compensate the model surface by.
+        This is to account for things like the Faro SMR.
     """
     mirror : str
     row : int
     col : int
     corners : NDArray[np.float32]
-    measurments : NDArray[np.float32]
-    model: NDArray[np.float32]
+    measurements : NDArray[np.float32]
     nom_adj : NDArray[np.float32]
-    rot : NDArray[np.float32]
-    shift : NDArray[np.float32]
+    compensate: float = field(default=0.0)
+    adjuster_radius: float = field(default=50.0)
 
-    def __set_attr__(self, name, value):
-        if name == "rot" or name == "shift":
-            self.__dict__.pop("meas_surface", None)
-            self.__dict__.pop("meas_adj", None)
-            self.__dict__.pop("model_transformed", None)
-            self.__dict__.pop("residuals", None)
-            self.__dict__.pop("rms", None)
-        elif name == "nom_adj" or name == "mirror":
+
+    def __post_init__(self):
+        self.measurements = np.atleast_2d(self.measurements)
+
+    def __setattr__(self, name, value):
+        if name == "nom_adj" or name == "mirror" or name == "measurements" or name == "compensate":
             self.__dict__.pop("can_surface", None)
+            self.__dict__.pop("model", None)
+            self.__dict__.pop("residuals", None)
+            self.__dict__.pop("transformed_residuals", None)
+            self.__dict__.pop("res_norm", None)
+            self.__dict__.pop("rms", None)
             self.__dict__.pop("meas_surface", None)
             self.__dict__.pop("meas_adj", None)
-        elif name == "model":
-            self.__dict__.pop("residuals", None)
-            self.__dict__.pop("rms", None)
+            self.__dict__.pop("meas_adj_resid", None)
+            self.__dict__.pop("model_transformed", None)
+            self.__dict__.pop("_transform", None)
+        elif name == "adjuster_radius":
+            self.__dict__.pop("meas_adj_resid", None)
         return super().__setattr__(name, value)
+
+    @cached_property
+    def model(self):
+        """
+        The modeled mirror surface at the locations of the measurementss.
+        """
+        model = self.measurements.copy()
+        model[:, 2] = mirror_surface(model[:, 0], model[:, 1], a[self.mirror])
+        if self.compensate != 0.0:
+            compensation = self.compensate * mirror_norm(model[:, 0], model[: 0], a[self.mirror])
+            model += compensation
+        return model
+
+    @cached_property
+    def _transform(self):
+        return get_rigid(self.model, self.measurements, center_dst=False)
+
+    @property
+    def rot(self):
+        """
+        Rotation that aligns the model to the measurements.
+        """
+        return self._transform[0]
+
+    @property
+    def shift(self):
+        """
+        Shift that aligns the model to the measurements.
+        """
+        return self._transform[1]
 
     @cached_property
     def can_surface(self):
@@ -157,63 +206,87 @@ class Panel:
         Note that this is in the nominal coordinates not the measured ones.
         """
         can_z = mirror_surface(self.nom_adj[:, 0], self.nom_adj[:, 1], a[self.mirror])
-        points = can_z.copy()
+        points = self.nom_adj.copy()
         points[:, 2] = can_z
         return points
 
     @cached_property
     def meas_surface(self):
         """
-        Transform the cannonical points to be in the measured coordinates.
+        The cannonical surface transformed to be in the measured coordinates.
         """
-        return apply_transform(self.rot, self.shift, self.can_surface)
+        return apply_transform(self.can_surface, self.rot, self.shift)
     
     @cached_property
     def meas_adj(self):
         """
-        Transform the adjuster points to be in the measured coordinates.
+        The adjuster points transformed to be in the measured coordinates.
         """
-        return apply_transform(self.rot, self.shift, self.nom_adj)
+        return apply_transform(self.nom_adj, self.rot, self.shift)
+
+    @cached_property
+    def meas_adj_resid(self):
+        """
+        A correction that can be applied to `meas_adj` where we compute
+        the average residual of measured points from the transformed model
+        that are within `adjuster_radius` of the adjuster point in `xy`.
+        """
+        resid = np.zeros(len(self.meas_adj))
+        for i, adj in enumerate(self.meas_adj):
+            dists = np.linalg.norm(self.measurements[:, :2] - adj[:2], axis=-1)
+            msk = dists <= self.adjuster_radius
+            if np.sum(msk) == 0:
+                continue
+            resid[i] = np.mean(self.transformed_residuals[msk, 2])
+
+        return resid
     
     @cached_property
     def model_transformed(self):
         """
-        Transform the model points to be in the measured coordinates.
+        The model transformed to be in the measured coordinates.
         """
-        return apply_transform(self.rot, self.shift, self.model)
+        return apply_transform(self.model, self.rot, self.shift)
 
     @cached_property
     def residuals(self):
         """
-        Get residuals between transformed model and measurments.
+        Get residuals between model and measurements.
         """
-        return self.measurments - self.model_transformed
+        return self.measurements - self.model
+
+    @cached_property
+    def transformed_residuals(self):
+        """
+        Get residuals between transformed model and measurements.
+        """
+        return self.measurements - self.model_transformed
 
     @cached_property
     def res_norm(self):
         """
-        Get norm of residuals between transformed model and measurments.
+        Get norm of residuals between transformed model and measurements.
         """
-        return np.linalg.norm(self.residuals) 
+        return np.linalg.norm(self.residuals, axis=-1) 
 
     @cached_property
     def rms(self):
         """
-        Get rms between transformed model and measurments.
+        Get rms between model and measurements.
         """
-        return np.sqrt(np.mean(self.res_norm ** 2))
+        return np.sqrt(np.mean(self.residuals[:, 2].ravel() ** 2))
     
 
-def gen_panels(mirror: str, measurments: dict[str, NDArray[np.float32]], corners: dict[tuple[int, int], NDArray[np.float32]], adjusters: dict[tuple[int, int], NDArray[np.float32]]) -> list[Panel]:
+def gen_panels(mirror: str, measurements: dict[str, NDArray[np.float32]], corners: dict[tuple[int, int], NDArray[np.float32]], adjusters: dict[tuple[int, int], NDArray[np.float32]], compensate: float = 0.0, adjuster_radius: float = 50.0) -> list[Panel]:
     """
-    Use a set of measurments to generate panel objects.
+    Use a set of measurements to generate panel objects.
 
     Parameters
     ----------
     mirror : str
         The mirror these panels belong to.
         Should be 'primary' or 'secondary'.
-    measurments : dict[str, NDArray[np.float32]]
+    measurements : dict[str, NDArray[np.float32]]
         The photogrammetry data.
         Dict is data indexed by the target names.
     corners : dict[tuple[int, int], ndarray[np.float32]]
@@ -223,124 +296,118 @@ def gen_panels(mirror: str, measurments: dict[str, NDArray[np.float32]], corners
         Nominal adjuster locations.
         This is indexed by a (row, col) tuple.
         Each entry is `(5, 3)` array where each row is an adjuster.
+    compensate : float, default: 0.0
+        Amount (in mm) to compensate the model surface by.
+        This is to account for things like the faro SMR.
+    adjuster_radius : float, default: 50.0
+        The radius in XY of points that an adjuster should use to
+        compute a secondary correction on its position.
+        Should be in mm.
 
     Returns
     -------
     panels : list[Panels]
         A list of panels with the transforme initialized to the identity.
     """
-    rot = np.eye(3, dtype=np.float32)
-    shift = np.zeros(3, dtype=np.float32)
-
     points = defaultdict(list)
     # dumb brute force
     corr = np.arange(4, dtype=int)
-    for _, point in measurments.items():
+    for _, point in measurements.items():
         for rc, crns in corners.items():
-            x = crns[:, 0] > point[:, 0]
-            y = crns[:, 1] > point[:, 1]
+            x = crns[:, 0] > point[0]
+            y = crns[:, 1] > point[1]
             val = x.astype(int) + 2*y.astype(int)
             if np.array_equal(np.sort(val), corr):
-                point[rc] += [point]
+                points[rc] += [point]
                 break
 
     # Now init the objects
     panels = []
-    for (row, col), meas in points:
+    for (row, col), meas in points.items():
         meas = np.vstack(meas, dtype=np.float32)
-        panel = Panel(mirror, row, col, corners[(row, col)], meas, np.zeros_like(meas, dtype=np.float32), adjusters[(row, col)], rot, shift)
+        panel = Panel(mirror, row, col, corners[(row, col)], meas, adjusters[(row, col)], compensate, adjuster_radius)
         panels += [panel]
     return panels
 
-def panel_model(pars: NDArray[np.float32], panel: Panel, compensate: float) -> NDArray[np.float32]:
+
+def remove_cm(meas, mirror, compensate: float = 0, thresh: float = 10, niters: int=10) -> dict[str, NDArray[np.float32]]:
     """
-    Model function to use when fitting panel transform.
+    Fit for the common mode transformation from the model to the measurements of all panels and them remove it.
+    Note that we only remove the shift component of the common mode, rotations are ignored.
 
     Parameters
     ----------
-    pars : NDArray[np.float32]
-        The fit pars.
-        These are just a small shift to apply to the model inputs.
-        Should have shape `(2,)`.
-    panel : Panel
-        The panel to be fit.
-    compensate : float
-        Compensation to apply to model.
-        This is to account for the radius of a Faro SMR.
-
-    Returns
-    -------
-    model : NDArray[np.float32]
-        The modeled panel surface.
-        Has the same shape as `panel.measurments`.
-    """
-    model = panel.measurments.copy()
-    model[:, :2] += pars
-    model[:, 2] = mirror_surface(model[:, 0], model[:, 1], a[panel.mirror])
-    if compensate != 0.0:
-        compensation = compensate * mirror_norm(model[:, 0], model[: 0], a[panel.mirror])
-        model += compensation
-    return model
-
-def panel_objective(pars: NDArray[np.float32], panel: Panel, compensate: float) -> float:
-    """
-    Objective function to use when fitting panel transform.
-
-    Parameters
-    ----------
-    pars : NDArray
-        The fit pars.
-        These are just a small shift to apply to the model inputs.
-        Should have shape `(2,)`.
-    panel : Panel
-        The panel to be fit.
-    compensate : float
-        Compensation to apply to model.
-        This is to account for the radius of a Faro SMR.
-
-    Returns
-    -------
-    chisq : float
-        The chi squared.
-    """
-    model = panel_model(pars, panel, compensate)
-    rot, sft = get_rigid(model, panel.measurments)
-    return np.sum((apply_transform(model, rot, sft) - panel.measurments)**2)
-
-def fit_panels(panels: list[Panel], max_off: float = 5, compensate: float = 0, thresh: float = 1.5):
-    """
-    Fit for the transformation from the model to the measurments.
-
-    Parameters
-    ----------
-    panels : list[Panel]
-        Panels to fit, will be modified in place.
-    max_off : float, default: 5
-        The maximum offset allowed in the model coordinates.
-        This is in mm.
+    meas : dict[str, NDArray[np.float32]]
+        The photogrammetry data.
+        Dict is data indexed by the target names.
+    mirror : str
+        The mirror this data belong to.
+        Should be 'primary' or 'secondary'.
     compensate : float, default: 0
         Compensation to apply to model.
         This is to account for the radius of a Faro SMR.
-    thresh : float, default: 1.5
+    thresh : float, default: 10
         How many times higher than the median residual a point needs to have to be
         considered an outlier.
+    niters : int, default: 10
+        How many iterations of common mode fitting to do.
+
+    Returns
+    -------
+    kept_panels : list[Panel]
+        The panels that were successfully fit.
     """
-    x0 = np.zeros(2)
-    bounds = [(-max_off, max_off)]*2
-    for panel in panels:
-        res = minimize(panel_objective, x0, (panel, compensate), bounds=bounds)
-        panel.model = panel_model(res.x, panel, compensate)
-        panel.rot, panel.shift = get_rigid(panel.model, panel.measurments)
-        cut = panel.residuals < thresh*np.median(panel.residuals)
+    def _cm(x, panel):
+        panel.measurements *= x[0]
+        panel.measurements[:] -= x[1:4]
+        rot = Rotation.from_euler('xyz', x[4:])
+        panel.measurements = rot.apply(panel.measurements)
+    
+    def _opt(x, panel):
+        p2 = deepcopy(panel)
+        _cm(x, p2)
+        return p2.rms
+
+    # make a fake panel for the full mirror
+    corners = np.array(([-3300, -3300, 0], [-3300, 3300, 0], [3300, 3300, 0], [3300, -3300, 0])) # ack hardcoded
+    labels = np.array(list(meas.keys()))
+    data = np.array(list(meas.values()))
+    corr = np.arange(4, dtype=int)
+    x = np.vstack([corners[:, 0] > dat[0] for dat in data])
+    y = np.vstack([corners[:, 1] > dat[1] for dat in data])
+    val = x.astype(int) + 2*y.astype(int)
+    val = np.sort(val, axis=-1)
+    msk = (val == corr).all(-1)
+    data = data[msk]
+    labels = labels[msk]
+    panel = Panel(mirror, -1, -1, np.zeros((4,3), "float32"), data, np.zeros((5,3), "float32"), compensate)
+
+    x0 = np.hstack([np.ones(1), np.zeros(6)])
+    bounds = [(-.95, 1.05)] + [(-100, 100)]*3 + [(0, 2*np.pi)]*3
+
+    for i in range(niters):
+        if len(panel.measurements) < 3:
+            raise ValueError
+        print(f"iter {i} for common mode fit")
+        cut = panel.res_norm > thresh*np.median(panel.res_norm)
         if np.sum(cut) > 0: 
-            print(f"Removing {np.sum(cut)} points from panel {panel.row}, {panel.col}")
-            panel.measurments = panel.measurments[cut]
-            res = minimize(panel_objective, x0, (panel, compensate), bounds=bounds)
-            panel.model = panel_model(res.x, panel, compensate)
-            panel.rot, panel.shift = get_rigid(panel.model, panel.measurments)
+            print(f"\tRemoving {np.sum(cut)} points from mirror")
+            panel.measurements = panel.measurements[~cut]
+            labels = labels[~cut]
+        print(f"\tRemoving a naive common mode shift of {panel.shift}")
+        panel.measurements -= panel.shift
+        panel.measurements @= panel.rot.T
+        res = minimize(_opt, x0, (panel,), bounds=bounds)
+
+        print(f"\tRemoving a fit common mode with scale {res.x[0]}, shift {res.x[1:4]}, and rotation {res.x[4:]}")
+        _cm(res.x, panel)
+        print(f"\tRemoving a secondary common mode shift of {panel.shift} and rotation of {decompose_rotation(panel.rot)}")
+        panel.measurements -= panel.shift
+        panel.measurements @= panel.rot.T
+    return {l:d for l, d in zip(labels, panel.measurements)} 
 
 
-def plot_panels(panels: list[Panel], title_str: str) -> Figure:
+def plot_panels(panels: list[Panel], title_str: str, vmax: Optional[float] = None) -> Figure:
     """
     Make a plot containing panel residuals and histogram.
     TODO: Correlation?
@@ -349,37 +416,53 @@ def plot_panels(panels: list[Panel], title_str: str) -> Figure:
     ----------
     panels : list[Panel]
         The panels to plot.
-
     title_str : str
         The title string, rms will me appended.
+    vmax : Optional[float], default: None
+        The max of the colorbar. vmin will be -1 times this.
+        Set to None to compute automatically.
+        Should be in um.
 
     Returns
     -------
     figure : Figure
         The figure with panels plotted on it.
     """
-    res_all = np.hstack([panel.residuals for panel in panels])*100
-    min_res, max_res = np.min(res_all[:, 2]), np.max(res_all[:, 2])
-    codes = [Path.MOVETO] + [Path.LINETO]*3 + [Path.CLOSEPOLY]
-    fig, (ax0, ax1) = plt.subplots(1, 2, gridspec_kw={"width_ratios":[2,1]})
+    res_all = np.vstack([panel.residuals for panel in panels])*1000
+    model_all = np.vstack([panel.model for panel in panels])
+    if vmax is None:
+        vmax = np.max(np.abs(res_all[:, 2]))
+    if vmax is None:
+        raise ValueError("vmax still None?")
+    gs = gridspec.GridSpec(2,2, width_ratios=[20,1], height_ratios=[2, 1])
+    fig = plt.figure()
+    ax0 = plt.subplot(gs[0])
+    cax = plt.subplot(gs[1])
+    ax1 = plt.subplot(gs[2:])
     cb = None
     for panel in panels:
-        vertices = [(corner[0], corner[1]) for corner in panel.corners]
-        path = Path(vertices, codes)
-        pathpatch = PathPatch(path, facecolor='none', edgecolor='green')
-        ax0.add_patch(pathpatch)
-        cb = ax0.tricontourf(panel.model_transformed[:, 0], panel.model_transformed[:, 1], panel.residuals[:, 2], vmin=min_res, vmax=max_res)
-    if cb is not None:
-        fig.colorbar(cb, ax0)
+        ax0.tricontourf(panel.model[:, 0], panel.model[:, 1], panel.residuals[:, 2]*1000, vmin=-1*vmax, vmax=vmax, cmap='coolwarm', alpha=.6)
+        cb = ax0.scatter(panel.model[:, 0], panel.model[:, 1], s=40, c=panel.residuals[:, 2]*1000, vmin=-1*vmax, vmax=vmax, cmap="coolwarm", marker="o", alpha=.9, linewidth=2, edgecolor="black") 
+        ax0.scatter(panel.meas_adj[:, 0], panel.meas_adj[:, 1], marker="x", linewidth=1, color="black") 
+    ax0.tricontourf(model_all[:, 0], model_all[:, 1], res_all[:, 2], vmin=-1*vmax, vmax=vmax, cmap='coolwarm', alpha=.2)
     ax0.set_xlabel("x (mm)")
     ax0.set_ylabel("y (mm)")
+    ax0.set_xlim(-3300, 3300) # ack hardcoded!
+    ax0.set_ylim(-3300, 3300)
+    if cb is not None:
+        fig.colorbar(cb, cax)
+    ax0.set_aspect('equal')
+    for panel in panels:
+        ax0.add_patch(Polygon(panel.corners[[0,1,3,2], :2], fill=False, color="black"))
 
     ax1.hist(res_all[:, 2], bins=len(panels))
     ax1.set_xlabel("z residual (um)")
 
-    points = np.array([len(panel.measurments) for panel in panels])
-    rms = np.array([len(panel.rms) for panel in panels])
-    tot_rms = (np.sum(rms*points)/np.sum(points))*100
+    points = np.array([len(panel.measurements) for panel in panels])
+    rms = np.array([panel.rms for panel in panels])
+    tot_rms = 1000*np.sum(rms*points)/np.sum(points)
     fig.suptitle(f"{title_str}, RMS={tot_rms:.2f} um")
+
+    plt.show()
 
     return fig
