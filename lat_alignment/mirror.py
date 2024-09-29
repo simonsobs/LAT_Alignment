@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from functools import cached_property
 import numpy as np
 from numpy.typing import NDArray
-from megham.transform import apply_transform, get_rigid, decompose_rotation
+from megham.transform import apply_transform, get_rigid, decompose_rotation, get_affine, decompose_affine
 from collections import defaultdict
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon
@@ -330,7 +330,7 @@ def gen_panels(mirror: str, measurements: dict[str, NDArray[np.float32]], corner
     return panels
 
 
-def remove_cm(meas, mirror, compensate: float = 0, thresh: float = 10, niters: int=10) -> dict[str, NDArray[np.float32]]:
+def remove_cm(meas, mirror, compensate: float = 0, thresh: float = 10, niters: int=10, verbose=False) -> dict[str, NDArray[np.float32]]:
     """
     Fit for the common mode transformation from the model to the measurements of all panels and them remove it.
     Note that we only remove the shift component of the common mode, rotations are ignored.
@@ -351,6 +351,8 @@ def remove_cm(meas, mirror, compensate: float = 0, thresh: float = 10, niters: i
         considered an outlier.
     niters : int, default: 10
         How many iterations of common mode fitting to do.
+    verbose : bool, default: False
+        If True print the transformation for each iteration.
 
     Returns
     -------
@@ -358,10 +360,10 @@ def remove_cm(meas, mirror, compensate: float = 0, thresh: float = 10, niters: i
         The panels that were successfully fit.
     """
     def _cm(x, panel):
-        panel.measurements *= x[0]
         panel.measurements[:] -= x[1:4]
         rot = Rotation.from_euler('xyz', x[4:])
         panel.measurements = rot.apply(panel.measurements)
+        panel.measurements *= x[0]
     
     def _opt(x, panel):
         p2 = deepcopy(panel)
@@ -394,16 +396,28 @@ def remove_cm(meas, mirror, compensate: float = 0, thresh: float = 10, niters: i
             print(f"\tRemoving {np.sum(cut)} points from mirror")
             panel.measurements = panel.measurements[~cut]
             labels = labels[~cut]
-        print(f"\tRemoving a naive common mode shift of {panel.shift}")
-        panel.measurements -= panel.shift
-        panel.measurements @= panel.rot.T
-        res = minimize(_opt, x0, (panel,), bounds=bounds)
+            data = data[~cut]
 
-        print(f"\tRemoving a fit common mode with scale {res.x[0]}, shift {res.x[1:4]}, and rotation {res.x[4:]}")
-        _cm(res.x, panel)
-        print(f"\tRemoving a secondary common mode shift of {panel.shift} and rotation of {decompose_rotation(panel.rot)}")
+        if verbose:
+            print(f"\tRemoving a naive common mode shift of {panel.shift}")
         panel.measurements -= panel.shift
         panel.measurements @= panel.rot.T
+
+        res = minimize(_opt, x0, (panel,), bounds=bounds)
+        if verbose:
+            print(f"\tRemoving a fit common mode with scale {res.x[0]}, shift {res.x[1:4]}, and rotation {res.x[4:]}")
+        _cm(res.x, panel)
+
+        if verbose:
+            print(f"\tRemoving a secondary common mode shift of {panel.shift} and rotation of {decompose_rotation(panel.rot)}")
+        panel.measurements -= panel.shift
+        panel.measurements @= panel.rot.T
+
+    aff, sft = get_affine(data, panel.measurements, method="mean", weights=np.ones(len(data)))
+    scale, shear, rot = decompose_affine(aff)
+    rot = decompose_rotation(rot)
+    print(f"Full common mode is:\n\tshift = {sft} mm\n\tscale = {scale}\n\tshear = {shear}\n\trot = {np.rad2deg(rot)} deg")
+
     return {l:d for l, d in zip(labels, panel.measurements)} 
 
 
