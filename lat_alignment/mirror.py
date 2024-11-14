@@ -2,18 +2,26 @@
 Functions to describe the mirror surface.
 """
 from scipy.optimize import minimize
+from collections import defaultdict
 from copy import deepcopy
 from dataclasses import dataclass, field
 from functools import cached_property
-import numpy as np
-from numpy.typing import NDArray
-from megham.transform import apply_transform, get_rigid, decompose_rotation, get_affine, decompose_affine
-from collections import defaultdict
-import matplotlib.pyplot as plt
-from matplotlib.patches import Polygon
-import matplotlib.gridspec as gridspec
-from matplotlib.figure import Figure
 from typing import Optional
+
+import matplotlib.gridspec as gridspec
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.figure import Figure
+from matplotlib.patches import Polygon
+from megham.transform import (
+    apply_transform,
+    decompose_affine,
+    decompose_rotation,
+    get_affine,
+    get_rigid,
+)
+from numpy.typing import NDArray
+from scipy.optimize import minimize
 from scipy.spatial.transform import Rotation
 
 # fmt: off
@@ -42,7 +50,9 @@ a = {'primary' :
 # fmt: on
 
 
-def mirror_surface(x: NDArray[np.float32], y: NDArray[np.float32], a: NDArray[np.float32]) -> NDArray[np.float32]:
+def mirror_surface(
+    x: NDArray[np.float32], y: NDArray[np.float32], a: NDArray[np.float32]
+) -> NDArray[np.float32]:
     """
     Analytic form of the mirror surface.
 
@@ -72,7 +82,9 @@ def mirror_surface(x: NDArray[np.float32], y: NDArray[np.float32], a: NDArray[np
     return z
 
 
-def mirror_norm(x: NDArray[np.float32], y: NDArray[np.float32], a: NDArray[np.float32]) -> NDArray[np.float32]:
+def mirror_norm(
+    x: NDArray[np.float32], y: NDArray[np.float32], a: NDArray[np.float32]
+) -> NDArray[np.float32]:
     """
     Analytic form of the vector normal to the mirror surface.
 
@@ -101,14 +113,15 @@ def mirror_norm(x: NDArray[np.float32], y: NDArray[np.float32], a: NDArray[np.fl
     for i in range(a.shape[0]):
         for j in range(a.shape[1]):
             if i != 0:
-                x_n += a[i, j] * (x ** (i - 1)) / (Rn ** i) * (y / Rn) ** j
+                x_n += a[i, j] * (x ** (i - 1)) / (Rn**i) * (y / Rn) ** j
             if j != 0:
-                y_n += a[i, j] * (x / Rn) ** i * (y ** (j - 1)) / (Rn ** j)
+                y_n += a[i, j] * (x / Rn) ** i * (y ** (j - 1)) / (Rn**j)
 
     z_n = -1 * np.ones_like(x_n)
     normals = np.array((x_n, y_n, z_n)).T
     normals /= np.linalg.norm(normals, axis=-1)[:, np.newaxis]
     return normals
+
 
 @dataclass
 class Panel:
@@ -138,21 +151,26 @@ class Panel:
         The amount (in mm) to compensate the model surface by.
         This is to account for things like the Faro SMR.
     """
-    mirror : str
-    row : int
-    col : int
-    corners : NDArray[np.float32]
-    measurements : NDArray[np.float32]
-    nom_adj : NDArray[np.float32]
+
+    mirror: str
+    row: int
+    col: int
+    corners: NDArray[np.float32]
+    measurements: NDArray[np.float32]
+    nom_adj: NDArray[np.float32]
     compensate: float = field(default=0.0)
     adjuster_radius: float = field(default=50.0)
-
 
     def __post_init__(self):
         self.measurements = np.atleast_2d(self.measurements)
 
     def __setattr__(self, name, value):
-        if name == "nom_adj" or name == "mirror" or name == "measurements" or name == "compensate":
+        if (
+            name == "nom_adj"
+            or name == "mirror"
+            or name == "measurements"
+            or name == "compensate"
+        ):
             self.__dict__.pop("can_surface", None)
             self.__dict__.pop("model", None)
             self.__dict__.pop("residuals", None)
@@ -176,7 +194,9 @@ class Panel:
         model = self.measurements.copy()
         model[:, 2] = mirror_surface(model[:, 0], model[:, 1], a[self.mirror])
         if self.compensate != 0.0:
-            compensation = self.compensate * mirror_norm(model[:, 0], model[: 0], a[self.mirror])
+            compensation = self.compensate * mirror_norm(
+                model[:, 0], model[:0], a[self.mirror]
+            )
             model += compensation
         return model
 
@@ -216,7 +236,7 @@ class Panel:
         The cannonical surface transformed to be in the measured coordinates.
         """
         return apply_transform(self.can_surface, self.rot, self.shift)
-    
+
     @cached_property
     def meas_adj(self):
         """
@@ -240,7 +260,7 @@ class Panel:
             resid[i] = np.mean(self.transformed_residuals[msk, 2])
 
         return resid
-    
+
     @cached_property
     def model_transformed(self):
         """
@@ -267,7 +287,7 @@ class Panel:
         """
         Get norm of residuals between transformed model and measurements.
         """
-        return np.linalg.norm(self.residuals, axis=-1) 
+        return np.linalg.norm(self.residuals, axis=-1)
 
     @cached_property
     def rms(self):
@@ -275,9 +295,16 @@ class Panel:
         Get rms between model and measurements.
         """
         return np.sqrt(np.mean(self.residuals[:, 2].ravel() ** 2))
-    
 
-def gen_panels(mirror: str, measurements: dict[str, NDArray[np.float32]], corners: dict[tuple[int, int], NDArray[np.float32]], adjusters: dict[tuple[int, int], NDArray[np.float32]], compensate: float = 0.0, adjuster_radius: float = 50.0) -> list[Panel]:
+
+def gen_panels(
+    mirror: str,
+    measurements: dict[str, NDArray[np.float32]],
+    corners: dict[tuple[int, int], NDArray[np.float32]],
+    adjusters: dict[tuple[int, int], NDArray[np.float32]],
+    compensate: float = 0.0,
+    adjuster_radius: float = 50.0,
+) -> list[Panel]:
     """
     Use a set of measurements to generate panel objects.
 
@@ -316,7 +343,7 @@ def gen_panels(mirror: str, measurements: dict[str, NDArray[np.float32]], corner
         for rc, crns in corners.items():
             x = crns[:, 0] > point[0]
             y = crns[:, 1] > point[1]
-            val = x.astype(int) + 2*y.astype(int)
+            val = x.astype(int) + 2 * y.astype(int)
             if np.array_equal(np.sort(val), corr):
                 points[rc] += [point]
                 break
@@ -325,12 +352,29 @@ def gen_panels(mirror: str, measurements: dict[str, NDArray[np.float32]], corner
     panels = []
     for (row, col), meas in points.items():
         meas = np.vstack(meas, dtype=np.float32)
-        panel = Panel(mirror, row, col, corners[(row, col)], meas, adjusters[(row, col)], compensate, adjuster_radius)
+        panel = Panel(
+            mirror,
+            row,
+            col,
+            corners[(row, col)],
+            meas,
+            adjusters[(row, col)],
+            compensate,
+            adjuster_radius,
+        )
         panels += [panel]
     return panels
 
 
-def remove_cm(meas, mirror, compensate: float = 0, thresh: float = 10, cut_thresh: float = 50, niters: int=10, verbose=False) -> dict[str, NDArray[np.float32]]:
+def remove_cm(
+    meas,
+    mirror,
+    compensate: float = 0,
+    thresh: float = 10,
+    cut_thresh: float = 50,
+    niters: int = 10,
+    verbose=False,
+) -> dict[str, NDArray[np.float32]]:
     """
     Fit for the common mode transformation from the model to the measurements of all panels and them remove it.
     Note that we only remove the shift component of the common mode, rotations are ignored.
@@ -359,42 +403,53 @@ def remove_cm(meas, mirror, compensate: float = 0, thresh: float = 10, cut_thres
     kept_panels : list[Panel]
         The panels that were successfully fit.
     """
+
     def _cm(x, panel):
         panel.measurements[:] -= x[1:4]
-        rot = Rotation.from_euler('xyz', x[4:])
+        rot = Rotation.from_euler("xyz", x[4:])
         panel.measurements = rot.apply(panel.measurements)
         panel.measurements *= x[0]
-    
+
     def _opt(x, panel):
         p2 = deepcopy(panel)
         _cm(x, p2)
         return p2.rms
 
     # make a fake panel for the full mirror
-    corners = np.array(([-3300, -3300, 0], [-3300, 3300, 0], [3300, 3300, 0], [3300, -3300, 0])) # ack hardcoded
+    corners = np.array(
+        ([-3300, -3300, 0], [-3300, 3300, 0], [3300, 3300, 0], [3300, -3300, 0])
+    )  # ack hardcoded
     labels = np.array(list(meas.keys()))
     data = np.array(list(meas.values()))
     corr = np.arange(4, dtype=int)
     x = np.vstack([corners[:, 0] > dat[0] for dat in data])
     y = np.vstack([corners[:, 1] > dat[1] for dat in data])
-    val = x.astype(int) + 2*y.astype(int)
+    val = x.astype(int) + 2 * y.astype(int)
     val = np.sort(val, axis=-1)
     msk = (val == corr).all(-1)
     data = data[msk]
     labels = labels[msk]
-    panel = Panel(mirror, -1, -1, np.zeros((4,3), "float32"), data, np.zeros((5,3), "float32"), compensate)
+    panel = Panel(
+        mirror,
+        -1,
+        -1,
+        np.zeros((4, 3), "float32"),
+        data,
+        np.zeros((5, 3), "float32"),
+        compensate,
+    )
     data = data.copy()
     data_clean = data.copy()
 
     x0 = np.hstack([np.ones(1), np.zeros(6)])
-    bounds = [(-.95, 1.05)] + [(-100, 100)]*3 + [(0, 2*np.pi)]*3
+    bounds = [(-0.95, 1.05)] + [(-100, 100)] * 3 + [(0, 2 * np.pi)] * 3
 
     for i in range(niters):
         if len(panel.measurements) < 3:
             raise ValueError
         print(f"iter {i} for common mode fit")
-        cut = panel.res_norm > thresh*np.median(panel.res_norm)
-        if np.sum(cut) > 0: 
+        cut = panel.res_norm > thresh * np.median(panel.res_norm)
+        if np.sum(cut) > 0:
             # print(f"\tRemoving {np.sum(cut)} points from mirror")
             panel.measurements = panel.measurements[~cut]
             # labels = labels[~cut]
@@ -407,29 +462,39 @@ def remove_cm(meas, mirror, compensate: float = 0, thresh: float = 10, cut_thres
 
         res = minimize(_opt, x0, (panel,), bounds=bounds)
         if verbose:
-            print(f"\tRemoving a fit common mode with scale {res.x[0]}, shift {res.x[1:4]}, and rotation {res.x[4:]}")
+            print(
+                f"\tRemoving a fit common mode with scale {res.x[0]}, shift {res.x[1:4]}, and rotation {res.x[4:]}"
+            )
         _cm(res.x, panel)
 
         if verbose:
-            print(f"\tRemoving a secondary common mode shift of {panel.shift} and rotation of {decompose_rotation(panel.rot)}")
+            print(
+                f"\tRemoving a secondary common mode shift of {panel.shift} and rotation of {decompose_rotation(panel.rot)}"
+            )
         panel.measurements -= panel.shift
         panel.measurements @= panel.rot.T
 
-    aff, sft = get_affine(data, panel.measurements, method="mean", weights=np.ones(len(data)))
+    aff, sft = get_affine(
+        data, panel.measurements, method="mean", weights=np.ones(len(data))
+    )
     scale, shear, rot = decompose_affine(aff)
     rot = decompose_rotation(rot)
-    print(f"Full common mode is:\n\tshift = {sft} mm\n\tscale = {scale}\n\tshear = {shear}\n\trot = {np.rad2deg(rot)} deg")
+    print(
+        f"Full common mode is:\n\tshift = {sft} mm\n\tscale = {scale}\n\tshear = {shear}\n\trot = {np.rad2deg(rot)} deg"
+    )
 
     panel.measurements = apply_transform(data_clean, aff, sft)
-    cut = panel.res_norm > cut_thresh*np.median(panel.res_norm)
-    if np.sum(cut) > 0: 
+    cut = panel.res_norm > cut_thresh * np.median(panel.res_norm)
+    if np.sum(cut) > 0:
         print(f"Removing {np.sum(cut)} points from mirror")
         panel.measurements = panel.measurements[~cut]
 
-    return {l:d for l, d in zip(labels, panel.measurements)} 
+    return {l: d for l, d in zip(labels, panel.measurements)}
 
 
-def plot_panels(panels: list[Panel], title_str: str, vmax: Optional[float] = None) -> Figure:
+def plot_panels(
+    panels: list[Panel], title_str: str, vmax: Optional[float] = None
+) -> Figure:
     """
     Make a plot containing panel residuals and histogram.
     TODO: Correlation?
@@ -450,39 +515,75 @@ def plot_panels(panels: list[Panel], title_str: str, vmax: Optional[float] = Non
     figure : Figure
         The figure with panels plotted on it.
     """
-    res_all = np.vstack([panel.residuals for panel in panels])*1000
+    res_all = np.vstack([panel.residuals for panel in panels]) * 1000
     model_all = np.vstack([panel.model for panel in panels])
     if vmax is None:
         vmax = np.max(np.abs(res_all[:, 2]))
     if vmax is None:
         raise ValueError("vmax still None?")
-    gs = gridspec.GridSpec(2,2, width_ratios=[20,1], height_ratios=[2, 1])
+    gs = gridspec.GridSpec(2, 2, width_ratios=[20, 1], height_ratios=[2, 1])
     fig = plt.figure()
     ax0 = plt.subplot(gs[0])
     cax = plt.subplot(gs[1])
     ax1 = plt.subplot(gs[2:])
     cb = None
     for panel in panels:
-        ax0.tricontourf(panel.model[:, 0], panel.model[:, 1], panel.residuals[:, 2]*1000, vmin=-1*vmax, vmax=vmax, cmap='coolwarm', alpha=.6)
-        cb = ax0.scatter(panel.model[:, 0], panel.model[:, 1], s=40, c=panel.residuals[:, 2]*1000, vmin=-1*vmax, vmax=vmax, cmap="coolwarm", marker="o", alpha=.9, linewidth=2, edgecolor="black") 
-        ax0.scatter(panel.meas_adj[:, 0], panel.meas_adj[:, 1], marker="x", linewidth=1, color="black") 
-    ax0.tricontourf(model_all[:, 0], model_all[:, 1], res_all[:, 2], vmin=-1*vmax, vmax=vmax, cmap='coolwarm', alpha=.2)
+        ax0.tricontourf(
+            panel.model[:, 0],
+            panel.model[:, 1],
+            panel.residuals[:, 2] * 1000,
+            vmin=-1 * vmax,
+            vmax=vmax,
+            cmap="coolwarm",
+            alpha=0.6,
+        )
+        cb = ax0.scatter(
+            panel.model[:, 0],
+            panel.model[:, 1],
+            s=40,
+            c=panel.residuals[:, 2] * 1000,
+            vmin=-1 * vmax,
+            vmax=vmax,
+            cmap="coolwarm",
+            marker="o",
+            alpha=0.9,
+            linewidth=2,
+            edgecolor="black",
+        )
+        ax0.scatter(
+            panel.meas_adj[:, 0],
+            panel.meas_adj[:, 1],
+            marker="x",
+            linewidth=1,
+            color="black",
+        )
+    ax0.tricontourf(
+        model_all[:, 0],
+        model_all[:, 1],
+        res_all[:, 2],
+        vmin=-1 * vmax,
+        vmax=vmax,
+        cmap="coolwarm",
+        alpha=0.2,
+    )
     ax0.set_xlabel("x (mm)")
     ax0.set_ylabel("y (mm)")
-    ax0.set_xlim(-3300, 3300) # ack hardcoded!
+    ax0.set_xlim(-3300, 3300)  # ack hardcoded!
     ax0.set_ylim(-3300, 3300)
     if cb is not None:
         fig.colorbar(cb, cax)
-    ax0.set_aspect('equal')
+    ax0.set_aspect("equal")
     for panel in panels:
-        ax0.add_patch(Polygon(panel.corners[[0,1,3,2], :2], fill=False, color="black"))
+        ax0.add_patch(
+            Polygon(panel.corners[[0, 1, 3, 2], :2], fill=False, color="black")
+        )
 
     ax1.hist(res_all[:, 2], bins=len(panels))
     ax1.set_xlabel("z residual (um)")
 
     points = np.array([len(panel.measurements) for panel in panels])
     rms = np.array([panel.rms for panel in panels])
-    tot_rms = 1000*np.sum(rms*points)/np.sum(points)
+    tot_rms = 1000 * np.sum(rms * points) / np.sum(points)
     fig.suptitle(f"{title_str}, RMS={tot_rms:.2f} um")
 
     plt.show()

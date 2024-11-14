@@ -1,11 +1,16 @@
-import os
-import yaml
-import numpy as np
 import argparse
-from . import mirror as mir, adjustments as adj, io
-import matplotlib.pyplot as plt
-from pqdm.processes import pqdm
+import os
 from functools import partial
+
+import matplotlib.pyplot as plt
+import numpy as np
+import yaml
+from pqdm.processes import pqdm
+
+from . import adjustments as adj
+from . import io
+from . import mirror as mir
+
 
 def adjust_panel(panel, mnum, cfg):
     adjustments = np.zeros(17)
@@ -16,9 +21,15 @@ def adjust_panel(panel, mnum, cfg):
     meas_adj[:, 2] += panel.meas_adj_resid
     meas_surface = panel.meas_surface.copy()
     meas_surface[:, 2] += panel.meas_adj_resid
-    dy, dy, d_adj, dx_err, dy_err, d_adj_err = adj.calc_adjustments(panel.can_surface, meas_surface, meas_adj, **cfg.get("adjust", {}))
-    adjustments[3:] = np.array([dy, dy] + list(d_adj) + [dx_err, dy_err] + list(d_adj_err))
+    dy, dy, d_adj, dx_err, dy_err, d_adj_err = adj.calc_adjustments(
+        panel.can_surface, meas_surface, meas_adj, **cfg.get("adjust", {})
+    )
+    adjustments[3:] = np.array(
+        [dy, dy] + list(d_adj) + [dx_err, dy_err] + list(d_adj_err)
+    )
+
     return adjustments
+
 
 def main():
     # load config
@@ -46,10 +57,19 @@ def main():
     adjusters = io.load_adjusters(os.path.join(dat_dir, f"{mirror}_adj.csv"), mirror)
 
     # init, fit, and plot panels
-    meas = mir.remove_cm(meas, mirror, cfg.get("compensate", 0), **cfg.get("common_mode", {}))
-    panels = mir.gen_panels(mirror, meas, corners, adjusters, cfg.get("compensate", 0), cfg.get("adjuster_radius", 100))
+    meas = mir.remove_cm(
+        meas, mirror, cfg.get("compensate", 0), **cfg.get("common_mode", {})
+    )
+    panels = mir.gen_panels(
+        mirror,
+        meas,
+        corners,
+        adjusters,
+        cfg.get("compensate", 0),
+        cfg.get("adjuster_radius", 100),
+    )
     title_str = cfg["title"]
-    fig = mir.plot_panels(panels, title_str, vmax = cfg.get("vmax", None))
+    fig = mir.plot_panels(panels, title_str, vmax=cfg.get("vmax", None))
     fig.savefig(os.path.join(cfgdir, f"{title_str.replace(' ', '_')}.png"))
 
     # calc and save adjustments
@@ -57,4 +77,8 @@ def main():
     adjustments = np.vstack(pqdm(panels, _adjust, n_jobs=8))
     order = np.lexsort((adjustments[2], adjustments[1], adjustments[0]))
     adjustments = adjustments[order]
-    np.savetxt(os.path.join(cfgdir, f"{title_str.replace(' ', '_')}.csv"), adjustments, fmt=["%d", "%d", "%d"]+["%.5f"]*14)
+    np.savetxt(
+        os.path.join(cfgdir, f"{title_str.replace(' ', '_')}.csv"),
+        adjustments,
+        fmt=["%d", "%d", "%d"] + ["%.5f"] * 14,
+    )
