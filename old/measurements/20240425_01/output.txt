@@ -1,0 +1,22 @@
+Starting alignment procedure for measurement at: /home/lordskh/Documents/Research/SO/LAT_Alignment/measurements/20240425_01
+Using coordinate system: global
+Using origin shift: [0. 0. 0.]
+Applying compensation: 19.050000 mm
+Common mode subtraction set to: True
+Aligning primary mirror
+Fitting panel 01-011551
+RMS of surface is: 5593.643
+Removing a common mode of [ 50.      -50.      108.35986] mm.
+Applying an offset of -1.918367 to all z adjusters
+Adjuster 1 of panel 0 under range by 19.280222
+Adjuster 2 of panel 0 under range by 79.889235
+Adjuster 3 of panel 0 over range by 78.761652
+Adjuster 4 of panel 0 over range by 18.152651
+Aligning panel 0
+	Move panel 22.485 ± 0.000 mm to the right
+	Move panel 35.621 ± 0.000 mm down
+	Move adjuster 1 20.280 ± 0.000 mm out
+	Move adjuster 2 80.889 ± -0.000 mm out
+	Move adjuster 3 79.762 ± 0.000 mm out
+	Move adjuster 4 19.153 ± -0.000 mm out
+	Move adjuster 5 0.540 ± 0.000 mm out

@@ -1,0 +1,5 @@
+mirror: "secondary"
+measurement: "Solat_M2_Set37_2024-08-24_Bundle4.csv"
+# measurement: "Solat_M2_Set38_2024-08-22_Bundle3.csv"
+title: "M2 20240822"
+vmax: 200
