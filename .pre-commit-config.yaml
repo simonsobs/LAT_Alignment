@@ -1,0 +1,28 @@
+repos:
+- repo: https://github.com/asottile/pyupgrade
+  rev: v3.19.0
+  hooks:
+    - id: pyupgrade
+- repo: https://github.com/commitizen-tools/commitizen
+  rev: v3.30.1
+  hooks:
+    - id: commitizen
+    - id: commitizen-branch
+      stages:
+        - pre-push
+- repo: https://github.com/pycqa/isort
+  rev: 5.13.2
+  hooks:
+    - id: isort
+      args:
+        - --profile
+        - black
+- repo: https://github.com/psf/black
+  rev: 24.10.0 
+  hooks:
+    - id: black
+
+ci:
+  autofix_commit_message: "ci: auto fixes"
+  autofix_prs: True
+  autoupdate_commit_msg: "ci: pre-commit autoupdate"

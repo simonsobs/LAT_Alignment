@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name="lat_alignment"
+version="3.0.0"
+authors= [{name ="Saianeesh Keshav Haridas"}]
+description = "Software package for the alignment of a SO style Large Aperature Telescope (LAT)"
+readme = "README.md"
+requires-python = ">=3.9"
+keywords = ["LAT", "Simons Observatory", "Optical Alignment"]
+license = {text = "GPLv3"}
+classifiers = [ "Programming Language :: Python" ]
+dependencies = ["scipy", "numpy", "matplotlib", "pyyaml", "megham", "pqdm"]
+
+[project.optional-dependencies]
+docs = [
+    "mkdocs",
+    "mkdocs-material",
+    "mkdocstrings[python]",
+    "mkdocs-gen-files",
+    "mkdocs-literate-nav",
+    "mkdocs-homepage-copier",
+]
+
+[project.scripts]
+lat_alignment = "lat_alignment.alignment:main"
+
+[tool.setuptools]
+packages=["lat_alignment"]
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+tag_format = "$version"
+version_scheme = "semver"
+version_provider = "pep621"
+update_changelog_on_bump = true
