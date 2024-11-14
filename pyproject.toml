@@ -10,7 +10,7 @@ description = "Software package for the alignment of a SO style Large Aperature 
 readme = "README.md"
 requires-python = ">=3.9"
 keywords = ["LAT", "Simons Observatory", "Optical Alignment"]
-license = {text = "GPLv3"}
+license = {text = "BSD-2-Clause"}
 classifiers = [ "Programming Language :: Python" ]
 dependencies = ["scipy", "numpy", "matplotlib", "pyyaml", "megham", "pqdm"]
 
