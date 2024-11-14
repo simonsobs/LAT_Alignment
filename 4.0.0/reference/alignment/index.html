@@ -327,6 +327,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#lat_alignment.alignment.adjust_panel" class="md-nav__link">
+    <span class="md-ellipsis">
+      adjust_panel
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -460,6 +469,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#lat_alignment.alignment.adjust_panel" class="md-nav__link">
+    <span class="md-ellipsis">
+      adjust_panel
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -484,6 +502,10 @@
 <a id="lat_alignment.alignment"></a>
     <div class="doc doc-contents first">
 
+        <p>Main driver script for running the alignment.
+You typically want to use the <code>lat_alignment</code> entrypoint rather than
+calling this directly.</p>
+
 
 
 
@@ -500,6 +522,189 @@
 
 
 
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="lat_alignment.alignment.adjust_panel" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">adjust_panel</span><span class="p">(</span><span class="n">panel</span><span class="p">,</span> <span class="n">mnum</span><span class="p">,</span> <span class="n">cfg</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Helper function to get the adjustments for a single panel.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>panel</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="lat_alignment.mirror.Panel" href="../mirror/#lat_alignment.mirror.Panel">Panel</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The mirror panel to adjust.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>mnum</code>
+            </td>
+            <td>
+                  <code>int</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The mirror number.
+1 for the primary and 2 for the secondary.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>cfg</code>
+            </td>
+            <td>
+                  <code>dict</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The configuration dictionairy.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>adjustments</code></td>            <td>
+                  <code><span title="numpy.typing.NDArray">NDArray</span>[<span title="numpy.float32">float32</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The adjustments to make for the panel.
+This is a 17 element array with the following structure:
+<code>[mnum, panel_row, panel_col, dx, dy, d_adj1, ..., d_adj5, dx_err, dy_err, d_adj1_err, ..., d_adj5_err]</code>.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>lat_alignment/alignment.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">adjust_panel</span><span class="p">(</span><span class="n">panel</span><span class="p">:</span> <span class="n">mir</span><span class="o">.</span><span class="n">Panel</span><span class="p">,</span> <span class="n">mnum</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">cfg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Helper function to get the adjustments for a single panel.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    panel : mir.Panel</span>
+<span class="sd">        The mirror panel to adjust.</span>
+<span class="sd">    mnum : int</span>
+<span class="sd">        The mirror number.</span>
+<span class="sd">        1 for the primary and 2 for the secondary.</span>
+<span class="sd">    cfg : dict</span>
+<span class="sd">        The configuration dictionairy.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    adjustments : NDArray[np.float32]</span>
+<span class="sd">        The adjustments to make for the panel.</span>
+<span class="sd">        This is a 17 element array with the following structure:</span>
+<span class="sd">        `[mnum, panel_row, panel_col, dx, dy, d_adj1, ..., d_adj5, dx_err, dy_err, d_adj1_err, ..., d_adj5_err]`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">adjustments</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">17</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">adjustments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">mnum</span>
+    <span class="n">adjustments</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">row</span>
+    <span class="n">adjustments</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">col</span>
+    <span class="n">meas_adj</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">meas_adj</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">meas_adj</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="n">panel</span><span class="o">.</span><span class="n">meas_adj_resid</span>
+    <span class="n">meas_surface</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">meas_surface</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">meas_surface</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="n">panel</span><span class="o">.</span><span class="n">meas_adj_resid</span>
+    <span class="n">dy</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">d_adj</span><span class="p">,</span> <span class="n">dx_err</span><span class="p">,</span> <span class="n">dy_err</span><span class="p">,</span> <span class="n">d_adj_err</span> <span class="o">=</span> <span class="n">adj</span><span class="o">.</span><span class="n">calc_adjustments</span><span class="p">(</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">can_surface</span><span class="p">,</span> <span class="n">meas_surface</span><span class="p">,</span> <span class="n">meas_adj</span><span class="p">,</span> <span class="o">**</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;adjust&quot;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="p">)</span>
+    <span class="n">adjustments</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">dy</span><span class="p">,</span> <span class="n">dy</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">d_adj</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">dx_err</span><span class="p">,</span> <span class="n">dy_err</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">d_adj_err</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">adjustments</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
 
 
 
