@@ -53,14 +53,14 @@ def load_photo(path: str, align: bool =True, err_thresh: float =2, plot: bool=Tr
 
     # Lets find and remove doubles
     # Dumb brute force
-    edm = make_edm(coords)
+    edm = make_edm(coords[:, :2])
     np.fill_diagonal(edm, np.nan)
     to_kill = []
     for i in range(len(edm)):
         if i in to_kill:
             continue
         imin = np.nanargmin(edm[i])
-        if edm[i][imin] > 10:
+        if edm[i][imin] > 20:
             continue
         if err[i] < err[imin]:
             to_kill += [imin]
