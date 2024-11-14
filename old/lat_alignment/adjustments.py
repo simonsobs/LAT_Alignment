@@ -3,11 +3,13 @@ Calculate adjustments needed to align LAT mirror panel
 
 Author: Saianeesh Keshav Haridas
 """
+
+from typing import Tuple
+
 import numpy as np
 import scipy.optimize as opt
-from scipy.spatial.transform import Rotation as rot
 from numpy import float64, ndarray
-from typing import Tuple
+from scipy.spatial.transform import Rotation as rot
 
 
 def rotate(
@@ -108,10 +110,7 @@ def adjustment_fit_func(
 
 
 def calc_adjustments(
-    can_points: ndarray,
-    points: ndarray,
-    adjustors: ndarray,
-    **kwargs
+    can_points: ndarray, points: ndarray, adjustors: ndarray, **kwargs
 ) -> Tuple[float64, float64, ndarray, float64, float64, ndarray]:
     """
     Calculate adjustments needed to align panel

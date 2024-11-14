@@ -1,7 +1,7 @@
 """
 Functions to describe the mirror surface.
 """
-from scipy.optimize import minimize
+
 from collections import defaultdict
 from copy import deepcopy
 from dataclasses import dataclass, field

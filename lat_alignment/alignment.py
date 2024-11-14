@@ -1,10 +1,16 @@
+"""
+Main driver script for running the alignment.
+You typically want to use the `lat_alignment` entrypoint rather than
+calling this directly.
+"""
+
 import argparse
 import os
 from functools import partial
 
-import matplotlib.pyplot as plt
 import numpy as np
 import yaml
+from numpy.typing import NDArray
 from pqdm.processes import pqdm
 
 from . import adjustments as adj
@@ -12,8 +18,28 @@ from . import io
 from . import mirror as mir
 
 
-def adjust_panel(panel, mnum, cfg):
-    adjustments = np.zeros(17)
+def adjust_panel(panel: mir.Panel, mnum: int, cfg: dict) -> NDArray[np.float32]:
+    """
+    Helper function to get the adjustments for a single panel.
+
+    Parameters
+    ----------
+    panel : mir.Panel
+        The mirror panel to adjust.
+    mnum : int
+        The mirror number.
+        1 for the primary and 2 for the secondary.
+    cfg : dict
+        The configuration dictionairy.
+
+    Returns
+    -------
+    adjustments : NDArray[np.float32]
+        The adjustments to make for the panel.
+        This is a 17 element array with the following structure:
+        `[mnum, panel_row, panel_col, dx, dy, d_adj1, ..., d_adj5, dx_err, dy_err, d_adj1_err, ..., d_adj5_err]`.
+    """
+    adjustments = np.zeros(17, np.float32)
     adjustments[0] = mnum
     adjustments[1] = panel.row
     adjustments[2] = panel.col

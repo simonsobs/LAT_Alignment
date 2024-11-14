@@ -3,6 +3,7 @@ Perform alignment of LAT mirrors
 
 Author: Saianeesh Keshav Haridas
 """
+
 import argparse as ap
 import logging
 import os
@@ -341,7 +342,7 @@ def main():
     parser.add_argument("config", help="Path to configuration file, should be a yaml")
     args = parser.parse_args()
 
-    with open(args.config, "r") as file:
+    with open(args.config) as file:
         cfg = yaml.safe_load(file)
     measurement_dir = cfg.get(
         "measurement_dir", os.path.dirname(os.path.abspath(args.config))
@@ -418,7 +419,7 @@ def main():
         if not os.path.isfile(adj_path):
             logger.error("Provided adjuster postion file doesn't seem to exist")
             sys.exit()
-        with open(adj_path, "r") as file:
+        with open(adj_path) as file:
             adjusters = yaml.safe_load(file)
 
     # Align primary mirror

@@ -14,6 +14,7 @@ by vertex. We denote these six coordinate systems as follows:
     - va_primary
     - va_secondary
 """
+
 from functools import cache, partial
 from typing import Optional
 
