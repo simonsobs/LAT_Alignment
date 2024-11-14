@@ -1,0 +1,975 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://simonsobs.github.io/LAT_Alignment/4.0.0/">
+      
+      
+      
+        <link rel="next" href="reference/adjustments/">
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.44">
+    
+    
+      
+        <title>LAT_Alignment</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.0253249f.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#lat-alignment" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="LAT_Alignment" class="md-header__button md-logo" aria-label="LAT_Alignment" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            LAT_Alignment
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Home
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="LAT_Alignment" class="md-nav__button md-logo" aria-label="LAT_Alignment" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    LAT_Alignment
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#file-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      File Structure
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="File Structure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#measurement-directories" class="md-nav__link">
+    <span class="md-ellipsis">
+      Measurement Directories
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Config File
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Description File
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#output-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Output File
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adjuster-positions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adjuster Positions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mirror-directories" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mirror Directories
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#measurement-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Measurement Files
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plot-directory" class="md-nav__link">
+    <span class="md-ellipsis">
+      Plot Directory
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#coordinate-systems" class="md-nav__link">
+    <span class="md-ellipsis">
+      Coordinate Systems
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bugs-and-feature-requests" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bugs and Feature Requests
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contributing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Contributing
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    API Reference
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            API Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="reference/adjustments/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    adjustments
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="reference/alignment/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    alignment
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="reference/fitting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    fitting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="reference/io/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    io
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="reference/mirror/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    mirror
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="reference/transforms/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    transforms
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#file-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      File Structure
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="File Structure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#measurement-directories" class="md-nav__link">
+    <span class="md-ellipsis">
+      Measurement Directories
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Config File
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Description File
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#output-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Output File
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adjuster-positions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adjuster Positions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mirror-directories" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mirror Directories
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#measurement-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Measurement Files
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plot-directory" class="md-nav__link">
+    <span class="md-ellipsis">
+      Plot Directory
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#coordinate-systems" class="md-nav__link">
+    <span class="md-ellipsis">
+      Coordinate Systems
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bugs-and-feature-requests" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bugs and Feature Requests
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contributing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Contributing
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="lat-alignment">LAT Alignment</h1>
+<p>Tools for LAT mirror alignment</p>
+<h2 id="installation">Installation</h2>
+<p>Technically after cloning this repository you can just run <code>python lat_alignment/alignment.py PATH/TO/CONFIG</code>,
+but it is recommended that you install this as a package instead.</p>
+<p>To do this just run: <code>pip install -e .</code> from the root of this repository.</p>
+<p>This has two main benefits over running the script directly:
+1. It will handle dependencies for you.
+2. This sets up an entrypoint called <code>lat_alignment</code> so that you can call the code from anywhere.
+This is nice because now you can call the code from the measurement directory where you are most likely editing files,
+saving you the hassle of having to <code>cd</code> or wrangle long file paths.</p>
+<h2 id="usage">Usage</h2>
+<ol>
+<li>Create the appropriate directory structure for your measurement (see <a href="#file-structure">File Structure</a> for details).</li>
+<li>Place the measurement files in the appropriate place in your created directory (see <a href="#measurement-files">Measurement Files</a> for details).</li>
+<li>Create a file with any information about the measurement that could prove useful (see <a href="#description-file">Description File</a> for details).</li>
+<li>Create a config file for your measurement (see <a href="#config-file">Config File</a> for details).</li>
+<li>Run the alignment script with <code>lat_alignment /PATH/TO/CONFIG</code></li>
+<li>Follow the instructions in the output to align panels. This output will both be printed in the terminal and written to an output file (see <a href="#output-file">Output File</a>)</li>
+</ol>
+<h3 id="file-structure">File Structure</h3>
+<p>Measurements should be organized in the following file structure</p>
+<pre><code>measurements
+|
+└───YYYYMMDD_num
+|   |config.txt
+|   |description.txt
+|   |output.txt
+|   |adjusters.yaml
+|   |
+|   └───M1
+|   |   |XX-XXXXXX.txt
+|   |   |XX-XXXXXX.txt
+|   |   |...
+|   |
+|   └───M2
+|   |   |XX-XXXXXX.txt
+|   |   |XX-XXXXXX.txt
+|   |   |...
+|   |
+|   └───plots
+|       └───M1
+|       |   |XX-XXXXXX_surface.png
+|       |   |XX-XXXXXX_hist.png
+|       |   |XX-XXXXXX_ps.png
+|       |   |...
+|       |
+|       └───M2
+|           |XX-XXXXXX_surface.png
+|           |XX-XXXXXX_hist.png
+|           |XX-XXXXXX_ps.png
+|           |...
+|       
+└───YYYYMMDD_num
+|   |config.txt
+|   |description.txt
+|   |adjusters.yaml
+|   |
+|   └───M1
+|   |   |XX-XXXXXX.txt
+|   |   |XX-XXXXXX.txt
+|   |   |...
+|   |
+|   └───M2
+|       |XX-XXXXXX.txt
+|       |XX-XXXXXX.txt
+|       |...
+|   |
+|   └───plots
+|       └───M1
+|       |   |XX-XXXXXX_surface.png
+|       |   |XX-XXXXXX_hist.png
+|       |   |XX-XXXXXX_ps.png
+|       |   |...
+|       |
+|       └───M2
+|           |XX-XXXXXX_surface.png
+|           |XX-XXXXXX_hist.png
+|           |XX-XXXXXX_ps.png
+|           |...
+|...
+</code></pre>
+<h4 id="measurement-directories">Measurement Directories</h4>
+<p>Each directory <code>YYYYMMDD_num</code> refers to a specific measurement session. Where <code>YYYYMMDD</code> refers to the date of the measurement and <code>num</code> refers to which number measurement on that date it was. For example the second measurement taken on January 1st, 2022 would be <code>20220101_02</code>.</p>
+<p>This is the file path that should be provided to <code>alignment.py</code> as the <code>measurement_dir</code> argument.</p>
+<h4 id="config-file">Config File</h4>
+<p>The file <code>config.yaml</code> contains configuration options. Below is an annotated example with all possible options.</p>
+<pre><code class="language-yaml"># The measurement directory
+# If not provided the dirctory containing the config will be used
+measurement_dir: PATH/TO/MEASUREMENT
+
+# The path the the dirctory containing the cannonical adjuster locations
+# If not provided the can_points directory in the root of this repository is used
+cannonical_points: PATH/TO/CAN/POINTS
+
+# Coordinate system of measurements
+# Possible vaules are [&quot;cad&quot;, &quot;global&quot;, &quot;primary&quot;, &quot;secondary&quot;]
+coordinates: cad # default value
+
+# Amount to shift the origin of the measurements by
+# Should be a 3 element list
+origin_shift: [0, 0, 0] # default value
+
+# FARO compensation
+compensation: 0.0 # default value
+
+# Set to True to apply common mode subtraction
+cm_sub: False # default value
+
+# Set to True to make plots if panels 
+plots: False # default value
+
+# Where to save log
+# If not provided log is saved to a file called output.txt
+# in the measurement_dir for this measurement
+log_file: null # Set to null to only print output and not save
+
+# Path to a yaml file with the current adjuster positions
+# If null (None) then all adjusters are assumed to be at 0
+# You probably want to point this to the file generated
+# in the previous alignment run if you have it
+adj_path: null # default value
+
+# Path to where to store the adjuster postions after aligning
+# If null (None) will store in a file called adjusters.yaml
+# in the measurement_dir for this measurement
+adj_out: null # default value
+
+# Defines the allowed adjuster range in mm
+adj_low: -1 # default value
+adj_high: 1 # default value
+</code></pre>
+<p>If you are using all default values make a blank config with <code>touch config.yaml</code></p>
+<h4 id="description-file">Description File</h4>
+<p>Each measurement directory should contain a file <code>description.txt</code> with information on the measurement. Any information that could provide useful context when looking at the measurement/alignment after the fact should be included here (ie: who performed the measurement, where the measurement was taken, etc.).</p>
+<h4 id="output-file">Output File</h4>
+<p>Output generated by <code>alignment.py</code>.
+By default this is saved at <code>measurement_dir/output.txt</code></p>
+<p>Note that this file gets overwritten when <code>lat_alignment</code> is run, so if you want to store multiple copies with different configs or something rename them or change the <code>log_file</code> in the config.</p>
+<h4 id="adjuster-positions">Adjuster Positions</h4>
+<p>Positions of adjusters after applying the calculated adjustments.
+This is a yaml file nominally saved at <code>measurement_dir/adjusters/yaml</code></p>
+<p>Each element in the file is in the format:</p>
+<pre><code>PANEL_NUMBER: [X, Y, ADJ_1, ADJ_2, ADJ_3, ADJ_4, ADJ_5] 
+</code></pre>
+<h4 id="mirror-directories">Mirror Directories</h4>
+<p>Directories containing the measurements files within each root measurement directory. <code>M1</code> contains the measurements for the primary mirror and <code>M2</code> contains the measurements for the secondary mirror. If you don't have measurements for one of the mirrors you do not need to create an empty directory for it.</p>
+<h4 id="measurement-files">Measurement Files</h4>
+<p>Files containing the point cloud measurements for a given panel. Should live in the mirror directory that the panel belongs to. Files should be named <code>XX-XXXXXX.txt</code> where <code>XX-XXXXXX</code> is the panel number. The numbering system is as follows:
+* First four digits (<code>XX-XX</code>) are the telescope number. For the LAT this is <code>01-01</code>
+* Fifth digit is the mirror number. This is <code>1</code> for the primary and <code>2</code> for the secondary.
+* Sixth digit is the panel row
+* Seventh digit is the panel column
+* Eight digit is the panel number (current, spare, replacement, etc.)</p>
+<h4 id="plot-directory">Plot Directory</h4>
+<p>If the <code>plots</code> option is set to <code>True</code> then the root measurement will contain a directory called <code>plots</code>. Within this directory will be directories for each mirror measured, <code>M1</code> for the primary and <code>M2</code> for the secondary. Each of these will contain three plots per panel measured:
+* <code>XX-XXXXXX_surface.png</code>, a plot of the panel's surface in the mirror's coordinate system.
+* <code>XX-XXXXXX_hist.png</code>, a histogram of the residuals from the panel's fit.
+* <code>XX-XXXXXX_ps.png</code>, a plot of the power spectrum of the residuals from the panel's fit.</p>
+<p>Where <code>XX-XXXXXX</code> is the panel number.</p>
+<h2 id="coordinate-systems">Coordinate Systems</h2>
+<p>The relevant coordinate systems are marked in the diagram below:</p>
+<p><img alt="LAT coordinate systems" src="./imgs/coords.png" /></p>
+<p>Where the orange circle marks the <code>global</code> coordinate system, the green circle marks the <code>primary</code> coordinate system, and the blue circle marks the <code>secondary</code> coordinate system.</p>
+<p>Additionally there is a <code>cad</code> coordinate system that is defined as the coordinate system from the SolidWorks model. It is given by the following transformation from the <code>global</code> coordinate system:</p>
+<pre><code>x -&gt; y - 200 mm
+y -&gt; x
+z -&gt; -z
+</code></pre>
+<p>It is currently unclear why the 200 mm offset exists.</p>
+<p>Note that the files in the <code>can_points</code> directory are in the <code>cad</code> coordinate system.</p>
+<p>All measurements should be done in one of these four coordinate systems modulo a known shift in the origin.</p>
+<h2 id="bugs-and-feature-requests">Bugs and Feature Requests</h2>
+<p>For low priority bugs and feature requests submit an issue on the <a href="https://github.com/simonsobs/LAT_Alignment">git repo</a>.</p>
+<p>For higher priority issues (or questions that require an expedient answer) <a href="mailto:haridas@sas.upenn.edu">email</a>, Slack, or call me.</p>
+<h2 id="contributing">Contributing</h2>
+<p>If you wish to contribute to this repository (either code or adding measurement files) contact me via <a href="mailto:haridas@sas.upenn.edu">email</a> or Slack.</p>
+<p>If you are contributing code please do so by creating a branch and submitting a pull request. Try to keep things as close to PEP8 as possible.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="assets/javascripts/bundle.83f73b43.min.js"></script>
+      
+        <script src="javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
