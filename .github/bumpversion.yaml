@@ -1,0 +1,43 @@
+name: Bump version and update docs
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  bump-version-and-docs:
+    if: "!startsWith(github.event.head_commit.message, 'bump:')"
+    runs-on: ubuntu-latest
+    name: "Bump version and create changelog with commitizen"
+    steps:
+      - name: Check out
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ssh-key: "${{ secrets.SKH_KEY }}"
+      - name: Create bump and changelog
+        uses: commitizen-tools/commitizen-action@master
+        with:
+          push: false
+      - name: Push using ssh
+        run: |
+          git push origin main --tags
+      - name: Print Version
+        run: echo "Bumped to version ${{ steps.cz.outputs.version }}"
+      - name: Setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.10.6
+      # - name: Install Dependencies
+      #   run: |
+      #     pip install mkdocs-material
+      #     pip install pillow cairosvg mike mkdocstrings[python] mkdocs-gen-files mkdocs-literate-nav mkdocs-homepage-copier 
+      # - name: Setup Docs Deploy
+      #   run: |
+      #     git config --global user.name "Docs Deploy"
+      #     git config --global user.email "docs.deploy@saianeesh.com"
+      # - name: Build Docs Website
+      #   run: |
+      #     mike set-default latest
+      #     mike deploy --push --update-aliases ${{ env.REVISION }} latest
