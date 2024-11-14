@@ -1,6 +1,7 @@
 """
 Functions to describe the mirror surface.
 """
+
 from collections import defaultdict
 from copy import deepcopy
 from dataclasses import dataclass, field

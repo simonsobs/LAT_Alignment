@@ -1,6 +1,7 @@
 """
 Functions for fitting against the mirror surface.
 """
+
 import numpy as np
 import scipy.optimize as opt
 from numpy.typing import NDArray

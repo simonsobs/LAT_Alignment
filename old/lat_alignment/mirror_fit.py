@@ -3,12 +3,14 @@ Fit point cloud to the analytic functional form of the LAT mirror surfaces
 
 Author: Saianeesh Keshav Haridas
 """
+
+from typing import Callable, Tuple, Union
+
 import numpy as np
 import scipy.optimize as opt
+from numpy import float64, ndarray
 from scipy.spatial.transform import Rotation as rot
 from scipy.stats import binned_statistic
-from numpy import float64, ndarray
-from typing import Callable, Tuple, Union
 
 # fmt: off
 a_primary = np.array([
@@ -73,9 +75,9 @@ def mirror_norm(x: ndarray, y: ndarray, a: ndarray) -> ndarray:
     for i in range(a.shape[0]):
         for j in range(a.shape[1]):
             if i != 0:
-                x_n += a[i, j] * (x ** (i - 1)) / (Rn ** i) * (y / Rn) ** j
+                x_n += a[i, j] * (x ** (i - 1)) / (Rn**i) * (y / Rn) ** j
             if j != 0:
-                y_n += a[i, j] * (x / Rn) ** i * (y ** (j - 1)) / (Rn ** j)
+                y_n += a[i, j] * (x / Rn) ** i * (y ** (j - 1)) / (Rn**j)
 
     z_n = -1 * np.ones_like(x_n)
     normals = np.array((x_n, y_n, z_n)).T

@@ -3,6 +3,7 @@ Main driver script for running the alignment.
 You typically want to use the `lat_alignment` entrypoint rather than
 calling this directly.
 """
+
 import argparse
 import os
 from functools import partial

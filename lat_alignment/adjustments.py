@@ -3,6 +3,7 @@ Calculate adjustments needed to align LAT mirror panel
 
 Author: Saianeesh Keshav Haridas
 """
+
 from typing import Tuple
 
 import numpy as np
