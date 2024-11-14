@@ -7,47 +7,72 @@ from typing import Tuple
 
 import numpy as np
 import scipy.optimize as opt
-from numpy import float64, ndarray
+from numpy.typing import NDArray
 from scipy.spatial.transform import Rotation as rot
 
 
 def rotate(
-    point: ndarray, end_point1: ndarray, end_point2: ndarray, thetha: float64
-) -> ndarray:
+    point: NDArray[np.float32],
+    end_point1: NDArray[np.float32],
+    end_point2: NDArray[np.float32],
+    theta: np.float32,
+) -> NDArray[np.float32]:
     """
     Rotate a point about an axis
 
-    @param point: The point to rotate
-    @param end_point1: A point on the axis of rotation
-    @param end_point2: Another point on the axis of rotation
-    @param thetha: Angle in radians to rotate by
+    Parameters
+    ----------
+    point : NDArray[np.float32]
+        The point to rotate
+    end_point1 : NDArray[np.float32]
+        A point on the axis of rotation
+    end_point2 : NDArray[np.float32]
+        Another point on the axis of rotation
+    theta: NDArray[np.float32]
+        Angle in radians to rotate by
 
-    @return point: The rotated point
+    Returns
+    -------
+    point : NDArray[np.float32]
+        The rotated point
     """
     origin = np.mean((end_point1, end_point2))
     point_0 = point - origin
     ax = end_point2 - end_point1
-    ax = rot.from_rotvec(thetha * ax / np.linalg.norm(ax))
+    ax = rot.from_rotvec(theta * ax / np.linalg.norm(ax))
     point_0 = ax.apply(point_0)
     return point_0 + origin
 
 
 def rotate_panel(
-    points: ndarray, adjustors: ndarray, thetha_0: float64, thetha_1: float64
-) -> Tuple[ndarray, ndarray]:
+    points: NDArray[np.float32],
+    adjustors: NDArray[np.float32],
+    thetha_0: np.float32,
+    thetha_1: np.float32,
+) -> Tuple[NDArray[np.float32], NDArray[np.float32]]:
     """
-    Rotate panel about axes created by adjustors
+    Rotate panel about axes created by adjustors.
 
-    @param points: Points on panel to rotate
-    @param adjustors: Adjustor positions
-    @param thetha_0: Angle to rotate about first adjustor axis
-    @param thetha_1: Angle to rotate about second adjustor axis
+    Parameters
+    ----------
+    points : NDArray[np.float32]
+        Points on panel to rotate.
+    adjustors : NDArray[np.float32]
+        Adjustor positions.
+    thetha_0 : np.float32
+        Angle to rotate about first adjustor axis
+    thetha_1 : np.float32.
+        Angle to rotate about second adjustor axis
 
-    @return rot_points: The rotated points
-    @return rot_adjustors: The rotated adjustors
+    Returns
+    -------
+    rot_points : NDArray[np.float32]
+        The rotated points.
+    rot_adjustors : NDArray[np.float32]
+        The rotated adjustors.
     """
-    rot_points = np.zeros(points.shape)
-    rot_adjustors = np.zeros(adjustors.shape)
+    rot_points = np.zeros(points.shape, np.float32)
+    rot_adjustors = np.zeros(adjustors.shape, np.float32)
 
     n_points = len(points)
     n_adjustors = len(adjustors)
@@ -64,42 +89,70 @@ def rotate_panel(
 
 
 def translate_panel(
-    points: ndarray, adjustors: ndarray, dx: float64, dy: float64, dz: float64
-) -> Tuple[ndarray, ndarray]:
+    points: NDArray[np.float32],
+    adjustors: NDArray[np.float32],
+    dx: np.float32,
+    dy: np.float32,
+    dz: np.float32,
+) -> Tuple[NDArray[np.float32], NDArray[np.float32]]:
     """
-    Translate panel
+    Translate a panel.
 
-    @param points: The points on panel to translate
-    @param adjustors: Adjustor positions
-    @param dx: Translation in x
-    @param dy: Translation in y
-    @param dz: Translation in z
+    Parameters
+    ----------
+    points : NDArray[np.float32]
+        The points on panel to translate.
+    adjustors : NDArray[np.float32]
+        Adjustor positions.
+    dx : np.float32
+        Translation in x.
+    dy : np.float32
+        Translation in y.
+    dz : np.float32
+        Translation in z.
 
-    @return points: The translated points
-    @return adjustors: The translated adjustors
+    Returns
+    -------
+    points : NDArray[np.float32]
+        The translated points.
+    adjustors : NDArray[np.float32]
+        The translated adjustors.
     """
     translation = np.array((dx, dy, dz))
     return points + translation, adjustors + translation
 
 
 def adjustment_fit_func(
-    pars: ndarray, can_points: ndarray, points: ndarray, adjustors: ndarray
-) -> float64:
-    """
-    Function to minimize when calculating adjustments
+    pars: NDArray[np.float32],
+    can_points: NDArray[np.float32],
+    points: NDArray[np.float32],
+    adjustors: NDArray[np.float32],
+) -> np.float32:
+    r"""
+    Function to minimize when calculating adjustments.
 
-    @param pars: The parameters to fit for:
-                    dx: Translation in x
-                    dy: Translation in y
-                    dz: Translation in z
-                    thetha_0: Angle to rotate about first adjustor axis
-                    thetha_1: Angle to rotate about second adjustor axis
-                    z_t: Additional translation to tension the center point
-    @param can_points: The cannonical positions of the points to align
-    @param points: The measured positions of the points to align
-    @param adjustors: The measured positions of the adjustors
+    Parameters
+    ----------
+    pars : NDArray[np.float32]
+        The parameters to fit for:
 
-    @return norm: The norm of (cannonical positions - transformed positions)
+        * dx: Translation in x
+        * dy: Translation in y
+        * dz: Translation in z
+        * thetha_0: Angle to rotate about first adjustor axis
+        * thetha_1: Angle to rotate about second adjustor axis
+        * z_t: Additional translation to tension the center point
+    can_points : NDArray[np.float32]
+        The cannonical positions of the points to align.
+    points : NDArray[np.float32]
+        The measured positions of the points to align.
+    adjustors : NDArray[np.float32]
+        The measured positions of the adjustors.
+
+    Returns
+    -------
+    norm : np.float32
+        The norm of $cannonical_positions - transformed_positions$.
     """
     dx, dy, dz, thetha_0, thetha_1, z_t = pars
     points, adjustors = translate_panel(points, adjustors, dx, dy, dz)
@@ -109,22 +162,44 @@ def adjustment_fit_func(
 
 
 def calc_adjustments(
-    can_points: ndarray, points: ndarray, adjustors: ndarray, **kwargs
-) -> Tuple[float64, float64, ndarray, float64, float64, ndarray]:
+    can_points: NDArray[np.float32],
+    points: NDArray[np.float32],
+    adjustors: NDArray[np.float32],
+    **kwargs,
+) -> Tuple[
+    np.float32,
+    np.float32,
+    NDArray[np.float32],
+    np.float32,
+    np.float32,
+    NDArray[np.float32],
+]:
     """
-    Calculate adjustments needed to align panel
+    Calculate adjustments needed to align panel.
 
-    @param can_points: The cannonical position of the points to align
-    @param points: The measured positions of the points to align
-    @param adjustors: The measured positions of the adjustors
-    @param **kwargs: Arguments to be passed to scipy.optimize.minimize
+    Parameters
+    ----------
+    can_points : NDArray[np.float32]
+        The cannonical position of the points to align.
+    points : NDArray[np.float32]
+        The measured positions of the points to align.
+    adjustors : NDArray[np.float32]
+        The measured positions of the adjustors.
+    **kwargs
+        Arguments to be passed to `scipy.optimize.minimize`.
 
-    @return dx: The required translation of panel in x
-    @return dy: The required translation of panel in y
-    @return d_adj: The amount to move each adjustor
-    @return dx_err: The error in the fit for dx
-    @return dy_err: The error in the fit for dy
-    @return d_adj_err: The error in the fit for d_adj
+    dx : np.float32
+        The required translation of panel in x.
+    dy : np.float32
+        The required translation of panel in y.
+    d_adj : NDArray[np.float32]
+        The amount to move each adjustor.
+    dx_err : np.float32
+        The error in the fit for `dx`.
+    dy_err : np.float32
+        The error in the fit for `dy`.
+    d_adj_err : NDArray[np.float32]
+        The error in the fit for `d_adj`.
     """
     res = opt.minimize(
         adjustment_fit_func, np.zeros(6), (can_points, points, adjustors), **kwargs

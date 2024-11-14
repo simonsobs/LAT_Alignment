@@ -17,7 +17,7 @@ def mirror_objective(
     Objective function to minimize when fitting to mirror surface.
     Essentially just a curvature weighted chisq.
 
-    Paramaters
+    Parameters
     ----------
     points : NDArray[np.floating]
         Array of points to compare against the mirror.
@@ -48,7 +48,7 @@ def mirror_transform(
     Function to apply an affine transform to the mirror.
     This is the transform we are fitting for.
 
-    Paramaters
+    Parameters
     ----------
     transform_pars : NDArray[np.floating]
         Flattened affine transform and shift, has to be 1d for use with minimizers.
@@ -74,13 +74,13 @@ def mirror_fit(
     a: NDArray[np.floating],
     compensate: float = 0,
     to_points: bool = True,
-    **kwargs
+    **kwargs,
 ) -> tuple[NDArray[np.floating], float]:
     """
     Fit points against the mirror surface.
     Ideally the points should be in the mirror's local coordinate system.
 
-    Paramaters
+    Parameters
     ----------
     points : NDArray[np.floating]
         Array of points to compare against the mirror.
@@ -137,7 +137,7 @@ def tension_model(
     Currently the model used is a radial power law.
 
 
-    Paramaters
+    Parameters
     ----------
     x0 : float
         Center of the power law in x.
@@ -178,7 +178,7 @@ def tension_fit(
     """
     Fit a power law model of tension to a point cloud of residuals.
 
-    Paramaters
+    Parameters
     ----------
     residuals : NDArray[np.floating]
         Residuals between measured point cloud and fit model.
@@ -218,7 +218,7 @@ def res_auto_corr(
     """
     Compute auto correlation of residuals from fit.
 
-    Paramaters
+    Parameters
     ----------
     residuals : NDArray[np.floating]
         Residuals between measured point cloud and fit model.
