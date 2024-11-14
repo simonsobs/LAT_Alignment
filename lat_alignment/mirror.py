@@ -330,7 +330,7 @@ def gen_panels(mirror: str, measurements: dict[str, NDArray[np.float32]], corner
     return panels
 
 
-def remove_cm(meas, mirror, compensate: float = 0, thresh: float = 10, niters: int=10, verbose=False) -> dict[str, NDArray[np.float32]]:
+def remove_cm(meas, mirror, compensate: float = 0, thresh: float = 10, cut_thresh: float = 50, niters: int=10, verbose=False) -> dict[str, NDArray[np.float32]]:
     """
     Fit for the common mode transformation from the model to the measurements of all panels and them remove it.
     Note that we only remove the shift component of the common mode, rotations are ignored.
@@ -383,6 +383,8 @@ def remove_cm(meas, mirror, compensate: float = 0, thresh: float = 10, niters: i
     data = data[msk]
     labels = labels[msk]
     panel = Panel(mirror, -1, -1, np.zeros((4,3), "float32"), data, np.zeros((5,3), "float32"), compensate)
+    data = data.copy()
+    data_clean = data.copy()
 
     x0 = np.hstack([np.ones(1), np.zeros(6)])
     bounds = [(-.95, 1.05)] + [(-100, 100)]*3 + [(0, 2*np.pi)]*3
@@ -393,9 +395,9 @@ def remove_cm(meas, mirror, compensate: float = 0, thresh: float = 10, niters: i
         print(f"iter {i} for common mode fit")
         cut = panel.res_norm > thresh*np.median(panel.res_norm)
         if np.sum(cut) > 0: 
-            print(f"\tRemoving {np.sum(cut)} points from mirror")
+            # print(f"\tRemoving {np.sum(cut)} points from mirror")
             panel.measurements = panel.measurements[~cut]
-            labels = labels[~cut]
+            # labels = labels[~cut]
             data = data[~cut]
 
         if verbose:
@@ -417,6 +419,12 @@ def remove_cm(meas, mirror, compensate: float = 0, thresh: float = 10, niters: i
     scale, shear, rot = decompose_affine(aff)
     rot = decompose_rotation(rot)
     print(f"Full common mode is:\n\tshift = {sft} mm\n\tscale = {scale}\n\tshear = {shear}\n\trot = {np.rad2deg(rot)} deg")
+
+    panel.measurements = apply_transform(data_clean, aff, sft)
+    cut = panel.res_norm > cut_thresh*np.median(panel.res_norm)
+    if np.sum(cut) > 0: 
+        print(f"Removing {np.sum(cut)} points from mirror")
+        panel.measurements = panel.measurements[~cut]
 
     return {l:d for l, d in zip(labels, panel.measurements)} 
 
