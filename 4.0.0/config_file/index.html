@@ -587,88 +587,98 @@
 
 <h1 id="configuration-file">Configuration File</h1>
 <h2 id="fields">Fields</h2>
-<p>??? info "<code>mode</code>"</p>
-<pre><code>The alignment mode to use.
-
-Possible values are:
-
-* `panel`: For aligning panels within one mirror.
-* `optical`: For aligning optical elements relative to each other (as solid bodies).
-</code></pre>
-<p>??? info "<code>mirror</code>"</p>
-<pre><code>The mirror that we want to align panels to.
-Only used if `mode` is `panel`.
-
-Possible values are:
-
-* `primary`: To align the primary mirror.
-* `secondary": The align the secondary mirror.
-</code></pre>
-<p>??? info "<code>align_to</code>"</p>
-<pre><code>Which optical element to keep fixed and align the others to.
-Only used if `mode` is `optical`.
-
-Possible values are:
-
-* `primary`: To align to the primary mirror.
-* `secondary": The align to the secondary mirror.
-* `receiver": The align to the receiver.
-* `bearing": The align to the bearing.
-</code></pre>
-<p>??? info "<code>measurement</code>"</p>
-<pre><code>The path to the photogrammetry data we are using to do the alignment.
+<details class="info">
+<summary><code>mode</code></summary>
+<p>The alignment mode to use.</p>
+<p>Possible values are:</p>
+<ul>
+<li><code>panel</code>: For aligning panels within one mirror.</li>
+<li><code>optical</code>: For aligning optical elements relative to each other (as solid bodies).</li>
+</ul>
+</details>
+<details class="info">
+<summary><code>mirror</code></summary>
+<p>The mirror that we want to align panels to.
+Only used if <code>mode</code> is <code>panel</code>.</p>
+<p>Possible values are:</p>
+<ul>
+<li><code>primary</code>: To align the primary mirror.</li>
+<li>`secondary": The align the secondary mirror.</li>
+</ul>
+</details>
+<details class="info">
+<summary><code>align_to</code></summary>
+<p>Which optical element to keep fixed and align the others to.
+Only used if <code>mode</code> is <code>optical</code>.</p>
+<p>Possible values are:</p>
+<ul>
+<li><code>primary</code>: To align to the primary mirror.</li>
+<li>`secondary": The align to the secondary mirror.</li>
+<li>`receiver": The align to the receiver.</li>
+<li>`bearing": The align to the bearing.</li>
+</ul>
+</details>
+<details class="info">
+<summary><code>measurement</code></summary>
+<p>The path to the photogrammetry data we are using to do the alignment.
 If this is a relative path it is taken relative to the directory that the
-configuration file is in.
-</code></pre>
-<p>??? info "<code>data_dir</code>"</p>
-<pre><code>The path to the data files that define the panel corners and the adjuster positions.
+configuration file is in.</p>
+</details>
+<details class="info">
+<summary><code>data_dir</code></summary>
+<p>The path to the data files that define the panel corners and the adjuster positions.
 If this is a relative path it is taken relative to the directory that the
-configuration file is in.
-
-You genrally don't need to provide this since the package will use its own bundled
-data files by default.
-</code></pre>
-<p>??? info "<code>load</code>"</p>
-<pre><code>Additional keyword arguments to pass to
-[`io.load_photo`](https://simonsobs.github.io/LAT_Alignment/latest/reference/io/#lat_alignment.io.load_photo).
-</code></pre>
-<p>??? info "<code>compensate</code>"</p>
-<pre><code>Amount to compensate mirror measurements by in mm.
-This is for backwards compatiblilty with laser tracker data and is $0$ by default.
-</code></pre>
-<p>??? info "<code>common_mode</code>"</p>
-<pre><code>Additional keyword arguments to pass to
-[`mirror.remove_cm`](https://simonsobs.github.io/LAT_Alignment/latest/reference/mirror/#lat_alignment.mirror.remove_cm)
-</code></pre>
-<p>??? info "<code>adjuster_radius</code>"</p>
-<pre><code>How close to an adjuster a data point needs to be in order for us to use its residual as
+configuration file is in.</p>
+<p>You genrally don't need to provide this since the package will use its own bundled
+data files by default.</p>
+</details>
+<details class="info">
+<summary><code>load</code></summary>
+<p>Additional keyword arguments to pass to
+<a href="https://simonsobs.github.io/LAT_Alignment/latest/reference/io/#lat_alignment.io.load_photo"><code>io.load_photo</code></a>.</p>
+</details>
+<details class="info">
+<summary><code>compensate</code></summary>
+<p>Amount to compensate mirror measurements by in mm.
+This is for backwards compatiblilty with laser tracker data and is <span class="arithmatex">\(0\)</span> by default.</p>
+</details>
+<details class="info">
+<summary><code>common_mode</code></summary>
+<p>Additional keyword arguments to pass to
+<a href="https://simonsobs.github.io/LAT_Alignment/latest/reference/mirror/#lat_alignment.mirror.remove_cm"><code>mirror.remove_cm</code></a></p>
+</details>
+<details class="info">
+<summary><code>adjuster_radius</code></summary>
+<p>How close to an adjuster a data point needs to be in order for us to use its residual as
 a secondary correction when computing adjustments.
-Only used if `mode` is `panel`.
-
-This is $100$ mm by default.
-</code></pre>
-<p>??? info "<code>vmax</code>"</p>
-<pre><code>The maximum value to use in the colorbar when plotting mirror surface.
-The colorbar is symmetric so `vmin = -1*vmax`.
-</code></pre>
-<p>??? info "<code>adjust</code>"</p>
-<pre><code>Additional keyword arguments to pass to
-[`adjustments.calc_adjustments`](https://simonsobs.github.io/LAT_Alignment/latest/reference/adjustments/#lat_alignment.adjustments.calc_adjustments)
-</code></pre>
-<p>??? info "<code>title</code>"</p>
-<pre><code>The title of the measurement.
-This is used both in plots and in output filenames.
-</code></pre>
+Only used if <code>mode</code> is <code>panel</code>.</p>
+<p>This is <span class="arithmatex">\(100\)</span> mm by default.</p>
+</details>
+<details class="info">
+<summary><code>vmax</code></summary>
+<p>The maximum value to use in the colorbar when plotting mirror surface.
+The colorbar is symmetric so <code>vmin = -1*vmax</code>.</p>
+</details>
+<details class="info">
+<summary><code>adjust</code></summary>
+<p>Additional keyword arguments to pass to
+<a href="https://simonsobs.github.io/LAT_Alignment/latest/reference/adjustments/#lat_alignment.adjustments.calc_adjustments"><code>adjustments.calc_adjustments</code></a></p>
+</details>
+<details class="info">
+<summary><code>title</code></summary>
+<p>The title of the measurement.
+This is used both in plots and in output filenames.</p>
+</details>
 <h2 id="example-configuration-files">Example Configuration Files</h2>
 <p>These are typical configuration files,
 you usually will not need to touch fields other than the ones shown here.</p>
 <h3 id="panel-alignment">Panel Alignment</h3>
-<pre><code class="language-yaml">mode: &quot;panel&quot;
-mirror: &quot;secondary&quot;
-measurement: &quot;data_20240911_1430.csv&quot;
-title: &quot;M2 20240911 1430&quot;
-vmax: 50
-</code></pre>
+<div class="highlight"><pre><span></span><code><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;panel&quot;</span>
+<span class="nt">mirror</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;secondary&quot;</span>
+<span class="nt">measurement</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;data_20240911_1430.csv&quot;</span>
+<span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;M2</span><span class="nv"> </span><span class="s">20240911</span><span class="nv"> </span><span class="s">1430&quot;</span>
+<span class="nt">vmax</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
+</code></pre></div>
 <h3 id="optical-element-alignment">Optical Element Alignment</h3>
 <p>WIP! Check back later!</p>
 
