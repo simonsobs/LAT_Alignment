@@ -26,4 +26,6 @@ extra_javascript:
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 nav:
   - Home: 'index.md'
+  - Coordinate Systems: 'coordinate_systems.md'
+  - Configuration File: 'config_file.md'
   - API Reference: reference/
