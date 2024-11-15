@@ -2,7 +2,7 @@
 
 ## Fields
 
-??? info "`mode`"
+???+ info "`mode`"
 
     The alignment mode to use.
 
@@ -11,7 +11,7 @@
     * `panel`: For aligning panels within one mirror.
     * `optical`: For aligning optical elements relative to each other (as solid bodies).
 
-??? info "`mirror`"
+???+ info "`mirror`"
 
     The mirror that we want to align panels to.
     Only used if `mode` is `panel`.
@@ -19,9 +19,9 @@
     Possible values are:
 
     * `primary`: To align the primary mirror.
-    * `secondary": The align the secondary mirror.
+    * `secondary`: To align the secondary mirror.
 
-??? info "`align_to`"
+???+ info "`align_to`"
 
     Which optical element to keep fixed and align the others to.
     Only used if `mode` is `optical`.
@@ -29,17 +29,17 @@
     Possible values are:
 
     * `primary`: To align to the primary mirror.
-    * `secondary": The align to the secondary mirror.
-    * `receiver": The align to the receiver.
-    * `bearing": The align to the bearing.
+    * `secondary`: To align to the secondary mirror.
+    * `receiver`: To align to the receiver.
+    * `bearing`: To align to the bearing.
 
-??? info "`measurement`"
+???+ info "`measurement`"
 
     The path to the photogrammetry data we are using to do the alignment.
     If this is a relative path it is taken relative to the directory that the
     configuration file is in.
 
-??? info "`data_dir`"
+???+ info "`data_dir`"
 
     The path to the data files that define the panel corners and the adjuster positions.
     If this is a relative path it is taken relative to the directory that the
@@ -48,24 +48,24 @@
     You genrally don't need to provide this since the package will use its own bundled
     data files by default.
 
-??? info "`load`"
+???+ info "`load`"
 
     Additional keyword arguments to pass to
     [`io.load_photo`](https://simonsobs.github.io/LAT_Alignment/latest/reference/io/#lat_alignment.io.load_photo).
 
 
-??? info "`compensate`"
+???+ info "`compensate`"
 
     Amount to compensate mirror measurements by in mm.
     This is for backwards compatiblilty with laser tracker data and is $0$ by default.
 
 
-??? info "`common_mode`"
+???+ info "`common_mode`"
 
     Additional keyword arguments to pass to
     [`mirror.remove_cm`](https://simonsobs.github.io/LAT_Alignment/latest/reference/mirror/#lat_alignment.mirror.remove_cm)
 
-??? info "`adjuster_radius`"
+???+ info "`adjuster_radius`"
 
     How close to an adjuster a data point needs to be in order for us to use its residual as
     a secondary correction when computing adjustments.
@@ -73,17 +73,17 @@
 
     This is $100$ mm by default.
 
-??? info "`vmax`"
+???+ info "`vmax`"
 
     The maximum value to use in the colorbar when plotting mirror surface.
     The colorbar is symmetric so `vmin = -1*vmax`.
 
-??? info "`adjust`"
+???+ info "`adjust`"
 
     Additional keyword arguments to pass to
     [`adjustments.calc_adjustments`](https://simonsobs.github.io/LAT_Alignment/latest/reference/adjustments/#lat_alignment.adjustments.calc_adjustments)
 
-??? info "`title`"
+???+ info "`title`"
 
     The title of the measurement.
     This is used both in plots and in output filenames.
