@@ -30,6 +30,9 @@ lat_alignment = "lat_alignment.alignment:main"
 [tool.setuptools]
 packages=["lat_alignment"]
 
+[tool.setuptools.package-data]
+"lat_alignment.data" = ["*.yaml", "*.csv"]
+
 [tool.commitizen]
 name = "cz_conventional_commits"
 tag_format = "$version"
