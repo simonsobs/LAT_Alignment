@@ -7,7 +7,7 @@ calling this directly.
 import argparse
 import os
 from functools import partial
-from importlib.resources import files 
+from importlib.resources import files
 
 import numpy as np
 import yaml
@@ -81,7 +81,9 @@ def main():
         corner_path = os.path.join(dat_dir, f"{mirror}_corners.yaml")
         adj_path = os.path.join(dat_dir, f"{mirror}_adj.csv")
     else:
-        corner_path = str(files("lat_alignment.data").joinpath(f"{mirror}_corners.yaml"))
+        corner_path = str(
+            files("lat_alignment.data").joinpath(f"{mirror}_corners.yaml")
+        )
         adj_path = str(files("lat_alignment.data").joinpath(f"{mirror}_adj.csv"))
 
     # load files
