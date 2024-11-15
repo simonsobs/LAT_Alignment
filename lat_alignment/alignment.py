@@ -76,8 +76,8 @@ def main():
 
     cfgdir = os.path.dirname(os.path.abspath(args.config))
     meas_file = os.path.abspath(os.path.join(cfgdir, cfg["measurement"]))
-    if "dat_dir" in cfg:
-        dat_dir = os.path.abspath(os.path.join(cfgdir, cfg["dat_dir"]))
+    if "data_dir" in cfg:
+        dat_dir = os.path.abspath(os.path.join(cfgdir, cfg["data_dir"]))
         corner_path = os.path.join(dat_dir, f"{mirror}_corners.yaml")
         adj_path = os.path.join(dat_dir, f"{mirror}_adj.csv")
     else:
