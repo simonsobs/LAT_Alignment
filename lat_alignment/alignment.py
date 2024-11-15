@@ -7,6 +7,7 @@ calling this directly.
 import argparse
 import os
 from functools import partial
+from importlib.resources import files 
 
 import numpy as np
 import yaml
@@ -75,12 +76,18 @@ def main():
 
     cfgdir = os.path.dirname(os.path.abspath(args.config))
     meas_file = os.path.abspath(os.path.join(cfgdir, cfg["measurement"]))
-    dat_dir = os.path.abspath(os.path.join(cfgdir, cfg.get("dat_dir", "../../data")))
+    if "dat_dir" in cfg:
+        dat_dir = os.path.abspath(os.path.join(cfgdir, cfg["dat_dir"]))
+        corner_path = os.path.join(dat_dir, f"{mirror}_corners.yaml")
+        adj_path = os.path.join(dat_dir, f"{mirror}_adj.csv")
+    else:
+        corner_path = str(files("lat_alignment.data").joinpath(f"{mirror}_corners.yaml"))
+        adj_path = str(files("lat_alignment.data").joinpath(f"{mirror}_adj.csv"))
 
     # load files
     meas = io.load_photo(meas_file, True, mirror=mirror, **cfg.get("load", {}))
-    corners = io.load_corners(os.path.join(dat_dir, f"{mirror}_corners.yaml"))
-    adjusters = io.load_adjusters(os.path.join(dat_dir, f"{mirror}_adj.csv"), mirror)
+    corners = io.load_corners(corner_path)
+    adjusters = io.load_adjusters(adj_path, mirror)
 
     # init, fit, and plot panels
     meas = mir.remove_cm(
