@@ -587,7 +587,7 @@
 
 <h1 id="configuration-file">Configuration File</h1>
 <h2 id="fields">Fields</h2>
-<details class="info">
+<details class="info" open="open">
 <summary><code>mode</code></summary>
 <p>The alignment mode to use.</p>
 <p>Possible values are:</p>
@@ -596,35 +596,35 @@
 <li><code>optical</code>: For aligning optical elements relative to each other (as solid bodies).</li>
 </ul>
 </details>
-<details class="info">
+<details class="info" open="open">
 <summary><code>mirror</code></summary>
 <p>The mirror that we want to align panels to.
 Only used if <code>mode</code> is <code>panel</code>.</p>
 <p>Possible values are:</p>
 <ul>
 <li><code>primary</code>: To align the primary mirror.</li>
-<li>`secondary": The align the secondary mirror.</li>
+<li><code>secondary</code>: To align the secondary mirror.</li>
 </ul>
 </details>
-<details class="info">
+<details class="info" open="open">
 <summary><code>align_to</code></summary>
 <p>Which optical element to keep fixed and align the others to.
 Only used if <code>mode</code> is <code>optical</code>.</p>
 <p>Possible values are:</p>
 <ul>
 <li><code>primary</code>: To align to the primary mirror.</li>
-<li>`secondary": The align to the secondary mirror.</li>
-<li>`receiver": The align to the receiver.</li>
-<li>`bearing": The align to the bearing.</li>
+<li><code>secondary</code>: To align to the secondary mirror.</li>
+<li><code>receiver</code>: To align to the receiver.</li>
+<li><code>bearing</code>: To align to the bearing.</li>
 </ul>
 </details>
-<details class="info">
+<details class="info" open="open">
 <summary><code>measurement</code></summary>
 <p>The path to the photogrammetry data we are using to do the alignment.
 If this is a relative path it is taken relative to the directory that the
 configuration file is in.</p>
 </details>
-<details class="info">
+<details class="info" open="open">
 <summary><code>data_dir</code></summary>
 <p>The path to the data files that define the panel corners and the adjuster positions.
 If this is a relative path it is taken relative to the directory that the
@@ -632,39 +632,39 @@ configuration file is in.</p>
 <p>You genrally don't need to provide this since the package will use its own bundled
 data files by default.</p>
 </details>
-<details class="info">
+<details class="info" open="open">
 <summary><code>load</code></summary>
 <p>Additional keyword arguments to pass to
 <a href="https://simonsobs.github.io/LAT_Alignment/latest/reference/io/#lat_alignment.io.load_photo"><code>io.load_photo</code></a>.</p>
 </details>
-<details class="info">
+<details class="info" open="open">
 <summary><code>compensate</code></summary>
 <p>Amount to compensate mirror measurements by in mm.
 This is for backwards compatiblilty with laser tracker data and is <span class="arithmatex">\(0\)</span> by default.</p>
 </details>
-<details class="info">
+<details class="info" open="open">
 <summary><code>common_mode</code></summary>
 <p>Additional keyword arguments to pass to
 <a href="https://simonsobs.github.io/LAT_Alignment/latest/reference/mirror/#lat_alignment.mirror.remove_cm"><code>mirror.remove_cm</code></a></p>
 </details>
-<details class="info">
+<details class="info" open="open">
 <summary><code>adjuster_radius</code></summary>
 <p>How close to an adjuster a data point needs to be in order for us to use its residual as
 a secondary correction when computing adjustments.
 Only used if <code>mode</code> is <code>panel</code>.</p>
 <p>This is <span class="arithmatex">\(100\)</span> mm by default.</p>
 </details>
-<details class="info">
+<details class="info" open="open">
 <summary><code>vmax</code></summary>
 <p>The maximum value to use in the colorbar when plotting mirror surface.
 The colorbar is symmetric so <code>vmin = -1*vmax</code>.</p>
 </details>
-<details class="info">
+<details class="info" open="open">
 <summary><code>adjust</code></summary>
 <p>Additional keyword arguments to pass to
 <a href="https://simonsobs.github.io/LAT_Alignment/latest/reference/adjustments/#lat_alignment.adjustments.calc_adjustments"><code>adjustments.calc_adjustments</code></a></p>
 </details>
-<details class="info">
+<details class="info" open="open">
 <summary><code>title</code></summary>
 <p>The title of the measurement.
 This is used both in plots and in output filenames.</p>
