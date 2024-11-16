@@ -3,7 +3,7 @@ Tools for Large Aperture Telescope (LAT) mirror alignment.
 While these tools are currently specific to the Simons Observatory LAT,
 much of the library could be generalized to any telescope alignment.
 
-For details on usage please check the guide (WIP! Doesn't exist yet!).
+For details on usage please read the [alignment procedure documentation](https://simonsobs.github.io/LAT_Alignment/latest/alignment_procedure/).
 
 ## Installation
 Technically after cloning this repository you can just run `python lat_alignment/alignment.py PATH/TO/CONFIG`,
