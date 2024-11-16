@@ -53,7 +53,7 @@ When aligning panels the code takes the following steps:
 There are only two required inputs to do the panel alignment.
 
 The first is a configuration file with the `mode` field set to `panel`,
-see (here)[https://simonsobs.github.io/LAT_Alignment/latest/config_file/#panel-alignment]
+see [here](https://simonsobs.github.io/LAT_Alignment/latest/config_file/#panel-alignment)
 for an example.
 
 The second is a photogrammetry measurement of the mirror we want to align panels for.

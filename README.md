@@ -12,6 +12,7 @@ but it is recommended that you install this as a package instead.
 To do this just run: `pip install -e .` from the root of this repository.
 
 This has two main benefits over running the script directly:
+
 1. It will handle dependencies for you.
 2. This sets up an entrypoint called `lat_alignment` so that you can call the code from anywhere.
 This is nice because now you can call the code from the measurement directory where you are most likely editing files,
