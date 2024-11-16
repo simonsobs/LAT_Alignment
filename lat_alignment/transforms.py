@@ -417,9 +417,8 @@ def align_photo(
         invars += [labels[trg_idx][np.argmin(dist)]]
     if len(ref) < 4:
         raise ValueError(f"Only {len(ref)} reference points found! Can't align!")
-    msk = [0, 1, 3]
-    pts = np.vstack(pts)[msk]
-    ref = np.vstack(ref)[msk]
+    pts = np.vstack(pts)
+    ref = np.vstack(ref)
     pts = np.vstack((pts, np.mean(pts, 0)))
     ref = np.vstack((ref, np.mean(ref, 0)))
     ref = transform(ref)
