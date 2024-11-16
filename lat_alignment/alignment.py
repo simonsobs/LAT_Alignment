@@ -48,11 +48,11 @@ def adjust_panel(panel: mir.Panel, mnum: int, cfg: dict) -> NDArray[np.float32]:
     meas_adj[:, 2] += panel.meas_adj_resid
     meas_surface = panel.meas_surface.copy()
     meas_surface[:, 2] += panel.meas_adj_resid
-    dy, dy, d_adj, dx_err, dy_err, d_adj_err = adj.calc_adjustments(
+    dx, dy, d_adj, dx_err, dy_err, d_adj_err = adj.calc_adjustments(
         panel.can_surface, meas_surface, meas_adj, **cfg.get("adjust", {})
     )
     adjustments[3:] = np.array(
-        [dy, dy] + list(d_adj) + [dx_err, dy_err] + list(d_adj_err)
+        [dx, dy] + list(d_adj) + [dx_err, dy_err] + list(d_adj_err)
     )
 
     return adjustments
