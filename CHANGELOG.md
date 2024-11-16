@@ -1,3 +1,10 @@
+## 4.0.1 (2024-11-16)
+
+### Fix
+
+- remove mask used for debugging
+- fix bug where dy was being returned for dx
+
 ## 4.0.0 (2024-11-14)
 
 ### Feat
