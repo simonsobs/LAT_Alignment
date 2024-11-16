@@ -628,11 +628,13 @@ much of the library could be generalized to any telescope alignment.</p>
 <p>Technically after cloning this repository you can just run <code>python lat_alignment/alignment.py PATH/TO/CONFIG</code>,
 but it is recommended that you install this as a package instead.</p>
 <p>To do this just run: <code>pip install -e .</code> from the root of this repository.</p>
-<p>This has two main benefits over running the script directly:
-1. It will handle dependencies for you.
-2. This sets up an entrypoint called <code>lat_alignment</code> so that you can call the code from anywhere.
+<p>This has two main benefits over running the script directly:</p>
+<ol>
+<li>It will handle dependencies for you.</li>
+<li>This sets up an entrypoint called <code>lat_alignment</code> so that you can call the code from anywhere.
 This is nice because now you can call the code from the measurement directory where you are most likely editing files,
-saving you the hassle of having to <code>cd</code> or wrangle long file paths.</p>
+saving you the hassle of having to <code>cd</code> or wrangle long file paths.</li>
+</ol>
 <h2 id="bugs-and-feature-requests">Bugs and Feature Requests</h2>
 <p>For low priority bugs and feature requests submit an issue on the <a href="https://github.com/simonsobs/LAT_Alignment">git repo</a>.</p>
 <p>For higher priority issues (or questions that require an expedient answer) <a href="mailto:haridas@sas.upenn.edu">email</a>, Slack, or call me.</p>
