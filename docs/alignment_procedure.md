@@ -10,7 +10,8 @@ If you are interested in applying this software to other measurements or other t
 [GitHub issue](https://github.com/simonsobs/LAT_Alignment/issues) for help with that.
 
 Before attempting and alignment it is useful to familiarize yourself with this relevant
-[coordinate systems](https://simonsobs.github.io/LAT_Alignment/latest/coordinate_systems/)
+[coordinate systems](https://simonsobs.github.io/LAT_Alignment/latest/coordinate_systems/),
+[the panel numbering scheme](https://simonsobs.github.io/LAT_Alignment/latest/panel_numbers/),
 and the package's [configuration file](https://simonsobs.github.io/LAT_Alignment/latest/config_file/).
 
 ### Reference Points

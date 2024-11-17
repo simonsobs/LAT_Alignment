@@ -49,6 +49,7 @@ extra_javascript:
 nav:
   - Home: 'index.md'
   - Coordinate Systems: 'coordinate_systems.md'
+  - Panel Numbering Scheme: 'panel_numbers.md'
   - Configuration File: 'config_file.md'
   - Alignment Procedure: 'alignment_procedure.md'
   - API Reference: reference/
