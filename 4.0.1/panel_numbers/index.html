@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://simonsobs.github.io/LAT_Alignment/4.0.1/config_file/">
+        <link rel="canonical" href="https://simonsobs.github.io/LAT_Alignment/4.0.1/panel_numbers/">
       
       
-        <link rel="prev" href="../panel_numbers/">
+        <link rel="prev" href="../coordinate_systems/">
       
       
-        <link rel="next" href="../alignment_procedure/">
+        <link rel="next" href="../config_file/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>Configuration File - LAT_Alignment</title>
+        <title>Panel Numbering Scheme - LAT_Alignment</title>
       
     
     
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#configuration-file" class="md-skip">
+        <a href="#panel-numbering-scheme" class="md-skip">
           Skip to content
         </a>
       
@@ -116,7 +116,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Configuration File
+              Panel Numbering Scheme
             
           </span>
         </div>
@@ -282,26 +282,6 @@
       
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../panel_numbers/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Panel Numbering Scheme
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
     
   
   
@@ -314,18 +294,28 @@
         
       
       
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
   
   <span class="md-ellipsis">
-    Configuration File
+    Panel Numbering Scheme
   </span>
   
 
-          <span class="md-nav__icon md-icon"></span>
-        </label>
+      </a>
       
-      <a href="./" class="md-nav__link md-nav__link--active">
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config_file/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -334,68 +324,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#fields" class="md-nav__link">
-    <span class="md-ellipsis">
-      Fields
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#example-configuration-files" class="md-nav__link">
-    <span class="md-ellipsis">
-      Example Configuration Files
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Example Configuration Files">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#panel-alignment" class="md-nav__link">
-    <span class="md-ellipsis">
-      Panel Alignment
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#optical-element-alignment" class="md-nav__link">
-    <span class="md-ellipsis">
-      Optical Element Alignment
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -608,56 +536,6 @@
     
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#fields" class="md-nav__link">
-    <span class="md-ellipsis">
-      Fields
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#example-configuration-files" class="md-nav__link">
-    <span class="md-ellipsis">
-      Example Configuration Files
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Example Configuration Files">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#panel-alignment" class="md-nav__link">
-    <span class="md-ellipsis">
-      Panel Alignment
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#optical-element-alignment" class="md-nav__link">
-    <span class="md-ellipsis">
-      Optical Element Alignment
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -671,102 +549,38 @@
                   
 
 
-<h1 id="configuration-file">Configuration File</h1>
-<h2 id="fields">Fields</h2>
-<details class="info" open="open">
-<summary><code>mode</code></summary>
-<p>The alignment mode to use.</p>
-<p>Possible values are:</p>
+<h1 id="panel-numbering-scheme">Panel Numbering Scheme</h1>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Here we only describe the indexing and labeling of the mirror panels.
+For information on the optics of the mirrors please see
+<a href="https://arxiv.org/abs/1807.06678">Parshley et al.</a>.
+For more information on the optics of the SO LAT 
+<a href="https://arxiv.org/abs/1808.05058">Dicker et al.</a> and
+<a href="https://arxiv.org/abs/2009.10138">Gudmundsson et al.</a>
+are useful resources as well.</p>
+</div>
+<p>Each LAT mirror panel can be identified by a eight digit ID in the following format:</p>
+<div class="arithmatex">\[
+(telescope number)(mirror number)(panel row)(panel column}(panel number)
+\]</div>
+<p>Where:</p>
 <ul>
-<li><code>panel</code>: For aligning panels within one mirror.</li>
-<li><code>optical</code>: For aligning optical elements relative to each other (as solid bodies).</li>
+<li><span class="arithmatex">\(telescope number\)</span> is a four digit ID for the telescope that the mirror belongs to with a hyphen between the second and third digit. The SO LAT is <span class="arithmatex">\(01-01\)</span>.</li>
+<li><span class="arithmatex">\(mirror number\)</span> is <span class="arithmatex">\(1\)</span> for the primary mirror and <span class="arithmatex">\(2\)</span> for the secondary mirror.</li>
+<li><span class="arithmatex">\(panel row\)</span> is which row of the mirror the panel is in (see diagram below).</li>
+<li><span class="arithmatex">\(panel column\)</span> is which column of the mirror the panel is in (see diagram below).</li>
+<li><span class="arithmatex">\(panel number\)</span> identifies which instance of the panel you have, it can change to denote the creation of a spare or replacement panel.</li>
 </ul>
-</details>
-<details class="info" open="open">
-<summary><code>mirror</code></summary>
-<p>The mirror that we want to align panels to.
-Only used if <code>mode</code> is <code>panel</code>.</p>
-<p>Possible values are:</p>
+<p><img alt="Diagram from Vertex showing the panel rows and columns" src="../imgs/panel_nums.png" /></p>
+<p>Each panel has eight adjusters:</p>
 <ul>
-<li><code>primary</code>: To align the primary mirror.</li>
-<li><code>secondary</code>: To align the secondary mirror.</li>
+<li>Two <span class="arithmatex">\(x\)</span> adjusters (ie: moving the panel along its row) denoted as <span class="arithmatex">\(H1\)</span> and <span class="arithmatex">\(H2\)</span>.</li>
+<li>One <span class="arithmatex">\(y\)</span> adjuster (ie: moving the panel along its column) denoted as <span class="arithmatex">\(H3\)</span>.</li>
+<li>Five <span class="arithmatex">\(z\)</span> adjusters (ie: to deform the panel surface) denoted as <span class="arithmatex">\(V1\)</span> to <span class="arithmatex">\(V5\)</span>.</li>
 </ul>
-</details>
-<details class="info" open="open">
-<summary><code>align_to</code></summary>
-<p>Which optical element to keep fixed and align the others to.
-Only used if <code>mode</code> is <code>optical</code>.</p>
-<p>Possible values are:</p>
-<ul>
-<li><code>primary</code>: To align to the primary mirror.</li>
-<li><code>secondary</code>: To align to the secondary mirror.</li>
-<li><code>receiver</code>: To align to the receiver.</li>
-<li><code>bearing</code>: To align to the bearing.</li>
-</ul>
-</details>
-<details class="info" open="open">
-<summary><code>measurement</code></summary>
-<p>The path to the photogrammetry data we are using to do the alignment.
-If this is a relative path it is taken relative to the directory that the
-configuration file is in.</p>
-</details>
-<details class="info" open="open">
-<summary><code>data_dir</code></summary>
-<p>The path to the data files that define the panel corners and the adjuster positions.
-If this is a relative path it is taken relative to the directory that the
-configuration file is in.</p>
-<p>You genrally don't need to provide this since the package will use its own bundled
-data files by default.</p>
-</details>
-<details class="info" open="open">
-<summary><code>load</code></summary>
-<p>Additional keyword arguments to pass to
-<a href="https://simonsobs.github.io/LAT_Alignment/latest/reference/io/#lat_alignment.io.load_photo"><code>io.load_photo</code></a>.</p>
-</details>
-<details class="info" open="open">
-<summary><code>compensate</code></summary>
-<p>Amount to compensate mirror measurements by in mm.
-This is for backwards compatiblilty with laser tracker data and is <span class="arithmatex">\(0\)</span> by default.</p>
-</details>
-<details class="info" open="open">
-<summary><code>common_mode</code></summary>
-<p>Additional keyword arguments to pass to
-<a href="https://simonsobs.github.io/LAT_Alignment/latest/reference/mirror/#lat_alignment.mirror.remove_cm"><code>mirror.remove_cm</code></a></p>
-</details>
-<details class="info" open="open">
-<summary><code>adjuster_radius</code></summary>
-<p>How close to an adjuster a data point needs to be in order for us to use its residual as
-a secondary correction when computing adjustments.
-Only used if <code>mode</code> is <code>panel</code>.</p>
-<p>This is <span class="arithmatex">\(100\)</span> mm by default.</p>
-</details>
-<details class="info" open="open">
-<summary><code>vmax</code></summary>
-<p>The maximum value to use in the colorbar when plotting mirror surface.
-The colorbar is symmetric so <code>vmin = -1*vmax</code>.</p>
-</details>
-<details class="info" open="open">
-<summary><code>adjust</code></summary>
-<p>Additional keyword arguments to pass to
-<a href="https://simonsobs.github.io/LAT_Alignment/latest/reference/adjustments/#lat_alignment.adjustments.calc_adjustments"><code>adjustments.calc_adjustments</code></a></p>
-</details>
-<details class="info" open="open">
-<summary><code>title</code></summary>
-<p>The title of the measurement.
-This is used both in plots and in output filenames.</p>
-</details>
-<h2 id="example-configuration-files">Example Configuration Files</h2>
-<p>These are typical configuration files,
-you usually will not need to touch fields other than the ones shown here.</p>
-<h3 id="panel-alignment">Panel Alignment</h3>
-<div class="highlight"><pre><span></span><code><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;panel&quot;</span>
-<span class="nt">mirror</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;secondary&quot;</span>
-<span class="nt">measurement</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;data_20240911_1430.csv&quot;</span>
-<span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;M2</span><span class="nv"> </span><span class="s">20240911</span><span class="nv"> </span><span class="s">1430&quot;</span>
-<span class="nt">vmax</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
-</code></pre></div>
-<h3 id="optical-element-alignment">Optical Element Alignment</h3>
-<p>WIP! Check back later!</p>
+<p>The locations of these adjusters on the back of the panel can be seen below:</p>
+<p><img alt="Diagram from Vertex showing the adjuster locations on the back of a panel" src="../imgs/adj_nums.png" /></p>
 
 
 
