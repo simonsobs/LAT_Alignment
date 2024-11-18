@@ -374,7 +374,9 @@ def remove_cm(
     cut_thresh: float = 50,
     niters: int = 10,
     verbose=False,
-) -> tuple[dict[str, NDArray[np.float32]], tuple[NDArray[np.float32], NDArray[np.float32]]]:
+) -> tuple[
+    dict[str, NDArray[np.float32]], tuple[NDArray[np.float32], NDArray[np.float32]]
+]:
     """
     Fit for the common mode transformation from the model to the measurements of all panels and them remove it.
 
@@ -403,7 +405,7 @@ def remove_cm(
         The points that were successfully fit.
     common_mode : tuple[NDArray[np.float32], NDArray[np.float32]]
         The common mode that was removed.
-        The first element is an affine matrix and 
+        The first element is an affine matrix and
         the second is the shift.
     """
 

@@ -11,7 +11,9 @@ from .transforms import align_photo, coord_transform
 
 def load_photo(
     path: str, align: bool = True, err_thresh: float = 2, plot: bool = True, **kwargs
-) -> tuple[dict[str, NDArray[np.float32]], tuple[NDArray[np.float32], NDArray[np.float32]]]:
+) -> tuple[
+    dict[str, NDArray[np.float32]], tuple[NDArray[np.float32], NDArray[np.float32]]
+]:
     """
     Load photogrammetry data.
     Assuming first column is target names and next three are (x, y , z).
@@ -36,8 +38,8 @@ def load_photo(
         The photogrammetry data.
         Dict is indexed by the target names.
     alignment : tuple[NDArray[np.float32], NDArray[np.float32]]
-        The transformation that aligned the points. 
-        The first element is a rotation matrix and 
+        The transformation that aligned the points.
+        The first element is a rotation matrix and
         the second is the shift.
     """
     labels = np.genfromtxt(path, dtype=str, delimiter=",", usecols=(0,))

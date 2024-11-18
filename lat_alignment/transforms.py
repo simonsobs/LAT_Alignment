@@ -19,7 +19,7 @@ from functools import cache, partial
 from typing import Optional
 
 import numpy as np
-from megham.transform import apply_transform, get_rigid, get_affine
+from megham.transform import apply_transform, get_affine, get_rigid
 from megham.utils import make_edm
 from numpy.typing import NDArray
 
@@ -340,11 +340,17 @@ def coord_transform(
             raise ValueError("Invalid coordinate system provided!")
 
 
-def affine_basis_transform(aff: NDArray[np.float32], sft: NDArray[np.float32], cfrom: str, cto: str, src_or_dst: bool = True) -> tuple[NDArray[np.float32], NDArray[np.float32]]:
+def affine_basis_transform(
+    aff: NDArray[np.float32],
+    sft: NDArray[np.float32],
+    cfrom: str,
+    cto: str,
+    src_or_dst: bool = True,
+) -> tuple[NDArray[np.float32], NDArray[np.float32]]:
     """
     Take an affine transform defined in one coordinate system and move it to another.
     The valid coordinate systems are the same as in `coord_transform`.
-    
+
     Parameters
     ----------
     aff : NDArray[np.float32]
@@ -373,8 +379,8 @@ def affine_basis_transform(aff: NDArray[np.float32], sft: NDArray[np.float32], c
         `sft` transformed into `cto`.
     """
     # Make a grid of reference points
-    line = np.array((-1, 0 , 1), np.float32)
-    x, y, z = np.meshgrid(line, line, line) 
+    line = np.array((-1, 0, 1), np.float32)
+    x, y, z = np.meshgrid(line, line, line)
     xyz = np.column_stack((x.ravel(), y.ravel(), z.ravel()))
 
     # Apply the affine transform
@@ -391,6 +397,7 @@ def affine_basis_transform(aff: NDArray[np.float32], sft: NDArray[np.float32], c
 
     return aff, sft
 
+
 def align_photo(
     labels: NDArray[np.str_],
     coords: NDArray[np.float32],
@@ -398,7 +405,12 @@ def align_photo(
     mirror: str = "primary",
     reference: Optional[list[tuple[tuple[float, float, float], list[str]]]] = None,
     max_dist: float = 100.0,
-) -> tuple[NDArray[np.str_], NDArray[np.float32], NDArray[np.bool_], tuple[NDArray[np.float32], NDArray[np.float32]]]:
+) -> tuple[
+    NDArray[np.str_],
+    NDArray[np.float32],
+    NDArray[np.bool_],
+    tuple[NDArray[np.float32], NDArray[np.float32]],
+]:
     """
     Align photogrammetry data and then put it into mirror coordinates.
 
@@ -436,8 +448,8 @@ def align_photo(
     msk : NDArray[np.bool_]
         Mask to removes invar points
     alignment : tuple[NDArray[np.float32], NDArray[np.float32]]
-        The transformation that aligned the points. 
-        The first element is a rotation matrix and 
+        The transformation that aligned the points.
+        The first element is a rotation matrix and
         the second is the shift.
     """
     if mirror not in ["primary", "secondary"]:

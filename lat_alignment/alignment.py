@@ -9,11 +9,11 @@ import os
 from functools import partial
 from importlib.resources import files
 
+import megham.transform as mt
 import numpy as np
 import yaml
 from numpy.typing import NDArray
 from pqdm.processes import pqdm
-import megham.transform as mt
 
 from . import adjustments as adj
 from . import io
@@ -129,38 +129,65 @@ def main():
         if align_to in ["receiver", "bearing"]:
             raise NotImplementedError(f"Alignment with {align_to} not yet implemented")
 
-        # Load data and compute the transformation to align with the model 
+        # Load data and compute the transformation to align with the model
         # We want to put all the transformations into opt_global
-        elements = {} # {element_name : full_alignment}
+        elements = {}  # {element_name : full_alignment}
         identity = (np.eye(3, dtype=np.float32), np.zeros(3, dtype=np.float32))
         try:
-            meas, alignment = io.load_photo(meas_file, True, mirror="primary", **cfg.get("load", {}))
-            meas, common_mode = mir.remove_cm(meas, "primary", cfg.get("compensate", 0), **cfg.get("common_mode", {}))
+            meas, alignment = io.load_photo(
+                meas_file, True, mirror="primary", **cfg.get("load", {})
+            )
+            meas, common_mode = mir.remove_cm(
+                meas, "primary", cfg.get("compensate", 0), **cfg.get("common_mode", {})
+            )
             full_alignment = mt.compose_transform(*alignment, *common_mode)
-            full_alignment = tf.affine_basis_transform(full_alignment[0], full_alignment[1], "opt_primary", "opt_global", False)
+            full_alignment = tf.affine_basis_transform(
+                full_alignment[0], full_alignment[1], "opt_primary", "opt_global", False
+            )
         except Exception as e:
-            print(f"Failed to load primary due to error: \n\t{e}\n if the primary was not in your data you can ignore this.")
+            print(
+                f"Failed to load primary due to error: \n\t{e}\n if the primary was not in your data you can ignore this."
+            )
             meas = {}
             full_alignment = identity
         if len(meas) >= 4:
             elements["primary"] = full_alignment
         try:
-            meas, alignment = io.load_photo(meas_file, True, mirror="secondary", **cfg.get("load", {}))
-            meas, common_mode = mir.remove_cm(meas, "secondary", cfg.get("compensate", 0), **cfg.get("common_mode", {}))
+            meas, alignment = io.load_photo(
+                meas_file, True, mirror="secondary", **cfg.get("load", {})
+            )
+            meas, common_mode = mir.remove_cm(
+                meas,
+                "secondary",
+                cfg.get("compensate", 0),
+                **cfg.get("common_mode", {}),
+            )
             full_alignment = mt.compose_transform(*alignment, *common_mode)
-            full_alignment = tf.affine_basis_transform(full_alignment[0], full_alignment[1], "opt_secondary", "opt_global", False)
+            full_alignment = tf.affine_basis_transform(
+                full_alignment[0],
+                full_alignment[1],
+                "opt_secondary",
+                "opt_global",
+                False,
+            )
         except Exception as e:
-            print(f"Failed to load secondary due to error: \n\t{e}\n if the secondary was not in your data you can ignore this.")
+            print(
+                f"Failed to load secondary due to error: \n\t{e}\n if the secondary was not in your data you can ignore this."
+            )
             meas = {}
             full_alignment = identity
         if len(meas) >= 4:
             elements["secondary"] = full_alignment
         if len(elements) < 2:
-            raise ValueError(f"Only {len(elements)} optical elements found in measurment. Can't align!")
+            raise ValueError(
+                f"Only {len(elements)} optical elements found in measurment. Can't align!"
+            )
         if align_to not in elements:
-            raise ValueError(f"Specified 'align_to' element ({align_to}) not found in measurment. Can't align!")
+            raise ValueError(
+                f"Specified 'align_to' element ({align_to}) not found in measurment. Can't align!"
+            )
 
-        # Now combine with the align_to alignment 
+        # Now combine with the align_to alignment
         transforms = {}
         align_to_inv = mt.invert_transform(*elements[align_to])
         for element, full_transform in elements.items():
@@ -171,7 +198,9 @@ def main():
             transforms[element] = transform
 
         # Save
-        with open(os.path.join(cfgdir, f"{title_str.replace(' ', '_')}.yaml"), "w") as file:
+        with open(
+            os.path.join(cfgdir, f"{title_str.replace(' ', '_')}.yaml"), "w"
+        ) as file:
             yaml.dump(transforms, file)
 
     else:
