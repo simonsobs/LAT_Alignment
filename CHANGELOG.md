@@ -1,3 +1,9 @@
+## 4.1.0 (2024-11-18)
+
+### Feat
+
+- first pass at optical element alignment
+
 ## 4.0.1 (2024-11-16)
 
 ### Fix
