@@ -374,7 +374,7 @@ def remove_cm(
     cut_thresh: float = 50,
     niters: int = 10,
     verbose=False,
-) -> dict[str, NDArray[np.float32]]:
+) -> tuple[dict[str, NDArray[np.float32]], tuple[NDArray[np.float32], NDArray[np.float32]]]:
     """
     Fit for the common mode transformation from the model to the measurements of all panels and them remove it.
 
@@ -399,8 +399,12 @@ def remove_cm(
 
     Returns
     -------
-    kept_panels : list[Panel]
-        The panels that were successfully fit.
+    kept_points: dict[str, NDArray[np.float32]]
+        The points that were successfully fit.
+    common_mode : tuple[NDArray[np.float32], NDArray[np.float32]]
+        The common mode that was removed.
+        The first element is an affine matrix and 
+        the second is the shift.
     """
 
     def _cm(x, panel):
@@ -488,7 +492,7 @@ def remove_cm(
         print(f"Removing {np.sum(cut)} points from mirror")
         panel.measurements = panel.measurements[~cut]
 
-    return {l: d for l, d in zip(labels, panel.measurements)}
+    return {l: d for l, d in zip(labels, panel.measurements)}, (aff, sft)
 
 
 def plot_panels(
