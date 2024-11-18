@@ -19,7 +19,7 @@ from functools import cache, partial
 from typing import Optional
 
 import numpy as np
-from megham.transform import apply_transform, get_rigid
+from megham.transform import apply_transform, get_affine, get_rigid
 from megham.utils import make_edm
 from numpy.typing import NDArray
 
@@ -340,6 +340,64 @@ def coord_transform(
             raise ValueError("Invalid coordinate system provided!")
 
 
+def affine_basis_transform(
+    aff: NDArray[np.float32],
+    sft: NDArray[np.float32],
+    cfrom: str,
+    cto: str,
+    src_or_dst: bool = True,
+) -> tuple[NDArray[np.float32], NDArray[np.float32]]:
+    """
+    Take an affine transform defined in one coordinate system and move it to another.
+    The valid coordinate systems are the same as in `coord_transform`.
+
+    Parameters
+    ----------
+    aff : NDArray[np.float32]
+        Affine matrix to tranform.
+        Should be a `(3, 3)` array.
+    sft : NDArray[np.float32]
+        Shift vector to tranform.
+        Should be a `(3,)` array.
+    cfrom : str
+        The coordinate system that `aff` and `sft` is currently in.
+    cto : str
+        The coordinate system to put `aff` and `sft` into.
+    src_or_dst : bool, default: True
+        If `True` then the coordinate transform is done on the source
+        points that we are affine transforming.
+        This is equivalent to doing `aff@(coord_transform(src)) + sft`.
+        If `False` then the coordinate transform is done on the destination
+        points obtained by the affine transform.
+        This is equivalent to doing `coord_transform(aff@src + sft)`
+
+    Returns
+    -------
+    aff_transformed : NDArray[np.float32]
+        `aff` transformed into `cto`.
+    sft_transformed : NDArray[np.float32]
+        `sft` transformed into `cto`.
+    """
+    # Make a grid of reference points
+    line = np.array((-1, 0, 1), np.float32)
+    x, y, z = np.meshgrid(line, line, line)
+    xyz = np.column_stack((x.ravel(), y.ravel(), z.ravel()))
+
+    # Apply the affine transform
+    xyz_transformed = apply_transform(xyz, aff, sft)
+
+    # Move to the new coordinate system
+    if src_or_dst:
+        xyz = coord_transform(xyz, cfrom, cto)
+    else:
+        xyz_transformed = coord_transform(xyz_transformed, cfrom, cto)
+
+    # Get the new affine transform
+    aff, sft = get_affine(xyz, xyz_transformed)
+
+    return aff, sft
+
+
 def align_photo(
     labels: NDArray[np.str_],
     coords: NDArray[np.float32],
@@ -347,7 +405,12 @@ def align_photo(
     mirror: str = "primary",
     reference: Optional[list[tuple[tuple[float, float, float], list[str]]]] = None,
     max_dist: float = 100.0,
-) -> tuple[NDArray[np.str_], NDArray[np.float32], NDArray[np.bool_]]:
+) -> tuple[
+    NDArray[np.str_],
+    NDArray[np.float32],
+    NDArray[np.bool_],
+    tuple[NDArray[np.float32], NDArray[np.float32]],
+]:
     """
     Align photogrammetry data and then put it into mirror coordinates.
 
@@ -384,6 +447,10 @@ def align_photo(
         Invar points are not included.
     msk : NDArray[np.bool_]
         Mask to removes invar points
+    alignment : tuple[NDArray[np.float32], NDArray[np.float32]]
+        The transformation that aligned the points.
+        The first element is a rotation matrix and
+        the second is the shift.
     """
     if mirror not in ["primary", "secondary"]:
         raise ValueError(f"Invalid mirror: {mirror}")
@@ -448,4 +515,4 @@ def align_photo(
 
     msk = ~np.isin(labels, invars)
 
-    return labels[msk], coords_transformed[msk], msk
+    return labels[msk], coords_transformed[msk], msk, (rot, sft)
