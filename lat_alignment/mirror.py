@@ -377,7 +377,6 @@ def remove_cm(
 ) -> dict[str, NDArray[np.float32]]:
     """
     Fit for the common mode transformation from the model to the measurements of all panels and them remove it.
-    Note that we only remove the shift component of the common mode, rotations are ignored.
 
     Parameters
     ----------
