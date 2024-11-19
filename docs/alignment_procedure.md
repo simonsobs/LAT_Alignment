@@ -24,8 +24,7 @@ These reference points should be places in locations that do not move when panel
 installed (ie: around the edge of the mirror's back-up structure.
 In order to identify these points known coded targets should be placed near the reference points.
 Currently the locations of these points (in the "Vertex Global" coordinates) along with nearby
-coded targets are hard coded [here](https://github.com/simonsobs/LAT_Alignment/blob/415d5ccad4d16aaf2ca267c21f762bf62b612ca4/lat_alignment/transforms.py#L28-L41),
-in the future these will likely be replaced with a file that can be provided by the user for more flexibility.
+coded targets are can be found in the `reference.yaml` data file.
 
 ## Panel Alignment
 

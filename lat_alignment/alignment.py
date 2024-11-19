@@ -72,6 +72,13 @@ def main():
     cfgdir = os.path.dirname(os.path.abspath(args.config))
     meas_file = os.path.abspath(os.path.join(cfgdir, cfg["measurement"]))
     title_str = cfg["title"]
+    dat_dir = os.path.abspath(os.path.join(cfgdir, cfg.get("data_dir", "/")))
+    if "data_dir" in cfg:
+        ref_path = os.path.join(dat_dir, "reference.yaml")
+    else:
+        ref_path = str(files("lat_alignment.data").joinpath("reference.yaml"))
+    with open(ref_path) as file:
+        reference = yaml.safe_load(file)
 
     if mode == "panel":
         mirror = cfg["mirror"]
@@ -83,7 +90,6 @@ def main():
             raise ValueError(f"Invalid mirror: {mirror}")
 
         if "data_dir" in cfg:
-            dat_dir = os.path.abspath(os.path.join(cfgdir, cfg["data_dir"]))
             corner_path = os.path.join(dat_dir, f"{mirror}_corners.yaml")
             adj_path = os.path.join(dat_dir, f"{mirror}_adj.csv")
         else:
@@ -93,7 +99,9 @@ def main():
             adj_path = str(files("lat_alignment.data").joinpath(f"{mirror}_adj.csv"))
 
         # load files
-        meas, _ = io.load_photo(meas_file, True, mirror=mirror, **cfg.get("load", {}))
+        meas, _ = io.load_photo(
+            meas_file, True, reference, mirror=mirror, **cfg.get("load", {})
+        )
         corners = io.load_corners(corner_path)
         adjusters = io.load_adjusters(adj_path, mirror)
 
@@ -135,7 +143,7 @@ def main():
         identity = (np.eye(3, dtype=np.float32), np.zeros(3, dtype=np.float32))
         try:
             meas, alignment = io.load_photo(
-                meas_file, True, mirror="primary", **cfg.get("load", {})
+                meas_file, True, reference, mirror="primary", **cfg.get("load", {})
             )
             meas, common_mode = mir.remove_cm(
                 meas, "primary", cfg.get("compensate", 0), **cfg.get("common_mode", {})
@@ -154,7 +162,7 @@ def main():
             elements["primary"] = full_alignment
         try:
             meas, alignment = io.load_photo(
-                meas_file, True, mirror="secondary", **cfg.get("load", {})
+                meas_file, True, reference, mirror="secondary", **cfg.get("load", {})
             )
             meas, common_mode = mir.remove_cm(
                 meas,

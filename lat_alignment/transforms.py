@@ -23,24 +23,6 @@ from megham.transform import apply_transform, get_affine, get_rigid
 from megham.utils import make_edm
 from numpy.typing import NDArray
 
-# TODO: Write better docs!
-
-DEFAULT_REF = {
-    "primary": [
-        ((-2818.56, 2400.94, -4819.33), ["CODE14", "CODE15", "CODE28"]),
-        ((-2818.83, -2397.25, -4821.03), ["CODE23", "CODE24", "CODE31"]),
-        ((2536.61, 2397.31, -2142.25), ["CODE17", "CODE18", "CODE29"]),
-        ((2538.4, -2399.23, -2141.8), ["CODE20", "CODE21", "CODE30"]),
-    ],
-    "secondary": [
-        ((-3882.8, -1998.53, 2550.87), ["CODE41", "CODE42", "CODE43"]),
-        ((-3883.22, 1993.61, 2551.27), ["CODE32", "CODE33", "CODE34"]),
-        ((-5617.53, 1998.7, -2652.13), ["CODE35", "CODE36", "CODE37"]),
-        ((-5616.5, -1995.38, -2651.13), ["CODE38", "CODE39", "CODE40"]),
-    ],
-}
-
-
 opt_sm1 = np.array((0, 0, 3600), np.float32)  # mm
 opt_sm2 = np.array((0, -4800, 0), np.float32)  # mm
 opt_am1 = -np.arctan(0.5)
@@ -401,9 +383,9 @@ def affine_basis_transform(
 def align_photo(
     labels: NDArray[np.str_],
     coords: NDArray[np.float32],
+    reference: dict,
     *,
     mirror: str = "primary",
-    reference: Optional[list[tuple[tuple[float, float, float], list[str]]]] = None,
     max_dist: float = 100.0,
 ) -> tuple[
     NDArray[np.str_],
@@ -422,17 +404,20 @@ def align_photo(
     coords : NDArray[np.float32]
         The coordinates of each photogrammetry point.
         Should have shape `(npoint, 3)`.
-    mirror : str, default: 'primary'
-        The mirror that these points belong to.
-        Should be either: 'primary' or 'secondary'.
-    reference : Optional[list[tuple[tuple[float, float, float], list[str]]]], default: None
-        List of reference points to use.
+    reference : dict
+        Reference dictionary.
+        Should contain a key called `coords` that specifies the
+        coordinate system that the reference points are in.
+        The rest of the keys should be optical elements (ie: "primary")
+        pointing to a list of reference points to use.
         Each point given should be a tuple with two elements.
         The first element is a tuple with the (x, y, z) coordinates
         of the point in the global coordinate system.
         The second is a list of nearby coded targets that can be used
         to identify the point.
-        If `None` the default reference for each mirror is used.
+    mirror : str, default: 'primary'
+        The mirror that these points belong to.
+        Should be either: 'primary' or 'secondary'.
     max_dist : float, default: 100
         Max distance in mm that the reference poing can be from the target
         point used to locate it.
@@ -454,21 +439,27 @@ def align_photo(
     """
     if mirror not in ["primary", "secondary"]:
         raise ValueError(f"Invalid mirror: {mirror}")
-    if mirror == "primary":
-        transform = partial(coord_transform, cfrom="va_global", cto="opt_primary")
-    else:
-        transform = partial(coord_transform, cfrom="va_global", cto="opt_secondary")
-    if reference is None:
-        reference = DEFAULT_REF[mirror]
-    if reference is None or len(reference) == 0:
+    if len(reference) == 0:
         raise ValueError("Invalid or empty reference")
+    if mirror not in reference:
+        raise ValueError("Mirror not found in reference dict")
+    if "coords" not in reference:
+        raise ValueError("Reference coordinate system not specified")
+    if mirror == "primary":
+        transform = partial(
+            coord_transform, cfrom=reference["coords"], cto="opt_primary"
+        )
+    else:
+        transform = partial(
+            coord_transform, cfrom=reference["coords"], cto="opt_secondary"
+        )
 
     # Lets find the points we can use
     trg_idx = np.where(np.char.find(labels, "TARGET") >= 0)[0]
     ref = []
     pts = []
     invars = []
-    for rpoint, codes in reference:
+    for rpoint, codes in reference[mirror]:
         have = np.isin(codes, labels)
         if np.sum(have) == 0:
             continue
