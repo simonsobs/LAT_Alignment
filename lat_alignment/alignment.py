@@ -5,10 +5,10 @@ calling this directly.
 """
 
 import argparse
+import logging
 import os
 from functools import partial
 from importlib.resources import files
-import logging
 
 import megham.transform as mt
 import numpy as np
@@ -65,10 +65,12 @@ def main():
     # load config
     parser = argparse.ArgumentParser()
     parser.add_argument("config", help="path to config file")
-    parser.add_argument("--log_level", "-l", default="INFO", help="the log level to use")
+    parser.add_argument(
+        "--log_level", "-l", default="INFO", help="the log level to use"
+    )
     args = parser.parse_args()
     logging.basicConfig()
-    logger = logging.getLogger('lat_alignment')
+    logger = logging.getLogger("lat_alignment")
     logger.setLevel(args.log_level.upper())
     with open(args.config) as file:
         cfg = yaml.safe_load(file)
@@ -208,7 +210,11 @@ def main():
             raise ValueError(
                 f"Specified 'align_to' element ({align_to}) not found in measurment. Can't align!"
             )
-        logger.info("Found %d optical elements in measurement: %s", len(elements), str(list(elements.keys())))
+        logger.info(
+            "Found %d optical elements in measurement: %s",
+            len(elements),
+            str(list(elements.keys())),
+        )
 
         # Now combine with the align_to alignment
         logger.info("Composing transforms to align with %s fixed", align_to)

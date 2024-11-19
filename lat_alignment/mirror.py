@@ -2,12 +2,12 @@
 Functions to describe the mirror surface.
 """
 
+import logging
 from collections import defaultdict
 from copy import deepcopy
 from dataclasses import dataclass, field
 from functools import cached_property
 from typing import Optional
-import logging
 
 import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
@@ -25,7 +25,7 @@ from numpy.typing import NDArray
 from scipy.optimize import minimize
 from scipy.spatial.transform import Rotation
 
-logger = logging.getLogger('lat_alignment')
+logger = logging.getLogger("lat_alignment")
 
 # fmt: off
 a = {'primary' : 
@@ -409,6 +409,7 @@ def remove_cm(
         the second is the shift.
     """
     logger.info("Removing common mode for %s", mirror)
+
     def _cm(x, panel):
         panel.measurements[:] -= x[1:4]
         rot = Rotation.from_euler("xyz", x[4:])
@@ -464,10 +465,19 @@ def remove_cm(
         panel.measurements @= panel.rot.T
 
         res = minimize(_opt, x0, (panel,), bounds=bounds)
-        logger.debug("\t\tRemoving a fit common mode with scale %f, shift %s, and rotation %s", res.x[0], str(res.x[1:4]), str(res.x[4:]))
+        logger.debug(
+            "\t\tRemoving a fit common mode with scale %f, shift %s, and rotation %s",
+            res.x[0],
+            str(res.x[1:4]),
+            str(res.x[4:]),
+        )
         _cm(res.x, panel)
 
-        logger.debug("\t\tRemoving a secondary common mode shift of %s and rotation of %s", str(panel.shift), str(np.rad2deg(decompose_rotation(panel.rot))))
+        logger.debug(
+            "\t\tRemoving a secondary common mode shift of %s and rotation of %s",
+            str(panel.shift),
+            str(np.rad2deg(decompose_rotation(panel.rot))),
+        )
         panel.measurements -= panel.shift
         panel.measurements @= panel.rot.T
 
@@ -476,7 +486,13 @@ def remove_cm(
     )
     scale, shear, rot = decompose_affine(aff)
     rot = decompose_rotation(rot)
-    logger.info("\tFull common mode is:\n\t\t\tshift = %s mm\n\t\t\tscale = %s\n\t\t\tshear = %s\n\t\t\trot = %s deg", str(sft), str(scale), str(shear), str(np.rad2deg(rot)))
+    logger.info(
+        "\tFull common mode is:\n\t\t\tshift = %s mm\n\t\t\tscale = %s\n\t\t\tshear = %s\n\t\t\trot = %s deg",
+        str(sft),
+        str(scale),
+        str(shear),
+        str(np.rad2deg(rot)),
+    )
 
     panel.measurements = apply_transform(data_clean, aff, sft)
     cut = panel.res_norm > cut_thresh * np.median(panel.res_norm)

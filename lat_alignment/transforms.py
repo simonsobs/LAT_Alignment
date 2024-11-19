@@ -15,16 +15,16 @@ by vertex. We denote these six coordinate systems as follows:
     - va_secondary
 """
 
-from functools import cache, partial
 import logging
+from functools import cache, partial
 
+import matplotlib.pyplot as plt
 import numpy as np
 from megham.transform import apply_transform, get_affine, get_rigid
 from megham.utils import make_edm
 from numpy.typing import NDArray
-import matplotlib.pyplot as plt
 
-logger = logging.getLogger('lat_alignment')
+logger = logging.getLogger("lat_alignment")
 
 opt_sm1 = np.array((0, 0, 3600), np.float32)  # mm
 opt_sm2 = np.array((0, -4800, 0), np.float32)  # mm
@@ -481,7 +481,11 @@ def align_photo(
         invars += [labels[trg_idx][np.argmin(dist)]]
     if len(ref) < 4:
         raise ValueError(f"Only {len(ref)} reference points found! Can't align!")
-    logger.debug("\t\tFound %d reference points in measurements with labels:\n\t\t\t%s", len(pts), str(invars))
+    logger.debug(
+        "\t\tFound %d reference points in measurements with labels:\n\t\t\t%s",
+        len(pts),
+        str(invars),
+    )
     pts = np.vstack(pts)
     ref = np.vstack(ref)
     pts = np.vstack((pts, np.mean(pts, 0)))
@@ -489,7 +493,7 @@ def align_photo(
     ref = transform(ref)
     logger.debug("\t\tReference points in mirror coords:\n%s", str(ref[:-1]))
     triu_idx = np.triu_indices(len(pts), 1)
-    scale_fac = np.nanmedian(make_edm(ref)[triu_idx] / make_edm(pts)[triu_idx]) 
+    scale_fac = np.nanmedian(make_edm(ref)[triu_idx] / make_edm(pts)[triu_idx])
     logger.debug("\t\tScale factor of %f applied", scale_fac)
     pts *= scale_fac
 
@@ -500,7 +504,10 @@ def align_photo(
         plt.scatter(pts_t[:, 0], pts_t[:, 1], color="b")
         plt.scatter(ref[:, 0], ref[:, 1], color="r")
         plt.show()
-    logger.info("\t\tRMS of reference points after alignment: %f", np.sqrt(np.mean((pts_t - ref)**2)))
+    logger.info(
+        "\t\tRMS of reference points after alignment: %f",
+        np.sqrt(np.mean((pts_t - ref) ** 2)),
+    )
     coords_transformed = apply_transform(coords, rot, sft)
 
     msk = ~np.isin(labels, invars)

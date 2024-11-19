@@ -1,5 +1,5 @@
-from collections import defaultdict
 import logging
+from collections import defaultdict
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -9,7 +9,8 @@ from numpy.typing import NDArray
 
 from .transforms import align_photo, coord_transform
 
-logger = logging.getLogger('lat_alignment')
+logger = logging.getLogger("lat_alignment")
+
 
 def load_photo(
     path: str,
