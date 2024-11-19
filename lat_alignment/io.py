@@ -20,7 +20,7 @@ def load_photo(
     plot: bool = True,
     **kwargs,
 ) -> tuple[
-    dict[str, NDArray[np.float32]], tuple[NDArray[np.float32], NDArray[np.float32]]
+    dict[str, NDArray[np.float32]], dict[str, NDArray[np.float32]], tuple[NDArray[np.float32], NDArray[np.float32]]
 ]:
     """
     Load photogrammetry data.
@@ -47,7 +47,10 @@ def load_photo(
     Returns
     -------
     data : dict[str, NDArray[np.float32]]
-        The photogrammetry data.
+        The photogrammetry data, only includes the non-coded targets.
+        Dict is indexed by the target names.
+    coded : dict[str, NDArray[np.float32]] 
+        The photogrammetry data, only includes the coded targets.
         Dict is indexed by the target names.
     alignment : tuple[NDArray[np.float32], NDArray[np.float32]]
         The transformation that aligned the points.
@@ -70,6 +73,8 @@ def load_photo(
         err = err[msk]
     else:
         alignment = (np.eye(3, dtype=np.float32), np.zeros(3, dtype=np.float32))
+    code_msk = np.char.find(labels, "CODE") >= 0
+    coded = {label: coord for label, coord in zip(labels[code_msk], coords[code_msk])}
     trg_msk = np.char.find(labels, "TARGET") >= 0
     labels = labels[trg_msk]
     coords = coords[trg_msk]
@@ -99,12 +104,13 @@ def load_photo(
     labels, coords = labels[msk], coords[msk]
 
     if plot:
-        plt.scatter(coords[:, 0], coords[:, 1], c=coords[:, 2], marker="x")
-        plt.colorbar()
+        fig = plt.figure()
+        ax = fig.add_subplot(projection='3d')
+        ax.scatter(coords[:, 0], coords[:, 1], coords[:, 2], marker="x")
         plt.show()
 
     data = {label: coord for label, coord in zip(labels, coords)}
-    return data, alignment
+    return data, coded, alignment
 
 
 def load_corners(path: str) -> dict[tuple[int, int], NDArray[np.float32]]:

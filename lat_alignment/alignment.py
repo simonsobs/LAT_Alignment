@@ -20,7 +20,15 @@ from . import adjustments as adj
 from . import io
 from . import mirror as mir
 from . import transforms as tf
+from . import bearing as br
 
+def log_alignment(alignment, logger):
+      aff, shift = alignment
+      scale, shear, rot = mt.decompose_affine(aff)
+      logger.debug("\tFinal shift is %s mm", str(shift))
+      logger.debug("\tFinal rotation is %s deg", str(np.rad2deg(mt.decompose_rotation(rot))))
+      logger.debug("\tFinal scale is %s", str(scale))
+      logger.debug("\tFinal shear is %s", str(shear))
 
 def adjust_panel(panel: mir.Panel, mnum: int, cfg: dict) -> NDArray[np.float32]:
     """
@@ -112,7 +120,7 @@ def main():
             adj_path = str(files("lat_alignment.data").joinpath(f"{mirror}_adj.csv"))
 
         # load files
-        meas, _ = io.load_photo(
+        meas, *_ = io.load_photo(
             meas_file, True, reference, mirror=mirror, **cfg.get("load", {})
         )
         corners = io.load_corners(corner_path)
@@ -149,8 +157,6 @@ def main():
         align_to = cfg["align_to"]
         if align_to not in ["primary", "secondary", "receiver", "bearing"]:
             raise ValueError(f"Invalid element specified for 'align_to': {align_to}")
-        if align_to in ["receiver", "bearing"]:
-            raise NotImplementedError(f"Alignment with {align_to} not yet implemented")
         logger.info("Aligning all optical elements to the %s", align_to)
 
         # Load data and compute the transformation to align with the model
@@ -158,8 +164,8 @@ def main():
         elements = {}  # {element_name : full_alignment}
         identity = (np.eye(3, dtype=np.float32), np.zeros(3, dtype=np.float32))
         try:
-            meas, alignment = io.load_photo(
-                meas_file, True, reference, mirror="primary", **cfg.get("load", {})
+            meas, _, alignment = io.load_photo(
+                meas_file, True, reference, element="primary", **cfg.get("load", {})
             )
             meas, common_mode = mir.remove_cm(
                 meas, "primary", cfg.get("compensate", 0), **cfg.get("common_mode", {})
@@ -168,6 +174,7 @@ def main():
             full_alignment = tf.affine_basis_transform(
                 full_alignment[0], full_alignment[1], "opt_primary", "opt_global", False
             )
+            log_alignment(full_alignment, logger)
         except Exception as e:
             print(
                 f"Failed to load primary due to error: \n\t{e}\n if the primary was not in your data you can ignore this."
@@ -177,8 +184,8 @@ def main():
         if len(meas) >= 4:
             elements["primary"] = full_alignment
         try:
-            meas, alignment = io.load_photo(
-                meas_file, True, reference, mirror="secondary", **cfg.get("load", {})
+            meas, _, alignment = io.load_photo(
+                meas_file, True, reference, element="secondary", **cfg.get("load", {})
             )
             meas, common_mode = mir.remove_cm(
                 meas,
@@ -194,6 +201,7 @@ def main():
                 "opt_global",
                 False,
             )
+            log_alignment(full_alignment, logger)
         except Exception as e:
             print(
                 f"Failed to load secondary due to error: \n\t{e}\n if the secondary was not in your data you can ignore this."
@@ -202,6 +210,35 @@ def main():
             full_alignment = identity
         if len(meas) >= 4:
             elements["secondary"] = full_alignment
+        try:
+            meas, coded, alignment = io.load_photo(
+                meas_file, True, reference, element="bearing", **cfg.get("load", {})
+            )
+            meas, cyl_fit = br.cylinder_fit(meas, coded)
+            full_alignment = alignment
+            full_alignment = mt.compose_transform(*alignment, *cyl_fit)
+            log_alignment(full_alignment, logger)
+        except Exception as e:
+            print(
+                f"Failed to load bearing due to error: \n\t{e}\n if the bearing was not in your data you can ignore this."
+            )
+            meas = {}
+            full_alignment = identity
+        if len(meas) >= 4:
+            elements["bearing"] = full_alignment
+        try:
+            meas, _, full_alignment = io.load_photo(
+                meas_file, True, reference, element="receiver", **cfg.get("load", {})
+            )
+            log_alignment(full_alignment, logger)
+        except Exception as e:
+            print(
+                f"Failed to load receiver due to error: \n\t{e}\n if the receiver was not in your data you can ignore this."
+            )
+            meas = {}
+            full_alignment = identity
+        if len(meas) >= 4:
+            elements["receiver"] = full_alignment
         if len(elements) < 2:
             raise ValueError(
                 f"Only {len(elements)} optical elements found in measurment. Can't align!"
@@ -224,7 +261,7 @@ def main():
             aff, sft = mt.compose_transform(*full_transform, *align_to_inv)
             shear, scale, rot = mt.decompose_affine(aff)
             rot = np.rad2deg(mt.decompose_rotation(rot))
-            transform = {"shift": sft, "rot": rot, "scale": scale, "shear": shear}
+            transform = {"shift": sft.tolist(), "rot": rot.tolist(), "scale": scale.tolist(), "shear": shear.tolist()}
             transforms[element] = transform
 
         # Save

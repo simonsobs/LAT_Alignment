@@ -20,7 +20,7 @@ from functools import cache, partial
 
 import matplotlib.pyplot as plt
 import numpy as np
-from megham.transform import apply_transform, get_affine, get_rigid
+from megham.transform import apply_transform, get_affine, get_rigid, decompose_rotation
 from megham.utils import make_edm
 from numpy.typing import NDArray
 
@@ -149,9 +149,10 @@ def _va_secondary_to_va_primary(coords: NDArray[np.float32]) -> NDArray[np.float
 
 
 def _opt_global_to_va_global(coords: NDArray[np.float32]) -> NDArray[np.float32]:
-    coords_transformed = coords[:, [1, 0, 2]]
+    coords_transformed = coords[:, [1, 0, 2]].copy()
     coords_transformed[:, 1] *= -1
-    coords_transformed = coords + vg2og_shift
+    coords_transformed[:, 2] *= -1
+    coords_transformed = coords_transformed + vg2og_shift
     return coords_transformed
 
 
@@ -191,15 +192,12 @@ def _va_global_to_opt_global(coords: NDArray[np.float32]) -> NDArray[np.float32]
     coords_transformed = coords - vg2og_shift
     coords_transformed = coords_transformed[:, [1, 0, 2]]
     coords_transformed[:, 2] *= -1
+    coords_transformed[:, 0] *= -1
     return coords_transformed
 
 
 def _va_global_to_opt_primary(coords: NDArray[np.float32]) -> NDArray[np.float32]:
-    # return _opt_global_to_opt_primary(_va_global_to_opt_global(coords))
-    coords_transformed = _va_global_to_va_primary(coords)
-    coords_transformed = coords_transformed[:, [1, 0, 2]]
-    coords_transformed[:, 2] *= -1
-    return coords_transformed
+    return _opt_global_to_opt_primary(_va_global_to_opt_global(coords))
 
 
 def _va_global_to_opt_secondary(coords: NDArray[np.float32]) -> NDArray[np.float32]:
@@ -389,7 +387,7 @@ def align_photo(
     reference: dict,
     *,
     plot: bool = True,
-    mirror: str = "primary",
+    element: str = "primary",
     max_dist: float = 100.0,
 ) -> tuple[
     NDArray[np.str_],
@@ -422,9 +420,9 @@ def align_photo(
     plot : bool, default: True
         If True show a diagnostic plot of how well the reference points
         are aligned.
-    mirror : str, default: 'primary'
-        The mirror that these points belong to.
-        Should be either: 'primary' or 'secondary'.
+    element: str, default: 'primary'
+        The element that these points belong to.
+        Should be either: 'primary', 'secondary', 'bearing', or 'receiver'.
     max_dist : float, default: 100
         Max distance in mm that the reference poing can be from the target
         point used to locate it.
@@ -444,22 +442,26 @@ def align_photo(
         The first element is a rotation matrix and
         the second is the shift.
     """
-    logger.info("\tAligning with reference points for %s", mirror)
-    if mirror not in ["primary", "secondary"]:
-        raise ValueError(f"Invalid mirror: {mirror}")
+    logger.info("\tAligning with reference points for %s", element)
+    if element not in ["primary", "secondary", "bearing", "receiver"]:
+        raise ValueError(f"Invalid element: {element}")
     if len(reference) == 0:
         raise ValueError("Invalid or empty reference")
-    if mirror not in reference:
-        raise ValueError("Mirror not found in reference dict")
+    if element not in reference:
+        raise ValueError("Element not found in reference dict")
     if "coords" not in reference:
         raise ValueError("Reference coordinate system not specified")
-    if mirror == "primary":
+    if element == "primary":
         transform = partial(
             coord_transform, cfrom=reference["coords"], cto="opt_primary"
         )
-    else:
+    elif element == "secondary":
         transform = partial(
             coord_transform, cfrom=reference["coords"], cto="opt_secondary"
+        )
+    else:
+        transform = partial(
+            coord_transform, cfrom=reference["coords"], cto="opt_global"
         )
 
     # Lets find the points we can use
@@ -467,7 +469,7 @@ def align_photo(
     ref = []
     pts = []
     invars = []
-    for rpoint, codes in reference[mirror]:
+    for rpoint, codes in reference[element]:
         have = np.isin(codes, labels)
         if np.sum(have) == 0:
             continue
@@ -491,7 +493,7 @@ def align_photo(
     pts = np.vstack((pts, np.mean(pts, 0)))
     ref = np.vstack((ref, np.mean(ref, 0)))
     ref = transform(ref)
-    logger.debug("\t\tReference points in mirror coords:\n%s", str(ref[:-1]))
+    logger.debug("\t\tReference points in element coords:\n%s", str(ref))
     triu_idx = np.triu_indices(len(pts), 1)
     scale_fac = np.nanmedian(make_edm(ref)[triu_idx] / make_edm(pts)[triu_idx])
     logger.debug("\t\tScale factor of %f applied", scale_fac)
@@ -501,15 +503,23 @@ def align_photo(
     pts_t = apply_transform(pts, rot, sft)
 
     if plot:
-        plt.scatter(pts_t[:, 0], pts_t[:, 1], color="b")
-        plt.scatter(ref[:, 0], ref[:, 1], color="r")
+        fig = plt.figure()
+        ax = fig.add_subplot(projection='3d')
+        ax.scatter(pts_t[:, 0], pts_t[:, 1], pts_t[:, 2], color="b")
+        ax.scatter(ref[:, 0], ref[:, 1], ref[:, 2], color="r", marker="X")
         plt.show()
     logger.info(
         "\t\tRMS of reference points after alignment: %f",
         np.sqrt(np.mean((pts_t - ref) ** 2)),
     )
-    coords_transformed = apply_transform(coords, rot, sft)
+    coords_transformed = apply_transform(coords*scale_fac, rot, sft)
 
     msk = ~np.isin(labels, invars)
+    msk = np.ones(len(coords), dtype=bool)
+            
+    logger.debug("\t\tShift is %s mm", str(sft))
+    logger.debug("\t\tRotation is %s deg", str(np.rad2deg(decompose_rotation(rot))))
+    scale_fac = np.eye(3)*scale_fac
+    rot @= scale_fac
 
     return labels[msk], coords_transformed[msk], msk, (rot, sft)
