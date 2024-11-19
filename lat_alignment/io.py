@@ -10,7 +10,12 @@ from .transforms import align_photo, coord_transform
 
 
 def load_photo(
-        path: str, align: bool = True, reference: dict = {}, err_thresh: float = 2, plot: bool = True, **kwargs
+    path: str,
+    align: bool = True,
+    reference: dict = {},
+    err_thresh: float = 2,
+    plot: bool = True,
+    **kwargs,
 ) -> tuple[
     dict[str, NDArray[np.float32]], tuple[NDArray[np.float32], NDArray[np.float32]]
 ]:
@@ -55,7 +60,9 @@ def load_photo(
     err = np.linalg.norm(errs, axis=-1)
 
     if align:
-        labels, coords, msk, alignment = align_photo(labels, coords, reference, **kwargs)
+        labels, coords, msk, alignment = align_photo(
+            labels, coords, reference, **kwargs
+        )
         err = err[msk]
     else:
         alignment = (np.eye(3, dtype=np.float32), np.zeros(3, dtype=np.float32))

@@ -23,7 +23,6 @@ from megham.transform import apply_transform, get_affine, get_rigid
 from megham.utils import make_edm
 from numpy.typing import NDArray
 
-
 opt_sm1 = np.array((0, 0, 3600), np.float32)  # mm
 opt_sm2 = np.array((0, -4800, 0), np.float32)  # mm
 opt_am1 = -np.arctan(0.5)
@@ -447,9 +446,13 @@ def align_photo(
     if "coords" not in reference:
         raise ValueError("Reference coordinate system not specified")
     if mirror == "primary":
-        transform = partial(coord_transform, cfrom=reference["coords"], cto="opt_primary")
+        transform = partial(
+            coord_transform, cfrom=reference["coords"], cto="opt_primary"
+        )
     else:
-        transform = partial(coord_transform, cfrom=reference["coords"], cto="opt_secondary")
+        transform = partial(
+            coord_transform, cfrom=reference["coords"], cto="opt_secondary"
+        )
 
     # Lets find the points we can use
     trg_idx = np.where(np.char.find(labels, "TARGET") >= 0)[0]

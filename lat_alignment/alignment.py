@@ -99,7 +99,9 @@ def main():
             adj_path = str(files("lat_alignment.data").joinpath(f"{mirror}_adj.csv"))
 
         # load files
-        meas, _ = io.load_photo(meas_file, True, reference, mirror=mirror, **cfg.get("load", {}))
+        meas, _ = io.load_photo(
+            meas_file, True, reference, mirror=mirror, **cfg.get("load", {})
+        )
         corners = io.load_corners(corner_path)
         adjusters = io.load_adjusters(adj_path, mirror)
 
