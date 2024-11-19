@@ -1,3 +1,9 @@
+## 4.2.0 (2024-11-19)
+
+### Feat
+
+- move reference points to data file
+
 ## 4.1.0 (2024-11-18)
 
 ### Feat

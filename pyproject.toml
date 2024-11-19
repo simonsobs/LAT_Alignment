@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name="lat_alignment"
-version="4.1.0"
+version="4.2.0"
 authors= [{name ="Saianeesh Keshav Haridas"}]
 description = "Software package for the alignment of a SO style Large Aperature Telescope (LAT)"
 readme = "README.md"
