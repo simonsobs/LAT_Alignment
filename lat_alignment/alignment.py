@@ -169,8 +169,9 @@ def main():
                 full_alignment[0], full_alignment[1], "opt_primary", "opt_global", False
             )
         except Exception as e:
-            print(
-                f"Failed to load primary due to error: \n\t{e}\n if the primary was not in your data you can ignore this."
+            logger.warning(
+                "Failed to load primary due to error: \n\t%s\n if the primary was not in your data you can ignore this.",
+                str(e),
             )
             meas = {}
             full_alignment = identity
@@ -195,8 +196,9 @@ def main():
                 False,
             )
         except Exception as e:
-            print(
-                f"Failed to load secondary due to error: \n\t{e}\n if the secondary was not in your data you can ignore this."
+            logger.warning(
+                "Failed to load secondary due to error: \n\t%s\n if the secondary was not in your data you can ignore this.",
+                str(e),
             )
             meas = {}
             full_alignment = identity
