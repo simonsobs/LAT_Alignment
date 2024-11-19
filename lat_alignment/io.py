@@ -10,7 +10,7 @@ from .transforms import align_photo, coord_transform
 
 
 def load_photo(
-    path: str, align: bool = True, err_thresh: float = 2, plot: bool = True, **kwargs
+        path: str, align: bool = True, reference: dict = {}, err_thresh: float = 2, plot: bool = True, **kwargs
 ) -> tuple[
     dict[str, NDArray[np.float32]], tuple[NDArray[np.float32], NDArray[np.float32]]
 ]:
@@ -24,6 +24,10 @@ def load_photo(
         The path to the photogrammetry data.
     align : bool, default: True
         If True align using the invar points.
+    reference : dict, default: {}
+        Reference dictionary for alignment.
+        See `transforms.align_photo` for details.
+        This is only used is `align` is `True`.
     err_thresh : float, default: 2
         How many times the median photogrammetry error
         a target need to have to be cut.
@@ -51,7 +55,7 @@ def load_photo(
     err = np.linalg.norm(errs, axis=-1)
 
     if align:
-        labels, coords, msk, alignment = align_photo(labels, coords, **kwargs)
+        labels, coords, msk, alignment = align_photo(labels, coords, reference, **kwargs)
         err = err[msk]
     else:
         alignment = (np.eye(3, dtype=np.float32), np.zeros(3, dtype=np.float32))
