@@ -1,3 +1,9 @@
+## 4.3.1 (2024-11-19)
+
+### Fix
+
+- swap remaining prints to logger
+
 ## 4.3.0 (2024-11-19)
 
 ### Feat
