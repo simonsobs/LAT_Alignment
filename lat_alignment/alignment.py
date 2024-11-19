@@ -8,6 +8,7 @@ import argparse
 import os
 from functools import partial
 from importlib.resources import files
+import logging
 
 import megham.transform as mt
 import numpy as np
@@ -64,7 +65,11 @@ def main():
     # load config
     parser = argparse.ArgumentParser()
     parser.add_argument("config", help="path to config file")
+    parser.add_argument("--log_level", "-l", default="INFO", help="the log level to use")
     args = parser.parse_args()
+    logging.basicConfig()
+    logger = logging.getLogger('lat_alignment')
+    logger.setLevel(args.log_level.upper())
     with open(args.config) as file:
         cfg = yaml.safe_load(file)
 
@@ -72,10 +77,15 @@ def main():
     cfgdir = os.path.dirname(os.path.abspath(args.config))
     meas_file = os.path.abspath(os.path.join(cfgdir, cfg["measurement"]))
     title_str = cfg["title"]
+    logger.info("Begining alignment %s in %s mode", title_str, mode)
+    logger.debug("Using measurement file: %s", meas_file)
+
     dat_dir = os.path.abspath(os.path.join(cfgdir, cfg.get("data_dir", "/")))
     if "data_dir" in cfg:
+        logger.info("Using data files from %s", dat_dir)
         ref_path = os.path.join(dat_dir, "reference.yaml")
     else:
+        logger.info("Using packaged data files")
         ref_path = str(files("lat_alignment.data").joinpath("reference.yaml"))
     with open(ref_path) as file:
         reference = yaml.safe_load(file)
@@ -88,6 +98,7 @@ def main():
             mnum = 2
         else:
             raise ValueError(f"Invalid mirror: {mirror}")
+        logger.info("Aligning panels for the %s mirror", mirror)
 
         if "data_dir" in cfg:
             corner_path = os.path.join(dat_dir, f"{mirror}_corners.yaml")
@@ -117,10 +128,12 @@ def main():
             cfg.get("compensate", 0),
             cfg.get("adjuster_radius", 100),
         )
+        logger.info("Found measurements for %d panels", len(panels))
         fig = mir.plot_panels(panels, title_str, vmax=cfg.get("vmax", None))
         fig.savefig(os.path.join(cfgdir, f"{title_str.replace(' ', '_')}.png"))
 
         # calc and save adjustments
+        logger.info("Caluculating adjustments")
         _adjust = partial(adjust_panel, mnum=mnum, cfg=cfg)
         adjustments = np.vstack(pqdm(panels, _adjust, n_jobs=8))
         order = np.lexsort((adjustments[2], adjustments[1], adjustments[0]))
@@ -136,6 +149,7 @@ def main():
             raise ValueError(f"Invalid element specified for 'align_to': {align_to}")
         if align_to in ["receiver", "bearing"]:
             raise NotImplementedError(f"Alignment with {align_to} not yet implemented")
+        logger.info("Aligning all optical elements to the %s", align_to)
 
         # Load data and compute the transformation to align with the model
         # We want to put all the transformations into opt_global
@@ -194,8 +208,10 @@ def main():
             raise ValueError(
                 f"Specified 'align_to' element ({align_to}) not found in measurment. Can't align!"
             )
+        logger.info("Found %d optical elements in measurement: %s", len(elements), str(list(elements.keys())))
 
         # Now combine with the align_to alignment
+        logger.info("Composing transforms to align with %s fixed", align_to)
         transforms = {}
         align_to_inv = mt.invert_transform(*elements[align_to])
         for element, full_transform in elements.items():
@@ -213,3 +229,4 @@ def main():
 
     else:
         raise ValueError(f"Invalid mode: {mode}")
+    logger.info("Outputs can be found in %s", cfgdir)
