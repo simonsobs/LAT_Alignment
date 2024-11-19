@@ -15,13 +15,16 @@ by vertex. We denote these six coordinate systems as follows:
     - va_secondary
 """
 
+import logging
 from functools import cache, partial
-from typing import Optional
 
+import matplotlib.pyplot as plt
 import numpy as np
 from megham.transform import apply_transform, get_affine, get_rigid
 from megham.utils import make_edm
 from numpy.typing import NDArray
+
+logger = logging.getLogger("lat_alignment")
 
 opt_sm1 = np.array((0, 0, 3600), np.float32)  # mm
 opt_sm2 = np.array((0, -4800, 0), np.float32)  # mm
@@ -385,6 +388,7 @@ def align_photo(
     coords: NDArray[np.float32],
     reference: dict,
     *,
+    plot: bool = True,
     mirror: str = "primary",
     max_dist: float = 100.0,
 ) -> tuple[
@@ -415,6 +419,9 @@ def align_photo(
         of the point in the global coordinate system.
         The second is a list of nearby coded targets that can be used
         to identify the point.
+    plot : bool, default: True
+        If True show a diagnostic plot of how well the reference points
+        are aligned.
     mirror : str, default: 'primary'
         The mirror that these points belong to.
         Should be either: 'primary' or 'secondary'.
@@ -437,6 +444,7 @@ def align_photo(
         The first element is a rotation matrix and
         the second is the shift.
     """
+    logger.info("\tAligning with reference points for %s", mirror)
     if mirror not in ["primary", "secondary"]:
         raise ValueError(f"Invalid mirror: {mirror}")
     if len(reference) == 0:
@@ -464,43 +472,41 @@ def align_photo(
         if np.sum(have) == 0:
             continue
         coded = coords[np.where(labels == codes[np.where(have)[0][0]])[0][0]]
-        print(codes[np.where(have)[0][0]])
         # Find the closest point
         dist = np.linalg.norm(coords[trg_idx] - coded, axis=-1)
         if np.min(dist) > max_dist:
             continue
-        print(np.min(dist))
         ref += [rpoint]
         pts += [coords[trg_idx][np.argmin(dist)]]
         invars += [labels[trg_idx][np.argmin(dist)]]
     if len(ref) < 4:
         raise ValueError(f"Only {len(ref)} reference points found! Can't align!")
+    logger.debug(
+        "\t\tFound %d reference points in measurements with labels:\n\t\t\t%s",
+        len(pts),
+        str(invars),
+    )
     pts = np.vstack(pts)
     ref = np.vstack(ref)
     pts = np.vstack((pts, np.mean(pts, 0)))
     ref = np.vstack((ref, np.mean(ref, 0)))
     ref = transform(ref)
-    print("Reference points in mirror coords:")
-    print(ref[:-1])
-    print(make_edm(ref) / make_edm(pts))
-    print(make_edm(ref) - make_edm(pts))
-    print(np.nanmedian(make_edm(ref) / make_edm(pts)))
-    pts *= np.nanmedian(make_edm(ref) / make_edm(pts))
-    print(make_edm(ref) / make_edm(pts))
-    print(make_edm(ref) - make_edm(pts))
-    print(np.nanmedian(make_edm(ref) / make_edm(pts)))
+    logger.debug("\t\tReference points in mirror coords:\n%s", str(ref[:-1]))
+    triu_idx = np.triu_indices(len(pts), 1)
+    scale_fac = np.nanmedian(make_edm(ref)[triu_idx] / make_edm(pts)[triu_idx])
+    logger.debug("\t\tScale factor of %f applied", scale_fac)
+    pts *= scale_fac
 
     rot, sft = get_rigid(pts, ref, method="mean")
     pts_t = apply_transform(pts, rot, sft)
-    import matplotlib.pyplot as plt
 
-    plt.scatter(pts_t[:, 0], pts_t[:, 1], color="b")
-    plt.scatter(ref[:, 0], ref[:, 1], color="r")
-    plt.show()
-    print(pts_t[:-1])
-    print(pts_t - ref)
-    print(
-        f"RMS of reference points after alignment: {np.sqrt(np.mean((pts_t - ref)**2))}"
+    if plot:
+        plt.scatter(pts_t[:, 0], pts_t[:, 1], color="b")
+        plt.scatter(ref[:, 0], ref[:, 1], color="r")
+        plt.show()
+    logger.info(
+        "\t\tRMS of reference points after alignment: %f",
+        np.sqrt(np.mean((pts_t - ref) ** 2)),
     )
     coords_transformed = apply_transform(coords, rot, sft)
 

@@ -2,6 +2,7 @@
 Functions to describe the mirror surface.
 """
 
+import logging
 from collections import defaultdict
 from copy import deepcopy
 from dataclasses import dataclass, field
@@ -23,6 +24,8 @@ from megham.transform import (
 from numpy.typing import NDArray
 from scipy.optimize import minimize
 from scipy.spatial.transform import Rotation
+
+logger = logging.getLogger("lat_alignment")
 
 # fmt: off
 a = {'primary' : 
@@ -373,7 +376,6 @@ def remove_cm(
     thresh: float = 10,
     cut_thresh: float = 50,
     niters: int = 10,
-    verbose=False,
 ) -> tuple[
     dict[str, NDArray[np.float32]], tuple[NDArray[np.float32], NDArray[np.float32]]
 ]:
@@ -396,8 +398,6 @@ def remove_cm(
         considered an outlier.
     niters : int, default: 10
         How many iterations of common mode fitting to do.
-    verbose : bool, default: False
-        If True print the transformation for each iteration.
 
     Returns
     -------
@@ -408,6 +408,7 @@ def remove_cm(
         The first element is an affine matrix and
         the second is the shift.
     """
+    logger.info("Removing common mode for %s", mirror)
 
     def _cm(x, panel):
         panel.measurements[:] -= x[1:4]
@@ -445,6 +446,7 @@ def remove_cm(
     )
     data = data.copy()
     data_clean = data.copy()
+    logger.info("\tRemoved %d points not on mirror surface", np.sum(~msk))
 
     x0 = np.hstack([np.ones(1), np.zeros(6)])
     bounds = [(-0.95, 1.05)] + [(-100, 100)] * 3 + [(0, 2 * np.pi)] * 3
@@ -452,30 +454,30 @@ def remove_cm(
     for i in range(niters):
         if len(panel.measurements) < 3:
             raise ValueError
-        print(f"iter {i} for common mode fit")
+        logger.debug("\titer %d for common mode fit", i)
         cut = panel.res_norm > thresh * np.median(panel.res_norm)
         if np.sum(cut) > 0:
-            # print(f"\tRemoving {np.sum(cut)} points from mirror")
             panel.measurements = panel.measurements[~cut]
-            # labels = labels[~cut]
             data = data[~cut]
 
-        if verbose:
-            print(f"\tRemoving a naive common mode shift of {panel.shift}")
+        logger.debug("\t\tRemoving a naive common mode shift of %s", str(panel.shift))
         panel.measurements -= panel.shift
         panel.measurements @= panel.rot.T
 
         res = minimize(_opt, x0, (panel,), bounds=bounds)
-        if verbose:
-            print(
-                f"\tRemoving a fit common mode with scale {res.x[0]}, shift {res.x[1:4]}, and rotation {res.x[4:]}"
-            )
+        logger.debug(
+            "\t\tRemoving a fit common mode with scale %f, shift %s, and rotation %s",
+            res.x[0],
+            str(res.x[1:4]),
+            str(res.x[4:]),
+        )
         _cm(res.x, panel)
 
-        if verbose:
-            print(
-                f"\tRemoving a secondary common mode shift of {panel.shift} and rotation of {decompose_rotation(panel.rot)}"
-            )
+        logger.debug(
+            "\t\tRemoving a secondary common mode shift of %s and rotation of %s",
+            str(panel.shift),
+            str(np.rad2deg(decompose_rotation(panel.rot))),
+        )
         panel.measurements -= panel.shift
         panel.measurements @= panel.rot.T
 
@@ -484,15 +486,20 @@ def remove_cm(
     )
     scale, shear, rot = decompose_affine(aff)
     rot = decompose_rotation(rot)
-    print(
-        f"Full common mode is:\n\tshift = {sft} mm\n\tscale = {scale}\n\tshear = {shear}\n\trot = {np.rad2deg(rot)} deg"
+    logger.info(
+        "\tFull common mode is:\n\t\t\tshift = %s mm\n\t\t\tscale = %s\n\t\t\tshear = %s\n\t\t\trot = %s deg",
+        str(sft),
+        str(scale),
+        str(shear),
+        str(np.rad2deg(rot)),
     )
 
     panel.measurements = apply_transform(data_clean, aff, sft)
     cut = panel.res_norm > cut_thresh * np.median(panel.res_norm)
     if np.sum(cut) > 0:
-        print(f"Removing {np.sum(cut)} points from mirror")
+        logger.info("\tRemoving %d bad points from mirror", np.sum(cut))
         panel.measurements = panel.measurements[~cut]
+    logger.info("\tMirror has %d good points", len(panel.measurements))
 
     return {l: d for l, d in zip(labels, panel.measurements)}, (aff, sft)
 

@@ -1,3 +1,4 @@
+import logging
 from collections import defaultdict
 
 import matplotlib.pyplot as plt
@@ -7,6 +8,8 @@ from megham.utils import make_edm
 from numpy.typing import NDArray
 
 from .transforms import align_photo, coord_transform
+
+logger = logging.getLogger("lat_alignment")
 
 
 def load_photo(
@@ -51,6 +54,7 @@ def load_photo(
         The first element is a rotation matrix and
         the second is the shift.
     """
+    logger.info("Loading measurement data")
     labels = np.genfromtxt(path, dtype=str, delimiter=",", usecols=(0,))
     coords = np.genfromtxt(path, dtype=np.float32, delimiter=",", usecols=(1, 2, 3))
     errs = np.genfromtxt(path, dtype=np.float32, delimiter=",", usecols=(4, 5, 6))
@@ -61,7 +65,7 @@ def load_photo(
 
     if align:
         labels, coords, msk, alignment = align_photo(
-            labels, coords, reference, **kwargs
+            labels, coords, reference, plot=plot, **kwargs
         )
         err = err[msk]
     else:
@@ -73,6 +77,7 @@ def load_photo(
 
     err_msk = err < err_thresh * np.median(err)
     labels, coords, err = labels[err_msk], coords[err_msk], err[err_msk]
+    logger.info("\t%d points loaded", len(coords))
 
     # Lets find and remove doubles
     # Dumb brute force
@@ -90,6 +95,7 @@ def load_photo(
         else:
             to_kill += [i]
     msk = ~np.isin(np.arange(len(coords), dtype=int), to_kill)
+    logger.info("\tFound and removed %d doubles", len(to_kill))
     labels, coords = labels[msk], coords[msk]
 
     if plot:
