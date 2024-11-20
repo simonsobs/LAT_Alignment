@@ -12,17 +12,17 @@
 
 Each LAT mirror panel can be identified by a eight digit ID in the following format:
 
-$$
+```
 (telescope number)(mirror number)(panel row)(panel column}(panel number)
-$$
+```
 
 Where:
 
-* $telescope number$ is a four digit ID for the telescope that the mirror belongs to with a hyphen between the second and third digit. The SO LAT is $01-01$.
-* $mirror number$ is $1$ for the primary mirror and $2$ for the secondary mirror.
-* $panel row$ is which row of the mirror the panel is in (see diagram below).
-* $panel column$ is which column of the mirror the panel is in (see diagram below).
-* $panel number$ identifies which instance of the panel you have, it can change to denote the creation of a spare or replacement panel.
+* `telescope number` is a four digit ID for the telescope that the mirror belongs to with a hyphen between the second and third digit. The SO LAT is $01-01$.
+* `mirror number` is $1$ for the primary mirror and $2$ for the secondary mirror.
+* `panel row` is which row of the mirror the panel is in (see diagram below).
+* `panel column` is which column of the mirror the panel is in (see diagram below).
+* `panel number` identifies which instance of the panel you have, it can change to denote the creation of a spare or replacement panel.
 
 ![Diagram from Vertex showing the panel rows and columns](./imgs/panel_nums.png)
 
