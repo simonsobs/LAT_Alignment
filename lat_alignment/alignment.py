@@ -21,6 +21,7 @@ from . import io
 from . import mirror as mir
 from . import transforms as tf
 from . import bearing as br
+from . import photogrammetry as pg
 
 def log_alignment(alignment, logger):
       aff, shift = alignment
@@ -99,6 +100,7 @@ def main():
         ref_path = str(files("lat_alignment.data").joinpath("reference.yaml"))
     with open(ref_path) as file:
         reference = yaml.safe_load(file)
+    dataset = io.load_photo(meas_file, **cfg.get("load", {}))
 
     if mode == "panel":
         mirror = cfg["mirror"]
@@ -120,19 +122,17 @@ def main():
             adj_path = str(files("lat_alignment.data").joinpath(f"{mirror}_adj.csv"))
 
         # load files
-        meas, *_ = io.load_photo(
-            meas_file, True, reference, mirror=mirror, **cfg.get("load", {})
-        )
         corners = io.load_corners(corner_path)
         adjusters = io.load_adjusters(adj_path, mirror)
 
         # init, fit, and plot panels
-        meas, _ = mir.remove_cm(
-            meas, mirror, cfg.get("compensate", 0), **cfg.get("common_mode", {})
+        dataset, _ = pg.align_photo(dataset, reference, True, mirror, **cfg.get("align_photo", {}))
+        dataset, _ = mir.remove_cm(
+            dataset, mirror, cfg.get("compensate", 0), **cfg.get("common_mode", {})
         )
         panels = mir.gen_panels(
             mirror,
-            meas,
+            dataset,
             corners,
             adjusters,
             cfg.get("compensate", 0),
@@ -164,9 +164,7 @@ def main():
         elements = {}  # {element_name : full_alignment}
         identity = (np.eye(3, dtype=np.float32), np.zeros(3, dtype=np.float32))
         try:
-            meas, _, alignment = io.load_photo(
-                meas_file, True, reference, element="primary", **cfg.get("load", {})
-            )
+            meas, alignment = pg.align_photo(dataset.copy(), reference, True, "primary", **cfg.get("align_photo", {}))
             meas, common_mode = mir.remove_cm(
                 meas, "primary", cfg.get("compensate", 0), **cfg.get("common_mode", {})
             )
@@ -184,14 +182,9 @@ def main():
         if len(meas) >= 4:
             elements["primary"] = full_alignment
         try:
-            meas, _, alignment = io.load_photo(
-                meas_file, True, reference, element="secondary", **cfg.get("load", {})
-            )
+            meas, alignment = pg.align_photo(dataset.copy(), reference, True, "primary", **cfg.get("align_photo", {}))
             meas, common_mode = mir.remove_cm(
-                meas,
-                "secondary",
-                cfg.get("compensate", 0),
-                **cfg.get("common_mode", {}),
+                meas, "secondary", cfg.get("compensate", 0), **cfg.get("common_mode", {})
             )
             full_alignment = mt.compose_transform(*alignment, *common_mode)
             full_alignment = tf.affine_basis_transform(
@@ -211,10 +204,8 @@ def main():
         if len(meas) >= 4:
             elements["secondary"] = full_alignment
         try:
-            meas, coded, alignment = io.load_photo(
-                meas_file, True, reference, element="bearing", **cfg.get("load", {})
-            )
-            meas, cyl_fit = br.cylinder_fit(meas, coded)
+            meas, alignment = pg.align_photo(dataset.copy(), reference, False, "bearing", **cfg.get("align_photo", {}))
+            meas, cyl_fit = br.cylinder_fit(meas)
             full_alignment = alignment
             full_alignment = mt.compose_transform(*alignment, *cyl_fit)
             log_alignment(full_alignment, logger)
@@ -227,9 +218,7 @@ def main():
         if len(meas) >= 4:
             elements["bearing"] = full_alignment
         try:
-            meas, _, full_alignment = io.load_photo(
-                meas_file, True, reference, element="receiver", **cfg.get("load", {})
-            )
+            meas, alignment = pg.align_photo(dataset.copy(), reference, False, "receiver", **cfg.get("align_photo", {}))
             log_alignment(full_alignment, logger)
         except Exception as e:
             print(

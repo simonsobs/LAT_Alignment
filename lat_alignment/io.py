@@ -7,21 +7,12 @@ import yaml
 from megham.utils import make_edm
 from numpy.typing import NDArray
 
-from .transforms import align_photo, coord_transform
+from .transforms import coord_transform
+from .photogrammetry import Dataset
 
 logger = logging.getLogger("lat_alignment")
 
-
-def load_photo(
-    path: str,
-    align: bool = True,
-    reference: dict = {},
-    err_thresh: float = 2,
-    plot: bool = True,
-    **kwargs,
-) -> tuple[
-    dict[str, NDArray[np.float32]], dict[str, NDArray[np.float32]], tuple[NDArray[np.float32], NDArray[np.float32]]
-]:
+def load_photo( path: str, err_thresh: float = 2, plot: bool = True) -> Dataset:
     """
     Load photogrammetry data.
     Assuming first column is target names and next three are (x, y , z).
@@ -30,32 +21,16 @@ def load_photo(
     ----------
     path : str
         The path to the photogrammetry data.
-    align : bool, default: True
-        If True align using the invar points.
-    reference : dict, default: {}
-        Reference dictionary for alignment.
-        See `transforms.align_photo` for details.
-        This is only used is `align` is `True`.
     err_thresh : float, default: 2
         How many times the median photogrammetry error
         a target need to have to be cut.
     plot: bool, default: True
         If True display a scatter plot of targets.
-    **kwargs
-        Arguments to pass to `align_photo`.
 
     Returns
     -------
-    data : dict[str, NDArray[np.float32]]
-        The photogrammetry data, only includes the non-coded targets.
-        Dict is indexed by the target names.
-    coded : dict[str, NDArray[np.float32]] 
-        The photogrammetry data, only includes the coded targets.
-        Dict is indexed by the target names.
-    alignment : tuple[NDArray[np.float32], NDArray[np.float32]]
-        The transformation that aligned the points.
-        The first element is a rotation matrix and
-        the second is the shift.
+    data : Dataset 
+        The photogrammetry data.
     """
     logger.info("Loading measurement data")
     labels = np.genfromtxt(path, dtype=str, delimiter=",", usecols=(0,))
@@ -65,41 +40,30 @@ def load_photo(
 
     labels, coords, errs = labels[msk], coords[msk], errs[msk]
     err = np.linalg.norm(errs, axis=-1)
+    trg_msk = (np.char.find(labels, "TARGET") >= 0)
+    code_msk = (np.char.find(labels, "CODE") >= 0)
 
-    if align:
-        labels, coords, msk, alignment = align_photo(
-            labels, coords, reference, plot=plot, **kwargs
-        )
-        err = err[msk]
-    else:
-        alignment = (np.eye(3, dtype=np.float32), np.zeros(3, dtype=np.float32))
-    code_msk = np.char.find(labels, "CODE") >= 0
-    coded = {label: coord for label, coord in zip(labels[code_msk], coords[code_msk])}
-    trg_msk = np.char.find(labels, "TARGET") >= 0
-    labels = labels[trg_msk]
-    coords = coords[trg_msk]
-    err = err[trg_msk]
-
-    err_msk = err < err_thresh * np.median(err)
+    err_msk = (err < err_thresh * np.median(err[trg_msk])) + code_msk
     labels, coords, err = labels[err_msk], coords[err_msk], err[err_msk]
     logger.info("\t%d points loaded", len(coords))
 
     # Lets find and remove doubles
     # Dumb brute force
-    edm = make_edm(coords[:, :2])
+    trg_msk = (np.char.find(labels, "TARGET") >= 0)
+    edm = make_edm(coords[trg_msk, :2])
     np.fill_diagonal(edm, np.nan)
     to_kill = []
     for i in range(len(edm)):
-        if i in to_kill:
+        if labels[trg_msk][i] in to_kill:
             continue
         imin = np.nanargmin(edm[i])
-        if edm[i][imin] > 20:
+        if edm[i][imin] > 5:
             continue
-        if err[i] < err[imin]:
-            to_kill += [imin]
+        if err[trg_msk][i] < err[trg_msk][imin]:
+            to_kill += [labels[trg_msk][imin]]
         else:
-            to_kill += [i]
-    msk = ~np.isin(np.arange(len(coords), dtype=int), to_kill)
+            to_kill += [labels[trg_msk][i]]
+    msk = ~np.isin(labels, to_kill)
     logger.info("\tFound and removed %d doubles", len(to_kill))
     labels, coords = labels[msk], coords[msk]
 
@@ -110,7 +74,7 @@ def load_photo(
         plt.show()
 
     data = {label: coord for label, coord in zip(labels, coords)}
-    return data, coded, alignment
+    return Dataset(data) 
 
 
 def load_corners(path: str) -> dict[tuple[int, int], NDArray[np.float32]]:

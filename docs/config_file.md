@@ -54,6 +54,12 @@
     [`io.load_photo`](https://simonsobs.github.io/LAT_Alignment/latest/reference/io/#lat_alignment.io.load_photo).
 
 
+???+ info "`load`"
+
+    Additional keyword arguments to pass to
+    [`photogrammetry.align_photo`](https://simonsobs.github.io/LAT_Alignment/latest/reference/photogrammetry/#lat_alignment.photogrammetry.align_photo).
+
+
 ???+ info "`compensate`"
 
     Amount to compensate mirror measurements by in mm.
