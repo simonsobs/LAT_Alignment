@@ -24,13 +24,44 @@ AXIS2 = Vector.from_points(ORIGIN, ZERO).unit()
 AXIS2_CODED = Vector.from_points(ORIGIN, ZERO_CODED).unit()
 
 def partition_points(dataset: Dataset) -> tuple[Dataset, Dataset, NDArray[np.float32], NDArray[np.float32]]:
+    """
+    Split up dataset into points on the bearing reference surface and inner surface.
+    Also pulls out the bearing zero points.
+
+    Parameters
+    ----------
+    dataset : Dataset
+        Photogrammetry dataset.
+        Should already be aligned to the bearing referance points.
+
+    Returns
+    -------
+    inside_points : Dataset
+        Points on the inner surface of the bearing.
+        Only includes targets, codes are removed.
+    face_points : Dataset
+        Points on face of the bearing that we use as a reference surface. 
+        Only includes targets, codes are removed.
+    zero_point : NDArray[np.float32]
+        Array of size (3,) that gives the coordinates of the target we treat
+        as the bearing's zero point.
+    zero_code: NDArray[np.float32]
+        Array of size (3,) that gives the coordinates of the coded target we use
+        to identify the bearing's zero point.
+
+    Raises
+    ------
+    ValueError
+        When the zero point of the bearing is not found or there are less than four
+        points found on the inner surface or face fo the bearing.
+    """
     if ZERO_CODE not in dataset.code_labels:
         raise ValueError("Can't find zero point of bearing! Coded target not found!")
     zero_coded = dataset[ZERO_CODE]
     dist = np.linalg.norm(dataset.targets - zero_coded, axis=-1)
     zero_point = dataset.targets[np.argmin(dist)]
     if np.min(dist) > 100:
-        raise ValueError("Can't find zero point of bearing!")# Falling back to coded target!")
+        raise ValueError("Can't find zero point of bearing!")
 
     inside_msk = (dataset.targets[:, 1] > ORIGIN[1] - 100) * (dataset.targets[:, 1] < ORIGIN[1] - 10)
     inside_points = Dataset({l:p for l,p in zip(dataset.target_labels[inside_msk], dataset.targets[inside_msk])})
@@ -46,6 +77,26 @@ def partition_points(dataset: Dataset) -> tuple[Dataset, Dataset, NDArray[np.flo
     return inside_points, face_points, zero_point, zero_coded 
 
 def cylinder_fit(dataset: Dataset) -> tuple[Dataset, tuple[NDArray[np.float32], NDArray[np.float32]]]:
+    """
+    Fit for the bearing's position by fitting a cylinder to the bearing surface.
+    This acts as a correction on top of the alignment to reference points.
+
+    Parameters
+    ----------
+    dataset : Dataset
+        Photogrammetry dataset.
+        Should already be aligned to the bearing referance points.
+
+    Returns
+    -------
+    inside_points : Dataset
+        Points on the inner surface of the bearing.
+        Only includes targets, codes are removed.
+    alignment : tuple[NDArray[np.float32], NDArray[np.float32]]
+        The transformation that aligned the bearing.
+        The first element is a rotation matrix and
+        the second is the shift.
+    """
     # Partition points
     logger.info("\tStarting fit of bearing axis")
     inside_points, face_points, zero_point, zero_coded = partition_points(dataset)
