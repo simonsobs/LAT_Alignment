@@ -10,7 +10,7 @@ import logging
 import matplotlib.pyplot as plt
 import numpy as np
 from numpy.typing import NDArray
-from megham.transform import apply_transform, get_rigid, decompose_rotation
+from megham.transform import apply_transform, get_rigid, decompose_rotation, get_affine
 from megham.utils import make_edm
 
 from .transforms import coord_transform
@@ -136,6 +136,7 @@ def align_photo(
     reference: dict,
     kill_refs: bool,
     element: str = "primary",
+    scale: bool = True,
     *,
     plot: bool = True,
     max_dist: float = 100.0,
@@ -183,11 +184,12 @@ def align_photo(
         the second is the shift.
     """
     logger.info("\tAligning with reference points for %s", element)
-    if element not in ["primary", "secondary", "bearing", "receiver"]:
+    elements = ["primary", "secondary", "bearing", "receiver"] 
+    if element not in elements and element != "all":
         raise ValueError(f"Invalid element: {element}")
     if len(reference) == 0:
         raise ValueError("Invalid or empty reference")
-    if element not in reference:
+    if element not in reference and element != "all":
         raise ValueError("Element not found in reference dict")
     if "coords" not in reference:
         raise ValueError("Reference coordinate system not specified")
@@ -203,6 +205,14 @@ def align_photo(
         transform = partial(
             coord_transform, cfrom=reference["coords"], cto="opt_global"
         )
+    if element == "all":
+        all_refs = []
+        for el in elements:
+            if el not in reference:
+                continue
+            all_refs += reference[el]
+        reference["all"] = all_refs
+
 
     # Lets find the points we can use
     ref = []
@@ -235,10 +245,13 @@ def align_photo(
     ref = np.vstack((ref, np.mean(ref, 0)))
     ref = transform(ref)
     logger.debug("\t\tReference points in element coords:\n%s", str(ref))
-    triu_idx = np.triu_indices(len(pts), 1)
-    scale_fac = np.nanmedian(make_edm(ref)[triu_idx] / make_edm(pts)[triu_idx])
+    scale_fac = 1
+    if scale:
+        triu_idx = np.triu_indices(len(pts), 1)
+        scale_fac = np.nanmedian(make_edm(ref)[triu_idx] / make_edm(pts)[triu_idx])
+        pts *= scale_fac
     logger.debug("\t\tScale factor of %f applied", scale_fac)
-    pts *= scale_fac
+
 
     rot, sft = get_rigid(pts, ref, method="mean")
     pts_t = apply_transform(pts, rot, sft)
@@ -246,6 +259,7 @@ def align_photo(
     if plot:
         fig = plt.figure()
         ax = fig.add_subplot(projection='3d')
+        ax.scatter(pts[:, 0], pts[:, 1], pts[:, 2], color="g")
         ax.scatter(pts_t[:, 0], pts_t[:, 1], pts_t[:, 2], color="b")
         ax.scatter(ref[:, 0], ref[:, 1], ref[:, 2], color="r", marker="X")
         plt.show()

@@ -158,6 +158,7 @@ def main():
         if align_to not in ["primary", "secondary", "receiver", "bearing"]:
             raise ValueError(f"Invalid element specified for 'align_to': {align_to}")
         logger.info("Aligning all optical elements to the %s", align_to)
+        dataset, _ = pg.align_photo(dataset, reference, False, "all", False, **cfg.get("align_photo", {}))
 
         # Load data and compute the transformation to align with the model
         # We want to put all the transformations into opt_global
@@ -206,7 +207,6 @@ def main():
         try:
             meas, alignment = pg.align_photo(dataset.copy(), reference, False, "bearing", **cfg.get("align_photo", {}))
             meas, cyl_fit = br.cylinder_fit(meas)
-            full_alignment = alignment
             full_alignment = mt.compose_transform(*alignment, *cyl_fit)
             log_alignment(full_alignment, logger)
         except Exception as e:
@@ -218,7 +218,7 @@ def main():
         if len(meas) >= 4:
             elements["bearing"] = full_alignment
         try:
-            meas, alignment = pg.align_photo(dataset.copy(), reference, False, "receiver", **cfg.get("align_photo", {}))
+            meas, full_alignment = pg.align_photo(dataset.copy(), reference, False, "receiver", **cfg.get("align_photo", {}))
             log_alignment(full_alignment, logger)
         except Exception as e:
             print(
@@ -248,7 +248,7 @@ def main():
         align_to_inv = mt.invert_transform(*elements[align_to])
         for element, full_transform in elements.items():
             aff, sft = mt.compose_transform(*full_transform, *align_to_inv)
-            shear, scale, rot = mt.decompose_affine(aff)
+            scale, shear, rot = mt.decompose_affine(aff)
             rot = np.rad2deg(mt.decompose_rotation(rot))
             transform = {"shift": sft.tolist(), "rot": rot.tolist(), "scale": scale.tolist(), "shear": shear.tolist()}
             transforms[element] = transform
