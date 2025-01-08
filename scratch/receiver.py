@@ -11,7 +11,7 @@ x = -1*r*np.sin(thetas)
 z = -1*r*np.cos(thetas)
 
 refs = np.column_stack((x, y, z))
-refs = coord_transform(refs, "opt_global", "va_global")
+# refs = coord_transform(refs, "opt_global", "va_global")
 
 for ref, label in zip(refs, labels):
     print([list(ref), [label]])

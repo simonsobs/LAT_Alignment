@@ -10,7 +10,7 @@ coords = np.genfromtxt(path, dtype=np.float32, delimiter=",", usecols=(1, 2, 3))
 nest_labels = ["TARGET49", "TARGET8", "TARGET65", "TARGET26"]
 nest_n = np.array([9., 14., 24., 29.]) - 1
 nest_x = 2040.*np.sin(np.deg2rad(10*nest_n))
-nest_y = 3990.4*np.ones(len(nest_labels))
+nest_y = 3990.4*np.ones(len(nest_labels)) + 100
 nest_z = -2040.*np.cos(np.deg2rad(10*nest_n))
 nest_model = np.column_stack([nest_x, nest_y, nest_z])
 nest_meas = [coords[labels == l] for l in nest_labels]
@@ -31,7 +31,7 @@ print(list(zero))
 zero = coords_t[labels == "CODE90"]
 print(list(zero))
 
-coords_t = coord_transform(coords_t, "opt_global", "va_global")
+# coords_t = coord_transform(coords_t, "opt_global", "va_global")
 ref_labels = ["TARGET72", "TARGET69", "TARGET66", "TARGET70"]
 ref = [coords_t[labels == l] for l in ref_labels]
 ref = np.vstack(ref)
