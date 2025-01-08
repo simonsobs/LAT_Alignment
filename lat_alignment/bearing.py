@@ -8,7 +8,7 @@ import numpy as np
 from numpy.typing import NDArray
 from skspatial.objects import Line, Vector, Plane
 from scipy.spatial.transform import Rotation as R
-from megham.transform import decompose_rotation
+from megham.transform import decompose_rotation, apply_transform
 
 from .photogrammetry import Dataset
 
@@ -90,7 +90,7 @@ def cylinder_fit(dataset: Dataset) -> tuple[Dataset, tuple[NDArray[np.float32], 
     Returns
     -------
     inside_points : Dataset
-        Points on the inner surface of the bearing.
+        Points on the inner surface of the bearing with alignment applied.
         Only includes targets, codes are removed.
     alignment : tuple[NDArray[np.float32], NDArray[np.float32]]
         The transformation that aligned the bearing.
@@ -125,5 +125,8 @@ def cylinder_fit(dataset: Dataset) -> tuple[Dataset, tuple[NDArray[np.float32], 
     rot = np.array(rot.as_matrix(), dtype=np.float32).T
     logger.debug("\t\tShift is %s mm", str(shift))
     logger.debug("\t\tRotation is %s deg", str(np.rad2deg(decompose_rotation(rot))))
+    
+    coords_transformed = apply_transform(inside_points.points, rot, shift)
+    data = {label: coord for label, coord in zip(inside_points.labels, coords_transformed)}
 
-    return inside_points, (rot, shift)
+    return Dataset(data), (rot, shift)
