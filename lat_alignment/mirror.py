@@ -25,6 +25,8 @@ from numpy.typing import NDArray
 from scipy.optimize import minimize
 from scipy.spatial.transform import Rotation
 
+from .photogrammetry import Dataset
+
 logger = logging.getLogger("lat_alignment")
 
 # fmt: off
@@ -302,7 +304,7 @@ class Panel:
 
 def gen_panels(
     mirror: str,
-    measurements: dict[str, NDArray[np.float32]],
+    dataset: Dataset,
     corners: dict[tuple[int, int], NDArray[np.float32]],
     adjusters: dict[tuple[int, int], NDArray[np.float32]],
     compensate: float = 0.0,
@@ -316,9 +318,8 @@ def gen_panels(
     mirror : str
         The mirror these panels belong to.
         Should be 'primary' or 'secondary'.
-    measurements : dict[str, NDArray[np.float32]]
+    dataset : Dataset
         The photogrammetry data.
-        Dict is data indexed by the target names.
     corners : dict[tuple[int, int], ndarray[np.float32]]
         The corners. This is indexed by a (row, col) tuple.
         Each entry is `(4, 3)` array where each row is a corner.
@@ -342,7 +343,7 @@ def gen_panels(
     points = defaultdict(list)
     # dumb brute force
     corr = np.arange(4, dtype=int)
-    for _, point in measurements.items():
+    for point in dataset.points:
         for rc, crns in corners.items():
             x = crns[:, 0] > point[0]
             y = crns[:, 1] > point[1]
@@ -370,23 +371,21 @@ def gen_panels(
 
 
 def remove_cm(
-    meas,
-    mirror,
+    dataset: Dataset,
+    mirror: str,
     compensate: float = 0,
     thresh: float = 10,
     cut_thresh: float = 50,
     niters: int = 10,
-) -> tuple[
-    dict[str, NDArray[np.float32]], tuple[NDArray[np.float32], NDArray[np.float32]]
-]:
+) -> tuple[Dataset, tuple[NDArray[np.float32], NDArray[np.float32]]]:
     """
     Fit for the common mode transformation from the model to the measurements of all panels and them remove it.
+    Note that this will remove all coded targets from the dataset.
 
     Parameters
     ----------
-    meas : dict[str, NDArray[np.float32]]
+    dataset : Dataset
         The photogrammetry data.
-        Dict is data indexed by the target names.
     mirror : str
         The mirror this data belong to.
         Should be 'primary' or 'secondary'.
@@ -401,8 +400,8 @@ def remove_cm(
 
     Returns
     -------
-    kept_points: dict[str, NDArray[np.float32]]
-        The points that were successfully fit.
+    kept_points: Dataset
+        The points that were successfully fit with the common mode removed.
     common_mode : tuple[NDArray[np.float32], NDArray[np.float32]]
         The common mode that was removed.
         The first element is an affine matrix and
@@ -425,8 +424,8 @@ def remove_cm(
     corners = np.array(
         ([-3300, -3300, 0], [-3300, 3300, 0], [3300, 3300, 0], [3300, -3300, 0])
     )  # ack hardcoded
-    labels = np.array(list(meas.keys()))
-    data = np.array(list(meas.values()))
+    labels = dataset.target_labels
+    data = dataset.targets
     corr = np.arange(4, dtype=int)
     x = np.vstack([corners[:, 0] > dat[0] for dat in data])
     y = np.vstack([corners[:, 1] > dat[1] for dat in data])
@@ -449,7 +448,7 @@ def remove_cm(
     logger.info("\tRemoved %d points not on mirror surface", np.sum(~msk))
 
     x0 = np.hstack([np.ones(1), np.zeros(6)])
-    bounds = [(-0.95, 1.05)] + [(-100, 100)] * 3 + [(0, 2 * np.pi)] * 3
+    bounds = [(0.95, 1.05)] + [(-100, 100)] * 3 + [(0, 2 * np.pi)] * 3
 
     for i in range(niters):
         if len(panel.measurements) < 3:
@@ -499,9 +498,12 @@ def remove_cm(
     if np.sum(cut) > 0:
         logger.info("\tRemoving %d bad points from mirror", np.sum(cut))
         panel.measurements = panel.measurements[~cut]
+        labels = labels[~cut]
     logger.info("\tMirror has %d good points", len(panel.measurements))
 
-    return {l: d for l, d in zip(labels, panel.measurements)}, (aff, sft)
+    data = {l: d for l, d in zip(labels, panel.measurements)}
+
+    return Dataset(data), (aff, sft)
 
 
 def plot_panels(

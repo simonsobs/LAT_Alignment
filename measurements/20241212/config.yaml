@@ -1,0 +1,4 @@
+mode: optical
+align_to: bearing
+measurement: LATR_To_Bearing_Set05.csv
+title: LATR_To_Bearing_Set05
