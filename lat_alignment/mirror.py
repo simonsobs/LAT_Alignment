@@ -377,16 +377,14 @@ def remove_cm(
     thresh: float = 10,
     cut_thresh: float = 50,
     niters: int = 10,
-) -> tuple[
-    Dataset, tuple[NDArray[np.float32], NDArray[np.float32]]
-]:
+) -> tuple[Dataset, tuple[NDArray[np.float32], NDArray[np.float32]]]:
     """
     Fit for the common mode transformation from the model to the measurements of all panels and them remove it.
     Note that this will remove all coded targets from the dataset.
 
     Parameters
     ----------
-    dataset : Dataset 
+    dataset : Dataset
         The photogrammetry data.
     mirror : str
         The mirror this data belong to.
@@ -402,7 +400,7 @@ def remove_cm(
 
     Returns
     -------
-    kept_points: Dataset 
+    kept_points: Dataset
         The points that were successfully fit with the common mode removed.
     common_mode : tuple[NDArray[np.float32], NDArray[np.float32]]
         The common mode that was removed.
@@ -426,8 +424,8 @@ def remove_cm(
     corners = np.array(
         ([-3300, -3300, 0], [-3300, 3300, 0], [3300, 3300, 0], [3300, -3300, 0])
     )  # ack hardcoded
-    labels = dataset.target_labels 
-    data = dataset.targets 
+    labels = dataset.target_labels
+    data = dataset.targets
     corr = np.arange(4, dtype=int)
     x = np.vstack([corners[:, 0] > dat[0] for dat in data])
     y = np.vstack([corners[:, 1] > dat[1] for dat in data])

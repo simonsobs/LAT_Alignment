@@ -375,5 +375,3 @@ def affine_basis_transform(
     aff, sft = get_affine(xyz, xyz_transformed)
 
     return aff, sft
-
-

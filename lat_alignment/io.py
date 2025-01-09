@@ -7,12 +7,15 @@ import yaml
 from megham.utils import make_edm
 from numpy.typing import NDArray
 
-from .transforms import coord_transform
 from .photogrammetry import Dataset
+from .transforms import coord_transform
 
 logger = logging.getLogger("lat_alignment")
 
-def load_photo( path: str, err_thresh: float = 2, doubles_dist: float = 10, plot: bool = True) -> Dataset:
+
+def load_photo(
+    path: str, err_thresh: float = 2, doubles_dist: float = 10, plot: bool = True
+) -> Dataset:
     """
     Load photogrammetry data.
     Assuming first column is target names and next three are (x, y , z).
@@ -29,7 +32,7 @@ def load_photo( path: str, err_thresh: float = 2, doubles_dist: float = 10, plot
 
     Returns
     -------
-    data : Dataset 
+    data : Dataset
         The photogrammetry data.
     """
     logger.info("Loading measurement data")
@@ -40,8 +43,8 @@ def load_photo( path: str, err_thresh: float = 2, doubles_dist: float = 10, plot
 
     labels, coords, errs = labels[msk], coords[msk], errs[msk]
     err = np.linalg.norm(errs, axis=-1)
-    trg_msk = (np.char.find(labels, "TARGET") >= 0)
-    code_msk = (np.char.find(labels, "CODE") >= 0)
+    trg_msk = np.char.find(labels, "TARGET") >= 0
+    code_msk = np.char.find(labels, "CODE") >= 0
 
     err_msk = (err < err_thresh * np.median(err[trg_msk])) + code_msk
     labels, coords, err = labels[err_msk], coords[err_msk], err[err_msk]
@@ -50,7 +53,7 @@ def load_photo( path: str, err_thresh: float = 2, doubles_dist: float = 10, plot
 
     # Lets find and remove doubles
     # Dumb brute force
-    trg_msk = (np.char.find(labels, "TARGET") >= 0)
+    trg_msk = np.char.find(labels, "TARGET") >= 0
     edm = make_edm(coords[trg_msk, :2])
     np.fill_diagonal(edm, np.nan)
     to_kill = []
@@ -70,12 +73,12 @@ def load_photo( path: str, err_thresh: float = 2, doubles_dist: float = 10, plot
 
     if plot:
         fig = plt.figure()
-        ax = fig.add_subplot(projection='3d')
+        ax = fig.add_subplot(projection="3d")
         ax.scatter(coords[:, 0], coords[:, 1], coords[:, 2], marker="x")
         plt.show()
 
     data = {label: coord for label, coord in zip(labels, coords)}
-    return Dataset(data) 
+    return Dataset(data)
 
 
 def load_corners(path: str) -> dict[tuple[int, int], NDArray[np.float32]]:

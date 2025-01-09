@@ -17,19 +17,23 @@ from numpy.typing import NDArray
 from pqdm.processes import pqdm
 
 from . import adjustments as adj
+from . import bearing as br
 from . import io
 from . import mirror as mir
-from . import transforms as tf
-from . import bearing as br
 from . import photogrammetry as pg
+from . import transforms as tf
+
 
 def log_alignment(alignment, logger):
-      aff, shift = alignment
-      scale, shear, rot = mt.decompose_affine(aff)
-      logger.debug("\tFinal shift is %s mm", str(shift))
-      logger.debug("\tFinal rotation is %s deg", str(np.rad2deg(mt.decompose_rotation(rot))))
-      logger.debug("\tFinal scale is %s", str(scale))
-      logger.debug("\tFinal shear is %s", str(shear))
+    aff, shift = alignment
+    scale, shear, rot = mt.decompose_affine(aff)
+    logger.debug("\tFinal shift is %s mm", str(shift))
+    logger.debug(
+        "\tFinal rotation is %s deg", str(np.rad2deg(mt.decompose_rotation(rot)))
+    )
+    logger.debug("\tFinal scale is %s", str(scale))
+    logger.debug("\tFinal shear is %s", str(shear))
+
 
 def adjust_panel(panel: mir.Panel, mnum: int, cfg: dict) -> NDArray[np.float32]:
     """
@@ -126,7 +130,9 @@ def main():
         adjusters = io.load_adjusters(adj_path, mirror)
 
         # init, fit, and plot panels
-        dataset, _ = pg.align_photo(dataset, reference, True, mirror, **cfg.get("align_photo", {}))
+        dataset, _ = pg.align_photo(
+            dataset, reference, True, mirror, **cfg.get("align_photo", {})
+        )
         dataset, _ = mir.remove_cm(
             dataset, mirror, cfg.get("compensate", 0), **cfg.get("common_mode", {})
         )
@@ -158,14 +164,18 @@ def main():
         if align_to not in ["primary", "secondary", "receiver", "bearing"]:
             raise ValueError(f"Invalid element specified for 'align_to': {align_to}")
         logger.info("Aligning all optical elements to the %s", align_to)
-        dataset, _ = pg.align_photo(dataset, reference, False, "all", False, **cfg.get("align_photo", {}))
+        dataset, _ = pg.align_photo(
+            dataset, reference, False, "all", False, **cfg.get("align_photo", {})
+        )
 
         # Load data and compute the transformation to align with the model
         # We want to put all the transformations into opt_global
         elements = {}  # {element_name : full_alignment}
         identity = (np.eye(3, dtype=np.float32), np.zeros(3, dtype=np.float32))
         try:
-            meas, alignment = pg.align_photo(dataset.copy(), reference, True, "primary", **cfg.get("align_photo", {}))
+            meas, alignment = pg.align_photo(
+                dataset.copy(), reference, True, "primary", **cfg.get("align_photo", {})
+            )
             meas, common_mode = mir.remove_cm(
                 meas, "primary", cfg.get("compensate", 0), **cfg.get("common_mode", {})
             )
@@ -183,9 +193,14 @@ def main():
         if len(meas) >= 4:
             elements["primary"] = full_alignment
         try:
-            meas, alignment = pg.align_photo(dataset.copy(), reference, True, "primary", **cfg.get("align_photo", {}))
+            meas, alignment = pg.align_photo(
+                dataset.copy(), reference, True, "primary", **cfg.get("align_photo", {})
+            )
             meas, common_mode = mir.remove_cm(
-                meas, "secondary", cfg.get("compensate", 0), **cfg.get("common_mode", {})
+                meas,
+                "secondary",
+                cfg.get("compensate", 0),
+                **cfg.get("common_mode", {}),
             )
             full_alignment = mt.compose_transform(*alignment, *common_mode)
             full_alignment = tf.affine_basis_transform(
@@ -205,7 +220,13 @@ def main():
         if len(meas) >= 4:
             elements["secondary"] = full_alignment
         try:
-            meas, alignment = pg.align_photo(dataset.copy(), reference, False, "bearing", **cfg.get("align_photo", {}))
+            meas, alignment = pg.align_photo(
+                dataset.copy(),
+                reference,
+                False,
+                "bearing",
+                **cfg.get("align_photo", {}),
+            )
             meas, cyl_fit = br.cylinder_fit(meas)
             full_alignment = mt.compose_transform(*alignment, *cyl_fit)
             log_alignment(full_alignment, logger)
@@ -218,7 +239,13 @@ def main():
         if len(meas) >= 4:
             elements["bearing"] = full_alignment
         try:
-            meas, full_alignment = pg.align_photo(dataset.copy(), reference, False, "receiver", **cfg.get("align_photo", {}))
+            meas, full_alignment = pg.align_photo(
+                dataset.copy(),
+                reference,
+                False,
+                "receiver",
+                **cfg.get("align_photo", {}),
+            )
             log_alignment(full_alignment, logger)
         except Exception as e:
             print(
@@ -250,7 +277,12 @@ def main():
             aff, sft = mt.compose_transform(*full_transform, *align_to_inv)
             scale, shear, rot = mt.decompose_affine(aff)
             rot = np.rad2deg(mt.decompose_rotation(rot))
-            transform = {"shift": sft.tolist(), "rot": rot.tolist(), "scale": scale.tolist(), "shear": shear.tolist()}
+            transform = {
+                "shift": sft.tolist(),
+                "rot": rot.tolist(),
+                "scale": scale.tolist(),
+                "shear": shear.tolist(),
+            }
             transforms[element] = transform
 
         # Save

@@ -1,21 +1,23 @@
 """
 Code for handling and processing photogrammetry data
 """
+
+import logging
+from copy import deepcopy
 from dataclasses import dataclass
 from functools import cached_property, partial
-from copy import deepcopy
 from typing import Self
-import logging
 
 import matplotlib.pyplot as plt
 import numpy as np
-from numpy.typing import NDArray
-from megham.transform import apply_transform, get_rigid, decompose_rotation, get_affine
+from megham.transform import apply_transform, decompose_rotation, get_affine, get_rigid
 from megham.utils import make_edm
+from numpy.typing import NDArray
 
 from .transforms import coord_transform
 
 logger = logging.getLogger("lat_alignment")
+
 
 @dataclass
 class Dataset:
@@ -29,8 +31,9 @@ class Dataset:
         Dict of photogrammetry points.
         You should genrally not touch this directly.
     """
+
     data_dict: dict[str, NDArray[np.float32]]
-    
+
     def _clear_cache(self):
         self.__dict__.pop("points", None)
         self.__dict__.pop("labels", None)
@@ -74,7 +77,7 @@ class Dataset:
         This is cached.
         """
         return np.array(list(self.data_dict.values()))
-    
+
     @cached_property
     def labels(self) -> NDArray[np.str_]:
         """
@@ -149,7 +152,7 @@ def align_photo(
 
     Parameters
     ----------
-    dataset : Dataset 
+    dataset : Dataset
         The photogrammetry data to align.
     reference : dict
         Reference dictionary.
@@ -184,7 +187,7 @@ def align_photo(
         the second is the shift.
     """
     logger.info("\tAligning with reference points for %s", element)
-    elements = ["primary", "secondary", "bearing", "receiver"] 
+    elements = ["primary", "secondary", "bearing", "receiver"]
     if element not in elements and element != "all":
         raise ValueError(f"Invalid element: {element}")
     if len(reference) == 0:
@@ -212,7 +215,6 @@ def align_photo(
                 continue
             all_refs += reference[el]
         reference["all"] = all_refs
-
 
     # Lets find the points we can use
     ref = []
@@ -252,13 +254,12 @@ def align_photo(
         pts *= scale_fac
     logger.debug("\t\tScale factor of %f applied", scale_fac)
 
-
     rot, sft = get_rigid(pts, ref, method="mean")
     pts_t = apply_transform(pts, rot, sft)
 
     if plot:
         fig = plt.figure()
-        ax = fig.add_subplot(projection='3d')
+        ax = fig.add_subplot(projection="3d")
         ax.scatter(pts[:, 0], pts[:, 1], pts[:, 2], color="g")
         ax.scatter(pts_t[:, 0], pts_t[:, 1], pts_t[:, 2], color="b")
         ax.scatter(ref[:, 0], ref[:, 1], ref[:, 2], color="r", marker="X")
@@ -267,7 +268,7 @@ def align_photo(
         "\t\tRMS of reference points after alignment: %f",
         np.sqrt(np.mean((pts_t - ref) ** 2)),
     )
-    coords_transformed = apply_transform(dataset.points*scale_fac, rot, sft)
+    coords_transformed = apply_transform(dataset.points * scale_fac, rot, sft)
     labels = dataset.labels
 
     if kill_refs:
@@ -277,16 +278,21 @@ def align_photo(
 
     data = {label: coord for label, coord in zip(labels, coords_transformed)}
     transformed = Dataset(data)
-            
+
     logger.debug("\t\tShift is %s mm", str(sft))
     logger.debug("\t\tRotation is %s deg", str(np.rad2deg(decompose_rotation(rot))))
-    scale_fac = np.eye(3)*scale_fac
+    scale_fac = np.eye(3) * scale_fac
     rot @= scale_fac
-    
+
     if plot:
         fig = plt.figure()
-        ax = fig.add_subplot(projection='3d')
-        ax.scatter(transformed.targets[:, 0], transformed.targets[:, 1], transformed.targets[:, 2], marker="x")
+        ax = fig.add_subplot(projection="3d")
+        ax.scatter(
+            transformed.targets[:, 0],
+            transformed.targets[:, 1],
+            transformed.targets[:, 2],
+            marker="x",
+        )
         plt.show()
 
     return transformed, (rot, sft)
