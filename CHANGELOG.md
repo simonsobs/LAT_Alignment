@@ -1,3 +1,21 @@
+## 5.0.0 (2025-01-09)
+
+### Feat
+
+- make distance to count as a double tunable
+- more robust vector alignment
+- add init alignment to all elements and include an option to not scale during alignment
+- first pass at adding the bearing and receiver also some fixes to coord transforms and better plotting
+
+### Fix
+
+- sign flip
+- tranform bearing points before returning
+
+### Refactor
+
+- Move to a more flexible interface for the photogrammetry data
+
 ## 4.3.1 (2024-11-19)
 
 ### Fix
