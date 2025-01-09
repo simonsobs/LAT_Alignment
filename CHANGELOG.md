@@ -1,3 +1,9 @@
+## 5.0.1 (2025-01-09)
+
+### Fix
+
+- flip signs of adjustments for primary to make things more intuitive
+
 ## 5.0.0 (2025-01-09)
 
 ### Feat
