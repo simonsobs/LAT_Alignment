@@ -12,7 +12,7 @@ from .photogrammetry import Dataset
 
 logger = logging.getLogger("lat_alignment")
 
-def load_photo( path: str, err_thresh: float = 2, plot: bool = True) -> Dataset:
+def load_photo( path: str, err_thresh: float = 2, doubles_dist: float = 10, plot: bool = True) -> Dataset:
     """
     Load photogrammetry data.
     Assuming first column is target names and next three are (x, y , z).
@@ -45,7 +45,8 @@ def load_photo( path: str, err_thresh: float = 2, plot: bool = True) -> Dataset:
 
     err_msk = (err < err_thresh * np.median(err[trg_msk])) + code_msk
     labels, coords, err = labels[err_msk], coords[err_msk], err[err_msk]
-    logger.info("\t%d points loaded", len(coords))
+    logger.info("\t%d good points loaded", len(coords))
+    logger.info("\t%d high error points not loaded", np.sum(~err_msk))
 
     # Lets find and remove doubles
     # Dumb brute force
@@ -57,7 +58,7 @@ def load_photo( path: str, err_thresh: float = 2, plot: bool = True) -> Dataset:
         if labels[trg_msk][i] in to_kill:
             continue
         imin = np.nanargmin(edm[i])
-        if edm[i][imin] > 5:
+        if edm[i][imin] > doubles_dist:
             continue
         if err[trg_msk][i] < err[trg_msk][imin]:
             to_kill += [labels[trg_msk][imin]]
