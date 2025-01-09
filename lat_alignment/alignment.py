@@ -67,6 +67,10 @@ def adjust_panel(panel: mir.Panel, mnum: int, cfg: dict) -> NDArray[np.float32]:
     dx, dy, d_adj, dx_err, dy_err, d_adj_err = adj.calc_adjustments(
         panel.can_surface, meas_surface, meas_adj, **cfg.get("adjust", {})
     )
+    # The primary has x and z opposite to what is intuitive
+    if mnum == 1:
+        dx *= -1
+        d_adj *= -1
     adjustments[3:] = np.array(
         [dx, dy] + list(d_adj) + [dx_err, dy_err] + list(d_adj_err)
     )
