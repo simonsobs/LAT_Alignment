@@ -148,7 +148,6 @@ def _va_secondary_to_va_primary(coords: NDArray[np.float32]) -> NDArray[np.float
 
 def _opt_global_to_va_global(coords: NDArray[np.float32]) -> NDArray[np.float32]:
     coords_transformed = coords[:, [1, 0, 2]].copy()
-    coords_transformed[:, 1] *= -1
     coords_transformed[:, 2] *= -1
     coords_transformed = coords_transformed + vg2og_shift
     return coords_transformed
@@ -190,25 +189,15 @@ def _va_global_to_opt_global(coords: NDArray[np.float32]) -> NDArray[np.float32]
     coords_transformed = coords - vg2og_shift
     coords_transformed = coords_transformed[:, [1, 0, 2]]
     coords_transformed[:, 2] *= -1
-    coords_transformed[:, 0] *= -1
     return coords_transformed
 
 
 def _va_global_to_opt_primary(coords: NDArray[np.float32]) -> NDArray[np.float32]:
-    coords_transformed = _va_global_to_va_primary(coords)
-    coords_transformed = coords_transformed[:, [1, 0, 2]]
-    coords_transformed[:, 2] *= -1
-    return coords_transformed
-    # return _opt_global_to_opt_primary(_va_global_to_opt_global(coords))
+    return _opt_global_to_opt_primary(_va_global_to_opt_global(coords))
 
 
 def _va_global_to_opt_secondary(coords: NDArray[np.float32]) -> NDArray[np.float32]:
-    coords_transformed = coords - vg2og_shift
-    coords_transformed = coords_transformed[:, [1, 0, 2]]
-    coords_transformed[:, 2] *= -1
-    return _opt_global_to_opt_secondary(coords_transformed)
-
-    # return _opt_global_to_opt_secondary(_va_global_to_opt_global(coords))
+    return _opt_global_to_opt_secondary(_va_global_to_opt_global(coords))
 
 
 def _va_primary_to_opt_global(coords: NDArray[np.float32]) -> NDArray[np.float32]:
