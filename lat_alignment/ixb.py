@@ -1,7 +1,10 @@
 """
 Functions for integrating with the Atlas Copco IxB tool
 """
+import tqdm
+import numpy as np
 from typing import Optional, Callable
+import argparse
 import json
 import socket
 import warnings
@@ -334,3 +337,56 @@ def close(sock: socket.SocketType, send: Callable[[str], None]):
     """
     send(MID3)
     sock.close()
+
+
+def main():
+    # load information
+    parser = argparse.ArgumentParser()
+    parser.add_argument("adjustments", help="path to adjustments file")
+    parser.add_argument("--host", "-H", default="169.254.1.1", type=str, help="the IP of the IxB tool")
+    parser.add_argument("--port", "-P", default=4545, type=int, help="the port open protocol runs at")
+    parser.add_argument("--microns_per_turn", "-m", default=100, type=float, help="The number of microns per turn of the adjuster")
+    parser.add_argument("--thresh", "-t", default=5, type=float, help="The threshold in microns at which we want to just set the adjustnent to 0") 
+    args = parser.parse_args()
+
+    # Load the file and build adjustments
+    adj_data = np.loadtxt(args.adjustments)
+    adjustments = {}
+    to_deg = 1000*360/args.microns_per_turn
+    thresh = args.thresh*to_deg/1000
+    for adj in adj_data:
+        name_root = f"P{int(adj[1])}{int(adj[2])}V"
+        p_adj = {f"{name_root}{v}" : adj[4+v]*to_deg for v in range(1, 6)}
+        adjustments.update(p_adj)
+
+    # To avoid indexing errors lets get a list of all possible adjustors
+    adjs = []
+    for r in range(1, 10):
+        for c in range(1, 10):
+            for a in range(1, 6):
+                adjs += [f"P{r}{c}V{a}"]
+
+    # Connect to tool and send info
+    sock, send, recv = init(args.host, args.port)
+    sign = {-1:1, 1:2}
+    failed = []
+    for i, adj in enumerate(tqdm.tqdm(adjs)):
+        send(construct_2501(i+1))
+        mid, _, dat, d, t = recv()
+        if mid == "0004" or d or t:
+            failed += [adjs]
+            sock, send, recv = init(args.host, args.port)
+            continue
+        _, prog = decode2501(mid, dat)
+        ang = adjustments.get(adj, .1)
+        if np.abs(ang) < thresh:
+            ang = .1
+        prog["threadDirection"] = sign[np.sign(ang)]
+        prog["steps"][1]["stepTightenToAngle"]["angleTarget"] = np.abs(ang)
+        send(construct_2500(i + 1, prog))
+        mid, _, dat, d, t = recv()
+        if mid == "0004" or d or t:
+            failed += [adjs]
+            sock, send, recv = init(args.host, args.port)
+    print(f"failed: {failed}")
+    close(sock, send)
