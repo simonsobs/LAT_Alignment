@@ -1,22 +1,29 @@
 """
 Functions for integrating with the Atlas Copco IxB tool
 """
-import tqdm
-import numpy as np
-from typing import Optional, Callable
+
 import argparse
 import json
 import socket
 import warnings
 from functools import partial
-from typing import Any
+from typing import Any, Callable, Optional
+
+import numpy as np
+import tqdm
 
 MID1 = "00200001001000000000"
 MID3 = "00200003001000000000"
 MID40 = "00200040002000000000"
 
 
-def connect(host: str, port: int = 4545, timeout: float=5, cur_try: int=0, max_retry: int=5) -> socket.SocketType:
+def connect(
+    host: str,
+    port: int = 4545,
+    timeout: float = 5,
+    cur_try: int = 0,
+    max_retry: int = 5,
+) -> socket.SocketType:
     """
     Connect to the open protocol port in the tool.
 
@@ -27,7 +34,7 @@ def connect(host: str, port: int = 4545, timeout: float=5, cur_try: int=0, max_r
     port : int, default: 4545
         The port that open protocol is running at.
     timeout : float, default: 5
-        The time in seconds to set the timeout on 
+        The time in seconds to set the timeout on
         network operations when communicating.
     cur_try : int, default: 0
         The attempt at connecting we are at.
@@ -51,7 +58,7 @@ def connect(host: str, port: int = 4545, timeout: float=5, cur_try: int=0, max_r
         return connect(host, port, cur_try + 1, max_retry)
 
 
-def send_mid(message: str, sock: Optional[socket.SocketType]=None, **kwargs):
+def send_mid(message: str, sock: Optional[socket.SocketType] = None, **kwargs):
     """
     Send a message to the tool.
     One attempt at recconecting and sending the message is made.
@@ -287,7 +294,11 @@ def construct_2500(pset: int, prog: dict[str, Any]) -> str:
     return mid
 
 
-def init(host: str, port: int, **kwargs) -> tuple[socket.SocketType, Callable[[str], None],  Callable[[], tuple[str, str, str, bool, bool]]]:
+def init(host: str, port: int, **kwargs) -> tuple[
+    socket.SocketType,
+    Callable[[str], None],
+    Callable[[], tuple[str, str, str, bool, bool]],
+]:
     """
     Connect to the tool and print identifying information.
     Also generates convenience functions.
@@ -343,20 +354,36 @@ def main():
     # load information
     parser = argparse.ArgumentParser()
     parser.add_argument("adjustments", help="path to adjustments file")
-    parser.add_argument("--host", "-H", default="169.254.1.1", type=str, help="the IP of the IxB tool")
-    parser.add_argument("--port", "-P", default=4545, type=int, help="the port open protocol runs at")
-    parser.add_argument("--microns_per_turn", "-m", default=100, type=float, help="The number of microns per turn of the adjuster")
-    parser.add_argument("--thresh", "-t", default=5, type=float, help="The threshold in microns at which we want to just set the adjustnent to 0") 
+    parser.add_argument(
+        "--host", "-H", default="169.254.1.1", type=str, help="the IP of the IxB tool"
+    )
+    parser.add_argument(
+        "--port", "-P", default=4545, type=int, help="the port open protocol runs at"
+    )
+    parser.add_argument(
+        "--microns_per_turn",
+        "-m",
+        default=100,
+        type=float,
+        help="The number of microns per turn of the adjuster",
+    )
+    parser.add_argument(
+        "--thresh",
+        "-t",
+        default=5,
+        type=float,
+        help="The threshold in microns at which we want to just set the adjustnent to 0",
+    )
     args = parser.parse_args()
 
     # Load the file and build adjustments
     adj_data = np.loadtxt(args.adjustments)
     adjustments = {}
-    to_deg = 1000*360/args.microns_per_turn
-    thresh = args.thresh*to_deg/1000
+    to_deg = 1000 * 360 / args.microns_per_turn
+    thresh = args.thresh * to_deg / 1000
     for adj in adj_data:
         name_root = f"P{int(adj[1])}{int(adj[2])}V"
-        p_adj = {f"{name_root}{v}" : adj[4+v]*to_deg for v in range(1, 6)}
+        p_adj = {f"{name_root}{v}": adj[4 + v] * to_deg for v in range(1, 6)}
         adjustments.update(p_adj)
 
     # To avoid indexing errors lets get a list of all possible adjustors
@@ -368,19 +395,19 @@ def main():
 
     # Connect to tool and send info
     sock, send, recv = init(args.host, args.port)
-    sign = {-1:1, 1:2}
+    sign = {-1: 1, 1: 2}
     failed = []
     for i, adj in enumerate(tqdm.tqdm(adjs)):
-        send(construct_2501(i+1))
+        send(construct_2501(i + 1))
         mid, _, dat, d, t = recv()
         if mid == "0004" or d or t:
             failed += [adjs]
             sock, send, recv = init(args.host, args.port)
             continue
         _, prog = decode2501(mid, dat)
-        ang = adjustments.get(adj, .1)
+        ang = adjustments.get(adj, 0.1)
         if np.abs(ang) < thresh:
-            ang = .1
+            ang = 0.1
         prog["threadDirection"] = sign[np.sign(ang)]
         prog["steps"][1]["stepTightenToAngle"]["angleTarget"] = np.abs(ang)
         send(construct_2500(i + 1, prog))
