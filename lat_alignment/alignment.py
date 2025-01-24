@@ -156,7 +156,7 @@ def main():
         logger.info("Caluculating adjustments")
         _adjust = partial(adjust_panel, mnum=mnum, cfg=cfg)
         adjustments = np.vstack(pqdm(panels, _adjust, n_jobs=8))
-        order = np.lexsort((adjustments[2], adjustments[1], adjustments[0]))
+        order = np.lexsort((adjustments[:, 2], adjustments[:, 1], adjustments[:, 0]))
         adjustments = adjustments[order]
         np.savetxt(
             os.path.join(cfgdir, f"{title_str.replace(' ', '_')}.csv"),
