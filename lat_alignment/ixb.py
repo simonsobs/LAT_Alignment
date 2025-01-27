@@ -339,10 +339,42 @@ def close(sock: socket.SocketType, send: Callable[[str], None]):
     sock.close()
 
 
+def get_adjs_names() -> tuple[list[str], list[str], list[str]]:
+    """
+    Get the names of the adjusters in the order and format of the programs
+    on the IxB tool.
+
+    Returns
+    -------
+    program_names : list[str]
+        The names of the programs in the order they will appear on the tool.
+    part1 : list[str]
+        The names of the adjusters in rows 1-4 of the mirror.
+    part2 : list[str]
+        The names of the adjusters in rows 5-9 of the mirror.
+    """
+    adjs = []
+    for r in range(1, 10):
+        for c in range(1, 10):
+            for a in range(1, 6):
+                adjs += [f"P{r}{c}V{a}"]
+
+    # There is a dumb 250 limit
+    # So we split the mirror into two parts
+    # Part 1 is rows 1-4 and part 2 5-9
+    split = 4*9*5 # 4 rows * 9 cols * 5 adjusters
+    part1 = adjs[:split].copy()
+    part2 = adjs[split:].copy()
+    adjs = [f"{p1}_{p2}" for p1, p2 in zip(part1, part2)] + part2[split:]
+
+    return adjs, part1, part2
+
+
 def main():
     # load information
     parser = argparse.ArgumentParser()
     parser.add_argument("adjustments", help="path to adjustments file")
+    parser.add_argument("part", type=int, help="The half of the mirror the adjust")
     parser.add_argument("--host", "-H", default="169.254.1.1", type=str, help="the IP of the IxB tool")
     parser.add_argument("--port", "-P", default=4545, type=int, help="the port open protocol runs at")
     parser.add_argument("--microns_per_turn", "-m", default=100, type=float, help="The number of microns per turn of the adjuster")
@@ -359,16 +391,14 @@ def main():
         p_adj = {f"{name_root}{v}" : adj[4+v]*to_deg for v in range(1, 6)}
         adjustments.update(p_adj)
 
-    # To avoid indexing errors lets get a list of all possible adjustors
-    adjs = []
-    for r in range(1, 10):
-        for c in range(1, 10):
-            for a in range(1, 6):
-                adjs += [f"P{r}{c}V{a}"]
+    # Get the part we want to adjust
+    if args.part not in [1, 2]:
+        raise ValueError("Part must be 1 or 2")
+    adjs = get_adjs_names()[args.part]
 
     # Connect to tool and send info
     sock, send, recv = init(args.host, args.port)
-    sign = {-1:1, 1:2}
+    sign = {1:1, -1:2}
     failed = []
     for i, adj in enumerate(tqdm.tqdm(adjs)):
         send(construct_2501(i+1))
