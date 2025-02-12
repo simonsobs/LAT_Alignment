@@ -400,6 +400,7 @@ def main():
     sock, send, recv = init(args.host, args.port)
     sign = {1:1, -1:2}
     failed = []
+    to_hit = []
     for i, adj in enumerate(tqdm.tqdm(adjs)):
         send(construct_2501(i+1))
         mid, _, dat, d, t = recv()
@@ -411,6 +412,8 @@ def main():
         ang = adjustments.get(adj, .1)
         if np.abs(ang) < thresh:
             ang = .1
+        else:
+            to_hit += [adj]
         prog["threadDirection"] = sign[np.sign(ang)]
         prog["steps"][1]["stepTightenToAngle"]["angleTarget"] = np.abs(ang)
         send(construct_2500(i + 1, prog))
@@ -419,4 +422,5 @@ def main():
             failed += [adjs]
             sock, send, recv = init(args.host, args.port)
     print(f"failed: {failed}")
+    print(f"to_hit: {to_hit}")
     close(sock, send)
