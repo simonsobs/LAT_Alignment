@@ -266,6 +266,19 @@ class Panel:
 
         return resid
 
+    @property
+    def adj_msk(self):
+        """
+        Get a mask that only is True for measurements that are close to an adjustor.
+        """
+        msk = np.zeros(len(self.measurements), dtype=bool)
+        if len(self.measurements) < 4:
+            return msk
+        for adj in self.meas_adj:
+            dists = np.linalg.norm(self.measurements[:, :2] - adj[:2], axis=-1)
+            msk += dists <= self.adjuster_radius
+        return msk
+
     @cached_property
     def model_transformed(self):
         """
@@ -542,6 +555,9 @@ def plot_panels(
     ax1 = plt.subplot(gs[2:])
     cb = None
     for panel in panels:
+        if len(panel.model) < 3:
+            logger.debug("\tCan't plot panel (%s, %s), not enough points", panel.row, panel.col)
+            continue
         ax0.tricontourf(
             panel.model[:, 0],
             panel.model[:, 1],
