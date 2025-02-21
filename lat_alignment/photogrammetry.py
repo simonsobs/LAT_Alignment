@@ -167,9 +167,11 @@ def align_photo(
         to identify the point.
     kill_refs : bool
         If True remove reference points from the dataset.
-    element: str, default: 'primary'
+    element : str, default: 'primary'
         The element that these points belong to.
-        Should be either: 'primary', 'secondary', 'bearing', or 'receiver'.
+        Should be either: 'primary', 'secondary', 'bearing', 'receiver', or 'all'.
+    scale : bool, default: True
+        If True also compute a scale factor from the reference points.
     plot : bool, default: True
         If True show a diagnostic plot of how well the reference points
         are aligned.
