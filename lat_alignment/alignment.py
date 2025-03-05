@@ -126,9 +126,14 @@ def main():
         adj_path_m2 = str(files("lat_alignment.data").joinpath(f"secondary_adj.csv"))
 
     # load files
-    corners = {"primary" : io.load_corners(corner_path_m1), "secondary" : io.load_corners(corner_path_m2)}
-    adjusters = {"primary" : io.load_adjusters(adj_path_m1, "primary"), "secondary" : io.load_adjusters(adj_path_m2, "secondary")}
-
+    corners = {
+        "primary": io.load_corners(corner_path_m1),
+        "secondary": io.load_corners(corner_path_m2),
+    }
+    adjusters = {
+        "primary": io.load_adjusters(adj_path_m1, "primary"),
+        "secondary": io.load_adjusters(adj_path_m2, "secondary"),
+    }
 
     if mode == "panel":
         mirror = cfg["mirror"]
@@ -146,14 +151,16 @@ def main():
                 dataset, reference, True, mirror, **cfg.get("align_photo", {})
             )
         except Exception as e:
-            raise ValueError("Failed to align to reference points, with error %s", str(e)) 
+            raise ValueError(
+                "Failed to align to reference points, with error %s", str(e)
+            )
             # TODO figure out bootstrapping
             # print("Bootstrapping")
             # dataset, _ = pg.align_photo(
             #     dataset, reference, True, 'all', scale=False, **cfg.get("align_photo", {})
             # )
             # points = tf.coord_transform(dataset.points, "opt_global", "opt_primary")
-            # dataset = pg.Dataset({l:p for l, p in zip(dataset.labels, points)}) 
+            # dataset = pg.Dataset({l:p for l, p in zip(dataset.labels, points)})
         dataset, _ = mir.remove_cm(
             dataset, mirror, cfg.get("compensate", 0), **cfg.get("common_mode", {})
         )
@@ -169,7 +176,7 @@ def main():
             for panel in panels:
                 panel.measurements = panel.measurements[panel.adj_msk]
             measurements = np.vstack([panel.measurements for panel in panels])
-            data = {"TARGET"+str(i): meas for i, meas in enumerate(measurements)}
+            data = {"TARGET" + str(i): meas for i, meas in enumerate(measurements)}
             dataset = io.Dataset(data)
             dataset, _ = mir.remove_cm(
                 dataset, mirror, cfg.get("compensate", 0), **cfg.get("common_mode", {})
@@ -230,10 +237,13 @@ def main():
                 for panel in panels:
                     panel.measurements = panel.measurements[panel.adj_msk]
                 measurements = np.vstack([panel.measurements for panel in panels])
-                data = {"TARGET"+str(i): meas for i, meas in enumerate(measurements)}
+                data = {"TARGET" + str(i): meas for i, meas in enumerate(measurements)}
                 meas = io.Dataset(data)
                 meas, common_mode_2 = mir.remove_cm(
-                    meas, "primary", cfg.get("compensate", 0), **cfg.get("common_mode", {})
+                    meas,
+                    "primary",
+                    cfg.get("compensate", 0),
+                    **cfg.get("common_mode", {}),
                 )
                 full_alignment = mt.compose_transform(*full_alignment, *common_mode_2)
             full_alignment = tf.affine_basis_transform(
@@ -251,7 +261,11 @@ def main():
             elements["primary"] = full_alignment
         try:
             meas, alignment = pg.align_photo(
-                dataset.copy(), reference, True, "secondary", **cfg.get("align_photo", {})
+                dataset.copy(),
+                reference,
+                True,
+                "secondary",
+                **cfg.get("align_photo", {}),
             )
             meas, common_mode = mir.remove_cm(
                 meas,
@@ -272,10 +286,13 @@ def main():
                 for panel in panels:
                     panel.measurements = panel.measurements[panel.adj_msk]
                 measurements = np.vstack([panel.measurements for panel in panels])
-                data = {"TARGET"+str(i): meas for i, meas in enumerate(measurements)}
+                data = {"TARGET" + str(i): meas for i, meas in enumerate(measurements)}
                 meas = io.Dataset(data)
                 meas, common_mode_2 = mir.remove_cm(
-                    meas, "secondary", cfg.get("compensate", 0), **cfg.get("common_mode", {})
+                    meas,
+                    "secondary",
+                    cfg.get("compensate", 0),
+                    **cfg.get("common_mode", {}),
                 )
                 full_alignment = mt.compose_transform(*full_alignment, *common_mode_2)
             full_alignment = tf.affine_basis_transform(

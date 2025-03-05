@@ -46,7 +46,7 @@ for i in tqdm.tqdm(range(len(adjs), orig_num)):
     prog = deepcopy(template)
     prog["name"] = "unused"
     prog["indexId"]["value"] = i + 1
-    prog["steps"][1]["stepTightenToAngle"]["angleTarget"] = .1
+    prog["steps"][1]["stepTightenToAngle"]["angleTarget"] = 0.1
     send(ixb.construct_2500(i + 1, prog))
     mid, rev, dat, d, t = recv()
     if mid == "0004" or d or t:

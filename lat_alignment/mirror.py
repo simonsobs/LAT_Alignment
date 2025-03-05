@@ -557,7 +557,9 @@ def plot_panels(
     cb = None
     for panel in panels:
         if len(panel.model) < 3:
-            logger.debug("\tCan't plot panel (%s, %s), not enough points", panel.row, panel.col)
+            logger.debug(
+                "\tCan't plot panel (%s, %s), not enough points", panel.row, panel.col
+            )
             continue
         ax0.tricontourf(
             panel.model[:, 0],

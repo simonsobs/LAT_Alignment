@@ -373,7 +373,7 @@ def get_adjs_names() -> tuple[list[str], list[str], list[str]]:
     # There is a dumb 250 limit
     # So we split the mirror into two parts
     # Part 1 is rows 1-4 and part 2 5-9
-    split = 4*9*5 # 4 rows * 9 cols * 5 adjusters
+    split = 4 * 9 * 5  # 4 rows * 9 cols * 5 adjusters
     part1 = adjs[:split].copy()
     part2 = adjs[split:].copy()
     adjs = [f"{p1}_{p2}" for p1, p2 in zip(part1, part2)] + part2[split:]
@@ -424,7 +424,7 @@ def main():
 
     # Connect to tool and send info
     sock, send, recv = init(args.host, args.port)
-    sign = {1:1, -1:2}
+    sign = {1: 1, -1: 2}
     failed = []
     to_hit = []
     for i, adj in enumerate(tqdm.tqdm(adjs)):
@@ -437,7 +437,7 @@ def main():
         _, prog = decode2501(mid, dat)
         ang = adjustments.get(adj, 0.1)
         if np.abs(ang) < thresh:
-            ang = .1
+            ang = 0.1
         else:
             to_hit += [adj]
         prog["threadDirection"] = sign[np.sign(ang)]
