@@ -1,3 +1,19 @@
+## 5.2.0 (2025-03-05)
+
+### Feat
+
+- add ability to kill points on mirror not near an adjustor and fix plotting with sparse measurements
+- print all adjustors to hit
+
+### Fix
+
+- better error handling and setup for future bootstrapping feature
+- mask out points too far from mirror surface
+
+### Refactor
+
+- split mirror into two parts and fix sign on thread direction
+
 ## 5.1.0 (2025-01-24)
 
 ### Feat
