@@ -1,14 +1,16 @@
 import json
 import os
 from copy import deepcopy
+
 import tqdm
+
 from lat_alignment import ixb
 
 host = "169.254.1.1"
 port = 4545
 sock, send, recv = ixb.init(host, port)
 
-template : dict
+template: dict
 if os.path.isfile("Tightening_Tighten_Template.json"):
     with open("Tightening_Tighten_Template.json") as f:
         template = json.load(f)
