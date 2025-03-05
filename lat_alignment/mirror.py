@@ -445,6 +445,7 @@ def remove_cm(
     val = x.astype(int) + 2 * y.astype(int)
     val = np.sort(val, axis=-1)
     msk = (val == corr).all(-1)
+    msk *= abs(data[:, 2]) < 500
     data = data[msk]
     labels = labels[msk]
     panel = Panel(
