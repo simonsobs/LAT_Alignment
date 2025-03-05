@@ -1,0 +1,9 @@
+mirror: "secondary"
+measurement: 20250221_Set04.csv 
+title: "M2 LATR_Full_Set04"
+vmax: 50
+common_mode:
+  cut_thresh: 10
+  niters: 15
+load:
+  doubles_dist: 30

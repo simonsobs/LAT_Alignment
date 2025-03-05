@@ -1,0 +1,10 @@
+mirror: "primary"
+measurement: Bundle6.csv 
+title: "M1 LATR_Full_Set05"
+vmax: 50
+load:
+  doubles_dist: 30
+  err_thresh: 3
+common_mode:
+  cut_thresh: 10
+  niters: 30
