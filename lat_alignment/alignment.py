@@ -141,9 +141,19 @@ def main():
         logger.info("Aligning panels for the %s mirror", mirror)
 
         # init, fit, and plot panels
-        dataset, _ = pg.align_photo(
-            dataset, reference, True, mirror, **cfg.get("align_photo", {})
-        )
+        try:
+            dataset, _ = pg.align_photo(
+                dataset, reference, True, mirror, **cfg.get("align_photo", {})
+            )
+        except Exception as e:
+            raise ValueError("Failed to align to reference points, with error %s", str(e)) 
+            # TODO figure out bootstrapping
+            # print("Bootstrapping")
+            # dataset, _ = pg.align_photo(
+            #     dataset, reference, True, 'all', scale=False, **cfg.get("align_photo", {})
+            # )
+            # points = tf.coord_transform(dataset.points, "opt_global", "opt_primary")
+            # dataset = pg.Dataset({l:p for l, p in zip(dataset.labels, points)}) 
         dataset, _ = mir.remove_cm(
             dataset, mirror, cfg.get("compensate", 0), **cfg.get("common_mode", {})
         )
