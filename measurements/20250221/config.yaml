@@ -1,0 +1,10 @@
+mode: optical
+load:
+  plot: False
+  doubles_dist: 10
+  err_thresh: 4
+align_photo:
+  plot: False
+align_to: bearing
+measurement: Bundle7.csv 
+title: LATR_Full_Set04

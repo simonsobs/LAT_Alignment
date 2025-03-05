@@ -1,0 +1,9 @@
+mirror: "primary"
+measurement: 20250221_Set04.csv 
+title: "M1 LATR_Full_Set04"
+vmax: 50
+load:
+  doubles_dist: 30
+common_mode:
+  cut_thresh: 10
+  niters: 15
