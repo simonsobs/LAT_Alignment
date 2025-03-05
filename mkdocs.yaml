@@ -52,4 +52,5 @@ nav:
   - Panel Numbering Scheme: 'panel_numbers.md'
   - Configuration File: 'config_file.md'
   - Alignment Procedure: 'alignment_procedure.md'
+  - IxB Tool: 'ixb.md'
   - API Reference: reference/
