@@ -151,16 +151,19 @@ def main():
                 dataset, reference, True, mirror, **cfg.get("align_photo", {})
             )
         except Exception as e:
-            raise ValueError(
-                "Failed to align to reference points, with error %s", str(e)
+            logger.error( "Failed to align to reference points, with error %s", str(e))
+            bootstrap_from = cfg.get("bootstrap_from", "all")
+            logger.info("Bootstrapping from %s", bootstrap_from)
+            dataset, _ = pg.align_photo(
+                dataset, reference, True, bootstrap_from, scale=False, **cfg.get("align_photo", {})
             )
-            # TODO figure out bootstrapping
-            # print("Bootstrapping")
-            # dataset, _ = pg.align_photo(
-            #     dataset, reference, True, 'all', scale=False, **cfg.get("align_photo", {})
-            # )
-            # points = tf.coord_transform(dataset.points, "opt_global", "opt_primary")
-            # dataset = pg.Dataset({l:p for l, p in zip(dataset.labels, points)})
+            if bootstrap_from == "primary":
+                points = tf.coord_transform(dataset.points, "opt_primary", f"opt_{mirror}")
+            elif bootstrap_from == "secondary":
+                points = tf.coord_transform(dataset.points, "opt_secondary", f"opt_{mirror}")
+            else:
+                points = tf.coord_transform(dataset.points, "opt_global", f"opt_{mirror}")
+            dataset = pg.Dataset({l:p for l, p in zip(dataset.labels, points)})
         dataset, _ = mir.remove_cm(
             dataset, mirror, cfg.get("compensate", 0), **cfg.get("common_mode", {})
         )
