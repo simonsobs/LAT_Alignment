@@ -140,6 +140,7 @@ def align_photo(
     kill_refs: bool,
     element: str = "primary",
     scale: bool = True,
+    blind_search: float = -1,
     *,
     plot: bool = True,
     max_dist: float = 100.0,
@@ -172,6 +173,9 @@ def align_photo(
         Should be either: 'primary', 'secondary', 'bearing', 'receiver', or 'all'.
     scale : bool, default: True
         If True also compute a scale factor from the reference points.
+    blind_search : float, default: -1
+        Perform a blind search for the reference points.
+        This is not implemented yet...
     plot : bool, default: True
         If True show a diagnostic plot of how well the reference points
         are aligned.
@@ -236,6 +240,8 @@ def align_photo(
         ref += [rpoint]
         pts += [dataset[label]]
         invars += [label]
+    if blind_search > 0:
+        raise NotImplementedError("Blind search not implemented yet!")
     if len(ref) < 4:
         raise ValueError(f"Only {len(ref)} reference points found! Can't align!")
     logger.debug(
