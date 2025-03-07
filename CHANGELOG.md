@@ -1,3 +1,9 @@
+## 5.3.0 (2025-03-07)
+
+### Feat
+
+- add bootstrapping from another optical element
+
 ## 5.2.0 (2025-03-05)
 
 ### Feat
