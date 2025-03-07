@@ -17,9 +17,14 @@ from .photogrammetry import Dataset
 logger = logging.getLogger("lat_alignment")
 
 # On the same plane as the face facing the receiver
+# ORIGIN = np.array([0.0, 4366.0, 0.0])  # opt_global
+# ZERO = np.array([5.66309902, 4279.33935856, 2001.09289888]) 
+# ZERO_CODED = np.array([55.12701416, 4282.49464202, 1999.9269164]) 
+# FACE_TOL = 5
 ORIGIN = np.array([0.0, 4410.0, 0.0])  # opt_global
 ZERO = np.array([-1.33556967e00, 4.32348732e03, 2.00727038e03])
 ZERO_CODED = np.array([48.14332494, 4326.74247708, 2006.50467441])
+FACE_TOL = .5
 ZERO_CODE = "CODE90"
 AXIS1 = Vector.from_points(ORIGIN, ORIGIN + np.array([0.0, -1.0, 0.0])).unit()
 AXIS2 = Vector.from_points(ORIGIN, ZERO).unit()
@@ -92,8 +97,8 @@ def partition_points(
         ),
         axis=0,
     )
-    face_msk = (dataset.points[:, 1] > face_origin[1] - 0.5) * (
-        dataset.points[:, 1] < face_origin[1] + 0.5
+    face_msk = (dataset.points[:, 1] > face_origin[1] - FACE_TOL) * (
+        dataset.points[:, 1] < face_origin[1] + FACE_TOL
     )
     face_points = Dataset(
         {l: p for l, p in zip(dataset.labels[face_msk], dataset.points[face_msk])}
