@@ -2,12 +2,16 @@
 Functions for integrating with the Atlas Copco IxB tool
 """
 
+from importlib.resources import files
 import argparse
 import json
 import socket
 import warnings
 from functools import partial
 from typing import Any, Callable, Optional
+import os
+from copy import deepcopy
+import time
 
 import numpy as np
 import tqdm
@@ -385,6 +389,7 @@ def main():
     # load information
     parser = argparse.ArgumentParser()
     parser.add_argument("adjustments", help="path to adjustments file")
+    parser.add_argument("part", type=int, help="Which half of the mirror to adjust")
     parser.add_argument(
         "--host", "-H", default="169.254.1.1", type=str, help="the IP of the IxB tool"
     )
@@ -407,6 +412,13 @@ def main():
     )
     args = parser.parse_args()
 
+
+    # Load templates
+    with open(str(files("lat_alignment.data").joinpath("Tightening_Tighten_Template.json")), 'r') as f:
+        tighten_template = json.load(f)
+    with open(str(files("lat_alignment.data").joinpath("Tightening_Loosen_Template.json")), 'r') as f:
+        loosen_template = json.load(f)
+
     # Load the file and build adjustments
     adj_data = np.loadtxt(args.adjustments)
     adjustments = {}
@@ -420,11 +432,13 @@ def main():
     # Get the part we want to adjust
     if args.part not in [1, 2]:
         raise ValueError("Part must be 1 or 2")
-    adjs = get_adjs_names()[args.part]
+    adjs_full, *adjs_part = get_adjs_names()#[args.part]
+    adjs = adjs_part[args.part - 1]
 
     # Connect to tool and send info
     sock, send, recv = init(args.host, args.port)
-    sign = {1: 1, -1: 2}
+    template = {1: tighten_template, -1: loosen_template}
+    direction = {1: "Tighten", -1: "Loosen"}
     failed = []
     to_hit = []
     for i, adj in enumerate(tqdm.tqdm(adjs)):
@@ -435,18 +449,40 @@ def main():
             sock, send, recv = init(args.host, args.port)
             continue
         _, prog = decode2501(mid, dat)
+        # print(construct_2500(i + 1, prog))
+        rev = prog["revision"] + 1
+        prog_id = prog["id"]
+        # prog_id["value"] = [23,125,93,221,120,229,79,175,133,107,214,249,176,98,143,238] #[v + 1 for v in prog_id["value"]]
+        ver_id = prog["versionId"]
+        # ver_id["value"]["value"] = [60,253,217,23,0,137,72,113,158,187,86,161,18,138,17,62] #[v + 1 for v in ver_id["value"]["value"]]
         ang = adjustments.get(adj, 0.1)
+        sign = np.sign(ang)
+        ang_use = max(int(np.abs(np.round(ang))), .1)
         if np.abs(ang) < thresh:
             ang = 0.1
+            ang_use = ang
         else:
-            to_hit += [adj]
-        prog["threadDirection"] = sign[np.sign(ang)]
-        prog["steps"][1]["stepTightenToAngle"]["angleTarget"] = np.abs(ang)
+            to_hit += [(adj, sign*ang_use)]
+        prog["steps"] = deepcopy(template[sign])["steps"]
+        prog["name"] = adjs_full[i]
+        prog["revision"] = rev
+        prog["id"] = prog_id
+        prog["versionId"] = ver_id 
+        prog["timestamp"]["value"] = int(time.time()) 
+        prog["indexId"]["value"] = i + 1
+        prog["steps"][1][f"step{direction[sign]}ToAngle"]["angleTarget"] = ang_use 
         send(construct_2500(i + 1, prog))
         mid, _, dat, d, t = recv()
         if mid == "0004" or d or t:
             failed += [adjs]
             sock, send, recv = init(args.host, args.port)
-    print(f"failed: {failed}")
-    print(f"to_hit: {to_hit}")
     close(sock, send)
+    panels_to_hit = np.unique([adj[0][:3] for adj in to_hit])
+    print(f"failed: {failed}")
+    print(f"to_hit: {to_hit} ({len(to_hit)} adjusters)")
+    print(f"panels_to_hit: {panels_to_hit}")
+
+    # Save as CSV
+    to_hit = np.array(to_hit, dtype=str)
+    fname = f"{os.path.splitext(args.adjustments)[0]}_part{args.part}_to_hit.csv"
+    np.savetxt(fname, to_hit, delimiter=",", fmt="%s")
