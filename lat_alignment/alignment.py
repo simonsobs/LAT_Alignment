@@ -66,9 +66,9 @@ def adjust_panel(panel: mir.Panel, mnum: int, fit: bool, cfg: dict) -> NDArray[n
     adjustments[2] = panel.col
     if fit:
         meas_adj = panel.meas_adj.copy()
-        meas_adj[:, 2] += panel.meas_adj_resid
+        meas_adj[:, 2] -= panel.meas_adj_resid
         meas_surface = panel.meas_surface.copy()
-        meas_surface[:, 2] += panel.meas_adj_resid
+        meas_surface[:, 2] -= panel.meas_adj_resid
         dx, dy, d_adj, dx_err, dy_err, d_adj_err = adj.calc_adjustments(
             panel.can_surface, meas_surface, meas_adj, **cfg.get("adjust", {})
         )
