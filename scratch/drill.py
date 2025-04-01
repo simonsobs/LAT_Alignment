@@ -6,19 +6,21 @@ import tqdm
 
 from lat_alignment import ixb
 
-host = "169.254.1.1"
+# host = "169.254.1.1"
+host = "192.168.1.1"
 port = 4545
 sock, send, recv = ixb.init(host, port)
 
+direction = "Loosen"
 template: dict
-if os.path.isfile("Tightening_Tighten_Template.json"):
-    with open("Tightening_Tighten_Template.json") as f:
+if os.path.isfile(f"Tightening_{direction}_Template.json"):
+    with open(f"Tightening_{direction}_Template.json") as f:
         template = json.load(f)
 else:
     send(ixb.construct_2501(1))
     mid, rev, dat, d, t = recv()
     info, template = ixb.decode2501(mid, dat)
-    with open("Tightening_Tighten_Template.json", "w", encoding="utf-8") as f:
+    with open(f"Tightening_{direction}_Template.json", "w", encoding="utf-8") as f:
         json.dump(template, f, ensure_ascii=False, indent=4)
 
 adjs, part1, part2 = ixb.get_adjs_names()
@@ -30,7 +32,7 @@ for i, adj in enumerate(tqdm.tqdm(adjs)):
     prog = deepcopy(template)
     prog["name"] = adj
     prog["indexId"]["value"] = i + 1
-    prog["steps"][1]["stepTightenToAngle"]["angleTarget"] = 30
+    prog["steps"][1][f"step{direction}ToAngle"]["angleTarget"] = 30
     send(ixb.construct_2500(i + 1, prog))
     mid, rev, dat, d, t = recv()
     if mid == "0004" or d or t:
@@ -46,7 +48,7 @@ for i in tqdm.tqdm(range(len(adjs), orig_num)):
     prog = deepcopy(template)
     prog["name"] = "unused"
     prog["indexId"]["value"] = i + 1
-    prog["steps"][1]["stepTightenToAngle"]["angleTarget"] = 0.1
+    prog["steps"][1][f"step{direction}ToAngle"]["angleTarget"] = 0.1
     send(ixb.construct_2500(i + 1, prog))
     mid, rev, dat, d, t = recv()
     if mid == "0004" or d or t:
