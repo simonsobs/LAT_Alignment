@@ -89,6 +89,15 @@
     Additional keyword arguments to pass to
     [`adjustments.calc_adjustments`](https://simonsobs.github.io/LAT_Alignment/latest/reference/adjustments/#lat_alignment.adjustments.calc_adjustments)
 
+???+ info "`fit_adjustments`"
+
+    If `True` then attempt to fit for adjustments by modeling them as panel rotations.
+    If `False` sinply use the raw residuals.
+    If you have a finely sampled point cloud fitting is prefered but for sparse sampling
+    you may want to turn this off.
+
+    This is `True` by default.
+
 ???+ info "`title`"
 
     The title of the measurement.

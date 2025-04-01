@@ -36,7 +36,7 @@ def log_alignment(alignment, logger):
     logger.debug("\tFinal shear is %s", str(shear))
 
 
-def adjust_panel(panel: mir.Panel, mnum: int, cfg: dict) -> NDArray[np.float32]:
+def adjust_panel(panel: mir.Panel, mnum: int, fit: bool, cfg: dict) -> NDArray[np.float32]:
     """
     Helper function to get the adjustments for a single panel.
 
@@ -47,6 +47,9 @@ def adjust_panel(panel: mir.Panel, mnum: int, cfg: dict) -> NDArray[np.float32]:
     mnum : int
         The mirror number.
         1 for the primary and 2 for the secondary.
+    fit: bool
+        If True fit for the adjustments by modeling them as rotations of the panel.
+        If False just use the raw residuals.
     cfg : dict
         The configuration dictionairy.
 
@@ -61,13 +64,21 @@ def adjust_panel(panel: mir.Panel, mnum: int, cfg: dict) -> NDArray[np.float32]:
     adjustments[0] = mnum
     adjustments[1] = panel.row
     adjustments[2] = panel.col
-    meas_adj = panel.meas_adj.copy()
-    meas_adj[:, 2] += panel.meas_adj_resid
-    meas_surface = panel.meas_surface.copy()
-    meas_surface[:, 2] += panel.meas_adj_resid
-    dx, dy, d_adj, dx_err, dy_err, d_adj_err = adj.calc_adjustments(
-        panel.can_surface, meas_surface, meas_adj, **cfg.get("adjust", {})
-    )
+    if fit:
+        meas_adj = panel.meas_adj.copy()
+        meas_adj[:, 2] += panel.meas_adj_resid
+        meas_surface = panel.meas_surface.copy()
+        meas_surface[:, 2] += panel.meas_adj_resid
+        dx, dy, d_adj, dx_err, dy_err, d_adj_err = adj.calc_adjustments(
+            panel.can_surface, meas_surface, meas_adj, **cfg.get("adjust", {})
+        )
+    else:
+        dx = 0 
+        dx_err = 0
+        dy = 0 
+        dy_err = 0
+        d_adj = -1*panel.adj_resid
+        d_adj_err = np.zeros_like(d_adj)
     # The primary has x and z opposite to what is intuitive
     if mnum == 1:
         dx *= -1
@@ -198,7 +209,7 @@ def main():
 
         # calc and save adjustments
         logger.info("Caluculating adjustments")
-        _adjust = partial(adjust_panel, mnum=mnum, cfg=cfg)
+        _adjust = partial(adjust_panel, mnum=mnum, fit=cfg.get("fit_adjustments", True), cfg=cfg)
         adjustments = np.vstack(pqdm(panels, _adjust, n_jobs=8))
         order = np.lexsort((adjustments[:, 2], adjustments[:, 1], adjustments[:, 0]))
         adjustments = adjustments[order]

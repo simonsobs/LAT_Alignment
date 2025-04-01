@@ -185,6 +185,7 @@ class Panel:
             self.__dict__.pop("meas_surface", None)
             self.__dict__.pop("meas_adj", None)
             self.__dict__.pop("meas_adj_resid", None)
+            self.__dict__.pop("adj_resid", None)
             self.__dict__.pop("model_transformed", None)
             self.__dict__.pop("_transform", None)
         elif name == "adjuster_radius":
@@ -263,6 +264,23 @@ class Panel:
             if np.sum(msk) == 0:
                 continue
             resid[i] = np.mean(self.transformed_residuals[msk, 2])
+
+        return resid
+
+    @cached_property
+    def adj_resid(self):
+        """
+        A correction that can be applied to `nom_adj` where we compute
+        the average residual of measured points from the model
+        that are within `adjuster_radius` of the adjuster point in `xy`.
+        """
+        resid = np.zeros(len(self.meas_adj))
+        for i, adj in enumerate(self.meas_adj):
+            dists = np.linalg.norm(self.measurements[:, :2] - adj[:2], axis=-1)
+            msk = dists <= self.adjuster_radius
+            if np.sum(msk) == 0:
+                continue
+            resid[i] = np.mean(self.residuals[msk, 2])
 
         return resid
 
