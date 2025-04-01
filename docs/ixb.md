@@ -10,7 +10,6 @@ This is done using the Atlas Copco Open Protocol, it may be useful to familiariz
 1. Connect to the tool, this can be done via wifi or USB. If you connect via USB the IP will be `168.254.1.1`, if you connect to the tool's local wifi network the IP should be `192.168.1.1`. To access the web interface simply enter the IP into your browser.
 2. Install the backup of the IxB configuration with all of the needed mapping preloaded (contact Saianeesh for this). See [this page](https://picontent.atlascopco.com/cont/external/short/html/IXB_Software/en-US/1419699508326801702027.html_) for instructions on how to do this import.
 3. Make sure open protocol is active in the virtual station.
-4. Initialize the needed tightening programs by running `python LAT_Alignment/scratch/drill.py`, you may need to edit the `host` field to be the IP that the tool is at. 
 
 ## Sending Data to the Tool
 
