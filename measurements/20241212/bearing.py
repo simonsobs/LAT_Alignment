@@ -14,12 +14,14 @@ nest_x = 2040.0 * np.sin(np.deg2rad(10 * nest_n))
 nest_y = 3990.4 * np.ones(len(nest_labels)) + 100
 nest_z = -2040.0 * np.cos(np.deg2rad(10 * nest_n))
 nest_model = np.column_stack([nest_x, nest_y, nest_z])
-nest_model = np.array([
-    [1995.47, 3840.23, -375.91],
-    [1562.74, 3843.45, 1293.41],
-    [-1561.77, 3848.33, 1318.03],
-    [-2021.09, 3849.25, -343.08]
-])
+nest_model = np.array(
+    [
+        [1995.47, 3840.23, -375.91],
+        [1562.74, 3843.45, 1293.41],
+        [-1561.77, 3848.33, 1318.03],
+        [-2021.09, 3849.25, -343.08],
+    ]
+)
 
 print(nest_model)
 nest_meas = [coords[labels == l] for l in nest_labels]
