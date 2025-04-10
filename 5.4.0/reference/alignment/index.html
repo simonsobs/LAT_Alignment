@@ -950,7 +950,11 @@ This is a 17 element array with the following structure:
 <span class="normal">87</span>
 <span class="normal">88</span>
 <span class="normal">89</span>
-<span class="normal">90</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">adjust_panel</span><span class="p">(</span><span class="n">panel</span><span class="p">:</span> <span class="n">mir</span><span class="o">.</span><span class="n">Panel</span><span class="p">,</span> <span class="n">mnum</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">fit</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">cfg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">]:</span>
+<span class="normal">90</span>
+<span class="normal">91</span>
+<span class="normal">92</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">adjust_panel</span><span class="p">(</span>
+    <span class="n">panel</span><span class="p">:</span> <span class="n">mir</span><span class="o">.</span><span class="n">Panel</span><span class="p">,</span> <span class="n">mnum</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">fit</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">cfg</span><span class="p">:</span> <span class="nb">dict</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Helper function to get the adjustments for a single panel.</span>
 
@@ -987,11 +991,11 @@ This is a 17 element array with the following structure:
             <span class="n">panel</span><span class="o">.</span><span class="n">can_surface</span><span class="p">,</span> <span class="n">meas_surface</span><span class="p">,</span> <span class="n">meas_adj</span><span class="p">,</span> <span class="o">**</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;adjust&quot;</span><span class="p">,</span> <span class="p">{})</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">dx</span> <span class="o">=</span> <span class="mi">0</span> 
+        <span class="n">dx</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">dx_err</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">dy</span> <span class="o">=</span> <span class="mi">0</span> 
+        <span class="n">dy</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">dy_err</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">d_adj</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">*</span><span class="n">panel</span><span class="o">.</span><span class="n">adj_resid</span>
+        <span class="n">d_adj</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">panel</span><span class="o">.</span><span class="n">adj_resid</span>
         <span class="n">d_adj_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">d_adj</span><span class="p">)</span>
     <span class="c1"># The primary has x and z opposite to what is intuitive</span>
     <span class="k">if</span> <span class="n">mnum</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
