@@ -1,3 +1,15 @@
+## 5.4.0 (2025-04-10)
+
+### Feat
+
+- much better handling of the CCW adjustemnts, ensure that we dont overwrite fields in ways that cause the adjustments to latch when in source batch mode, add templane files to data directory, output csvs of adjustments, readd argument that went missing
+
+### Fix
+
+- slight numerical fix
+- compose in the correct direction
+- fix sign flip on redidual correction
+
 ## 5.3.0 (2025-03-07)
 
 ### Feat
