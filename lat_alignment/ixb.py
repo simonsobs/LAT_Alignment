@@ -412,11 +412,16 @@ def main():
     )
     args = parser.parse_args()
 
-
     # Load templates
-    with open(str(files("lat_alignment.data").joinpath("Tightening_Tighten_Template.json")), 'r') as f:
+    with open(
+        str(files("lat_alignment.data").joinpath("Tightening_Tighten_Template.json")),
+        "r",
+    ) as f:
         tighten_template = json.load(f)
-    with open(str(files("lat_alignment.data").joinpath("Tightening_Loosen_Template.json")), 'r') as f:
+    with open(
+        str(files("lat_alignment.data").joinpath("Tightening_Loosen_Template.json")),
+        "r",
+    ) as f:
         loosen_template = json.load(f)
 
     # Load the file and build adjustments
@@ -432,7 +437,7 @@ def main():
     # Get the part we want to adjust
     if args.part not in [1, 2]:
         raise ValueError("Part must be 1 or 2")
-    adjs_full, *adjs_part = get_adjs_names()#[args.part]
+    adjs_full, *adjs_part = get_adjs_names()  # [args.part]
     adjs = adjs_part[args.part - 1]
 
     degs = np.array(list(adjustments.values()))
@@ -459,21 +464,21 @@ def main():
         sign = np.sign(ang)
         if sign == 0:
             sign = 1
-        ang_use = max(int(np.abs(np.round(ang))), .1)
+        ang_use = max(int(np.abs(np.round(ang))), 0.1)
         if np.abs(ang) < thresh:
             ang = 0.1
             ang_use = ang
         else:
-            to_hit += [(adj, sign*ang_use)]
+            to_hit += [(adj, sign * ang_use)]
         prog["steps"] = deepcopy(template[sign])["steps"]
         prog["programRestrictions"] = deepcopy(template[sign])["programRestrictions"]
         prog["name"] = adjs_full[i]
         prog["revision"] = rev
         prog["id"] = prog_id
-        prog["versionId"] = ver_id 
-        prog["timestamp"]["value"] = int(time.time()) 
+        prog["versionId"] = ver_id
+        prog["timestamp"]["value"] = int(time.time())
         prog["indexId"]["value"] = i + 1
-        prog["steps"][1][f"step{direction[sign]}ToAngle"]["angleTarget"] = ang_use 
+        prog["steps"][1][f"step{direction[sign]}ToAngle"]["angleTarget"] = ang_use
         send(construct_2500(i + 1, prog))
         mid, _, dat, d, t = recv()
         if mid == "0004" or d or t:

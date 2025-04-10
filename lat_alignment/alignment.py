@@ -36,7 +36,9 @@ def log_alignment(alignment, logger):
     logger.debug("\tFinal shear is %s", str(shear))
 
 
-def adjust_panel(panel: mir.Panel, mnum: int, fit: bool, cfg: dict) -> NDArray[np.float32]:
+def adjust_panel(
+    panel: mir.Panel, mnum: int, fit: bool, cfg: dict
+) -> NDArray[np.float32]:
     """
     Helper function to get the adjustments for a single panel.
 
@@ -73,11 +75,11 @@ def adjust_panel(panel: mir.Panel, mnum: int, fit: bool, cfg: dict) -> NDArray[n
             panel.can_surface, meas_surface, meas_adj, **cfg.get("adjust", {})
         )
     else:
-        dx = 0 
+        dx = 0
         dx_err = 0
-        dy = 0 
+        dy = 0
         dy_err = 0
-        d_adj = -1*panel.adj_resid
+        d_adj = -1 * panel.adj_resid
         d_adj_err = np.zeros_like(d_adj)
     # The primary has x and z opposite to what is intuitive
     if mnum == 1:
@@ -162,19 +164,30 @@ def main():
                 dataset, reference, True, mirror, **cfg.get("align_photo", {})
             )
         except Exception as e:
-            logger.error( "Failed to align to reference points, with error %s", str(e))
+            logger.error("Failed to align to reference points, with error %s", str(e))
             bootstrap_from = cfg.get("bootstrap_from", "all")
             logger.info("Bootstrapping from %s", bootstrap_from)
             dataset, _ = pg.align_photo(
-                dataset, reference, True, bootstrap_from, scale=False, **cfg.get("align_photo", {})
+                dataset,
+                reference,
+                True,
+                bootstrap_from,
+                scale=False,
+                **cfg.get("align_photo", {}),
             )
             if bootstrap_from == "primary":
-                points = tf.coord_transform(dataset.points, "opt_primary", f"opt_{mirror}")
+                points = tf.coord_transform(
+                    dataset.points, "opt_primary", f"opt_{mirror}"
+                )
             elif bootstrap_from == "secondary":
-                points = tf.coord_transform(dataset.points, "opt_secondary", f"opt_{mirror}")
+                points = tf.coord_transform(
+                    dataset.points, "opt_secondary", f"opt_{mirror}"
+                )
             else:
-                points = tf.coord_transform(dataset.points, "opt_global", f"opt_{mirror}")
-            dataset = pg.Dataset({l:p for l, p in zip(dataset.labels, points)})
+                points = tf.coord_transform(
+                    dataset.points, "opt_global", f"opt_{mirror}"
+                )
+            dataset = pg.Dataset({l: p for l, p in zip(dataset.labels, points)})
         dataset, _ = mir.remove_cm(
             dataset, mirror, cfg.get("compensate", 0), **cfg.get("common_mode", {})
         )
@@ -209,7 +222,9 @@ def main():
 
         # calc and save adjustments
         logger.info("Caluculating adjustments")
-        _adjust = partial(adjust_panel, mnum=mnum, fit=cfg.get("fit_adjustments", True), cfg=cfg)
+        _adjust = partial(
+            adjust_panel, mnum=mnum, fit=cfg.get("fit_adjustments", True), cfg=cfg
+        )
         adjustments = np.vstack(pqdm(panels, _adjust, n_jobs=8))
         order = np.lexsort((adjustments[:, 2], adjustments[:, 1], adjustments[:, 0]))
         adjustments = adjustments[order]
