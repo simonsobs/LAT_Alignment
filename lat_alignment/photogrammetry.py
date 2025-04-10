@@ -134,6 +134,13 @@ class Dataset:
         return deepcopy(self)
 
 
+# def _blind_search(dataset: Dataset, refs: NDArray[np.float32], found: list[str], which: list[int], tol: float):
+#     if len(found) == 0:
+#         raise ValueError("Cannot do blind search with zero located targets")
+#     edm_ref = make_edm(refs)
+#     edm = make_edm(dataset.targets)
+
+
 def align_photo(
     dataset: Dataset,
     reference: dict,
@@ -242,7 +249,14 @@ def align_photo(
         invars += [label]
     if blind_search > 0:
         raise NotImplementedError("Blind search not implemented yet!")
-    if len(ref) < 4:
+    print(invars)
+    # Set 12
+    # ref = [rpoint for rpoint, _ in reference[element]]
+    # ref = np.array(ref)[[True, True, False, True]]
+    # invars = ["TARGET35", "TARGET4", "TARGET484"] #, "TARGET421"]
+    # pts = [dataset[label] for label in invars]
+    # print(invars)
+    if len(ref) < 3:
         raise ValueError(f"Only {len(ref)} reference points found! Can't align!")
     logger.debug(
         "\t\tFound %d reference points in measurements with labels:\n\t\t\t%s",
