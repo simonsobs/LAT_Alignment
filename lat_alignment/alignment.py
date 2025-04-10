@@ -238,7 +238,7 @@ def main():
             meas, common_mode = mir.remove_cm(
                 meas, "primary", cfg.get("compensate", 0), **cfg.get("common_mode", {})
             )
-            full_alignment = mt.compose_transform(*alignment, *common_mode)
+            full_alignment = mt.compose_transform(*common_mode, *alignment)
             if cfg.get("only_adj", True):
                 panels = mir.gen_panels(
                     "primary",
@@ -259,7 +259,7 @@ def main():
                     cfg.get("compensate", 0),
                     **cfg.get("common_mode", {}),
                 )
-                full_alignment = mt.compose_transform(*full_alignment, *common_mode_2)
+                full_alignment = mt.compose_transform(*common_mode_2, *full_alignment)
             full_alignment = tf.affine_basis_transform(
                 full_alignment[0], full_alignment[1], "opt_primary", "opt_global", False
             )
@@ -287,7 +287,7 @@ def main():
                 cfg.get("compensate", 0),
                 **cfg.get("common_mode", {}),
             )
-            full_alignment = mt.compose_transform(*alignment, *common_mode)
+            full_alignment = mt.compose_transform(*common_mode, *alignment)
             if cfg.get("only_adj", True):
                 panels = mir.gen_panels(
                     "secondary",
@@ -308,7 +308,7 @@ def main():
                     cfg.get("compensate", 0),
                     **cfg.get("common_mode", {}),
                 )
-                full_alignment = mt.compose_transform(*full_alignment, *common_mode_2)
+                full_alignment = mt.compose_transform(*common_mode_2, *full_alignment)
             full_alignment = tf.affine_basis_transform(
                 full_alignment[0],
                 full_alignment[1],
@@ -381,7 +381,7 @@ def main():
         transforms = {}
         align_to_inv = mt.invert_transform(*elements[align_to])
         for element, full_transform in elements.items():
-            aff, sft = mt.compose_transform(*full_transform, *align_to_inv)
+            aff, sft = mt.compose_transform(*align_to_inv, *full_transform)
             scale, shear, rot = mt.decompose_affine(aff)
             rot = np.rad2deg(mt.decompose_rotation(rot))
             transform = {

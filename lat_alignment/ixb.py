@@ -435,6 +435,9 @@ def main():
     adjs_full, *adjs_part = get_adjs_names()#[args.part]
     adjs = adjs_part[args.part - 1]
 
+    degs = np.array(list(adjustments.values()))
+    print(f"{np.sum(np.abs(degs) > thresh)} above threshold")
+
     # Connect to tool and send info
     sock, send, recv = init(args.host, args.port)
     template = {1: tighten_template, -1: loosen_template}
@@ -449,14 +452,13 @@ def main():
             sock, send, recv = init(args.host, args.port)
             continue
         _, prog = decode2501(mid, dat)
-        # print(construct_2500(i + 1, prog))
         rev = prog["revision"] + 1
         prog_id = prog["id"]
-        # prog_id["value"] = [23,125,93,221,120,229,79,175,133,107,214,249,176,98,143,238] #[v + 1 for v in prog_id["value"]]
         ver_id = prog["versionId"]
-        # ver_id["value"]["value"] = [60,253,217,23,0,137,72,113,158,187,86,161,18,138,17,62] #[v + 1 for v in ver_id["value"]["value"]]
         ang = adjustments.get(adj, 0.1)
         sign = np.sign(ang)
+        if sign == 0:
+            sign = 1
         ang_use = max(int(np.abs(np.round(ang))), .1)
         if np.abs(ang) < thresh:
             ang = 0.1
@@ -464,6 +466,7 @@ def main():
         else:
             to_hit += [(adj, sign*ang_use)]
         prog["steps"] = deepcopy(template[sign])["steps"]
+        prog["programRestrictions"] = deepcopy(template[sign])["programRestrictions"]
         prog["name"] = adjs_full[i]
         prog["revision"] = rev
         prog["id"] = prog_id
