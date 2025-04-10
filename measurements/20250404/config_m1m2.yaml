@@ -1,0 +1,10 @@
+mode: optical
+load:
+  plot: False
+  doubles_dist: 10
+  err_thresh: 4
+align_photo:
+  plot: True
+align_to: secondary 
+measurement: Set_20.csv 
+title: M1_to_M2_Set_20

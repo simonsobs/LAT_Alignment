@@ -1,10 +1,11 @@
 mirror: "primary"
-measurement: Bundle6.csv 
+measurement: Bundle3.csv 
 title: "M1 LATR_Full_Set05"
 vmax: 50
 load:
-  doubles_dist: 30
-  err_thresh: 3
+  doubles_dist: 10
+  err_thresh: 2
 common_mode:
-  cut_thresh: 10
-  niters: 30
+  cut_thresh: 5
+  niters: 10
+bootstrap_from: "secondary"

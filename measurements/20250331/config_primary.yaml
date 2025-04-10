@@ -1,0 +1,11 @@
+mirror: "primary"
+measurement: Set_06.csv 
+title: "M1 LAT Set 06"
+vmax: 100
+load:
+  doubles_dist: 5
+  err_thresh: 2
+common_mode:
+  cut_thresh: 5
+  niters: 10
+# bootstrap_from: "secondary"
