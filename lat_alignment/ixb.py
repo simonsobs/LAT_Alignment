@@ -2,16 +2,16 @@
 Functions for integrating with the Atlas Copco IxB tool
 """
 
-from importlib.resources import files
 import argparse
 import json
-import socket
-import warnings
-from functools import partial
-from typing import Any, Callable, Optional
 import os
-from copy import deepcopy
+import socket
 import time
+import warnings
+from copy import deepcopy
+from functools import partial
+from importlib.resources import files
+from typing import Any, Callable, Optional
 
 import numpy as np
 import tqdm
@@ -415,12 +415,10 @@ def main():
     # Load templates
     with open(
         str(files("lat_alignment.data").joinpath("Tightening_Tighten_Template.json")),
-        "r",
     ) as f:
         tighten_template = json.load(f)
     with open(
         str(files("lat_alignment.data").joinpath("Tightening_Loosen_Template.json")),
-        "r",
     ) as f:
         loosen_template = json.load(f)
 
