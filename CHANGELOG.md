@@ -1,3 +1,9 @@
+## 5.5.0 (2025-06-18)
+
+### Feat
+
+- add ability to use fixed codes to align and try cutting points when rms is high
+
 ## 5.4.0 (2025-04-10)
 
 ### Feat
