@@ -1,0 +1,13 @@
+mirror: "primary"
+measurement: Set_28_B6.csv 
+title: "M1 LAT Set 28 B6"
+vmax: 100
+load:
+  doubles_dist: 3
+  err_thresh: 2
+common_mode:
+  thresh: 5
+  cut_thresh: 1000
+  niters: 10
+fit_adjustments: False
+# bootstrap_from: "secondary"

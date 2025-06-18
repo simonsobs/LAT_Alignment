@@ -1,0 +1,13 @@
+mirror: "secondary"
+measurement: Set_34.csv 
+title: "M2 LAT Set 34"
+vmax: 50
+load:
+  doubles_dist: 3
+  err_thresh: 10
+common_mode:
+  thresh: 5
+  cut_thresh: 4
+  niters: 10
+fit_adjustments: False
+# bootstrap_from: "secondary"
