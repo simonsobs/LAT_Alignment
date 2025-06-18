@@ -10,6 +10,7 @@ from typing import Self
 
 import matplotlib.pyplot as plt
 import numpy as np
+from traitlets import ValidateHandler
 from megham.transform import apply_transform, decompose_rotation, get_affine, get_rigid
 from megham.utils import make_edm
 from numpy.typing import NDArray
@@ -151,6 +152,7 @@ def align_photo(
     *,
     plot: bool = True,
     max_dist: float = 100.0,
+    rms_thresh: float = 1.0,
 ) -> tuple[
     Dataset,
     tuple[NDArray[np.float32], NDArray[np.float32]],
@@ -173,6 +175,8 @@ def align_photo(
         of the point in the global coordinate system.
         The second is a list of nearby coded targets that can be used
         to identify the point.
+        Each item in the list of coded targets should be a tuple containing
+        the label of the code and the (x, y, z) coordinate of the coded target.
     kill_refs : bool
         If True remove reference points from the dataset.
     element : str, default: 'primary'
@@ -189,6 +193,8 @@ def align_photo(
     max_dist : float, default: 100
         Max distance in mm that the reference poing can be from the target
         point used to locate it.
+    rms_thresh : float, default: 1
+        RMS is mm above which we will attempt to cut points.
 
     Returns
     -------
@@ -201,6 +207,7 @@ def align_photo(
     """
     logger.info("\tAligning with reference points for %s", element)
     elements = ["primary", "secondary", "bearing", "receiver"]
+    # import ipdb; ipdb.set_trace()
     if element not in elements and element != "all":
         raise ValueError(f"Invalid element: {element}")
     if len(reference) == 0:
@@ -233,12 +240,20 @@ def align_photo(
     ref = []
     pts = []
     invars = []
+    ref_coded = []
+    found_coded = []
     for rpoint, codes in reference[element]:
-        codes = np.array(codes)
-        have = np.isin(codes, dataset.code_labels)
+        code_l = np.array([l for l, _ in codes])
+        code_p = np.array([p for _, p in codes])
+        have = np.isin(code_l, dataset.code_labels)
         if np.sum(have) == 0:
             continue
-        coded = dataset[codes[have][0]]
+        # Save the coded we have just in case
+        ref_coded += [code_p[have]]
+        found_coded += [dataset[l] for l in code_l[have]]
+
+        # Use the first found coded as reference
+        coded = dataset[code_l[have][0]]
         # Find the closest point
         dist = np.linalg.norm(dataset.targets - coded, axis=-1)
         if np.min(dist) > max_dist:
@@ -249,7 +264,6 @@ def align_photo(
         invars += [label]
     if blind_search > 0:
         raise NotImplementedError("Blind search not implemented yet!")
-    print(invars)
     # Set 12
     # ref = [rpoint for rpoint, _ in reference[element]]
     # ref = np.array(ref)[[True, True, False, True]]
@@ -257,7 +271,12 @@ def align_photo(
     # pts = [dataset[label] for label in invars]
     # print(invars)
     if len(ref) < 3:
-        raise ValueError(f"Only {len(ref)} reference points found! Can't align!")
+        logger.warning(f"Only {len(ref)} reference points found!")
+        logger.warning(f"Adding reference codes")
+        pts += found_coded
+        ref += ref_coded
+    if len(ref) < 3:
+        raise ValueError(f"Only {len(ref)} reference points found including codes! Can't align!")
     logger.debug(
         "\t\tFound %d reference points in measurements with labels:\n\t\t\t%s",
         len(pts),
@@ -269,27 +288,53 @@ def align_photo(
     ref = np.vstack((ref, np.mean(ref, 0)))
     ref = transform(ref)
     logger.debug("\t\tReference points in element coords:\n%s", str(ref))
+
+    msk = np.ones(len(ref), bool)
     scale_fac = 1
-    if scale:
-        triu_idx = np.triu_indices(len(pts), 1)
-        scale_fac = np.nanmedian(make_edm(ref)[triu_idx] / make_edm(pts)[triu_idx])
-        pts *= scale_fac
-    logger.debug("\t\tScale factor of %f applied", scale_fac)
+    rot = None
+    sft = None
+    rms = np.inf
+    for _ in range(len(ref) - 4):
+        rot, sft = get_rigid(pts[msk], ref[msk], method="mean")
+        if scale:
+            triu_idx = np.triu_indices(len(pts[msk]), 1)
+            scale_fac = np.nanmedian(make_edm(ref[msk])[triu_idx] / make_edm(pts[msk])[triu_idx])
+        pts_scaled = pts*scale_fac
+        logger.debug("\t\tScale factor of %f applied", scale_fac)
 
-    rot, sft = get_rigid(pts, ref, method="mean")
-    pts_t = apply_transform(pts, rot, sft)
+        new_rot, new_sft = get_rigid(pts_scaled[msk], ref[msk], method="mean")
+        pts_t = apply_transform(pts_scaled[msk], new_rot, new_sft)
+        if plot:
+            fig = plt.figure()
+            ax = fig.add_subplot(projection="3d")
+            ax.scatter(pts[:, 0], pts[:, 1], pts[:, 2], color="g")
+            ax.scatter(pts_t[:, 0], pts_t[:, 1], pts_t[:, 2], color="b")
+            ax.scatter(ref[:, 0], ref[:, 1], ref[:, 2], color="r", marker="X")
+            plt.show()
+        diff = pts_t - ref[msk]
+        new_rms = np.sqrt(np.mean((diff) ** 2))
+        diff = np.linalg.norm(diff, axis=1)
+        if new_rms > rms:
+            logger.info("\t\tNew RMS is worse, accepting last try")
+            break
+        rms = new_rms
+        rot = new_rot
+        sft = new_sft
+        logger.info(
+            "\t\tRMS of reference points after alignment: %f",
+            rms,
+        )
+        if rms <= rms_thresh:
+            break
+        logger.info("\t\tRMS over thresh, trying cutting worst point")
+        to_cut = np.argmax(np.abs(diff))
+        _msk = msk[msk].copy()
+        _msk[to_cut] = False
+        msk[msk] = _msk
 
-    if plot:
-        fig = plt.figure()
-        ax = fig.add_subplot(projection="3d")
-        ax.scatter(pts[:, 0], pts[:, 1], pts[:, 2], color="g")
-        ax.scatter(pts_t[:, 0], pts_t[:, 1], pts_t[:, 2], color="b")
-        ax.scatter(ref[:, 0], ref[:, 1], ref[:, 2], color="r", marker="X")
-        plt.show()
-    logger.info(
-        "\t\tRMS of reference points after alignment: %f",
-        np.sqrt(np.mean((pts_t - ref) ** 2)),
-    )
+    if rot is None or sft is None:
+        raise ValueError("Transformation is None")
+
     coords_transformed = apply_transform(dataset.points * scale_fac, rot, sft)
     labels = dataset.labels
 
