@@ -27,6 +27,7 @@ docs = [
 [project.scripts]
 lat_alignment = "lat_alignment.alignment:main"
 ixb_send = "lat_alignment.ixb:main"
+lat_hwfe = "lat_alignment.hwfe:main"
 
 [tool.setuptools]
 packages=["lat_alignment"]

@@ -1,5 +1,8 @@
 import logging
 from collections import defaultdict
+import os
+import yaml
+from importlib.resources import files
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -12,6 +15,70 @@ from .transforms import coord_transform
 
 logger = logging.getLogger("lat_alignment")
 
+def _load_tracker_yaml(path: str):
+    with open(path) as file:
+        dat = yaml.safe_load(file)
+    if "reference" in dat:
+        ref_path = dat["reference"]
+    else:
+        ref_path = str(files("lat_alignment.data").joinpath("reference.yaml"))
+    with open(ref_path) as file:
+        reference = yaml.safe_load(file)
+
+    null = np.zeros((4, 3)) + np.nan
+    data = {}
+
+    # Add optical eliments
+    data['primary'] = dat.get("primary", null)
+    data['secondary'] = dat.get("secondary", null)
+    data['receiver'] = dat.get("receiver", null)
+
+    # Add errors
+    data['primary_err'] = dat.get("primary_err", null)
+    data['secondary_err'] = dat.get("secondary_err", null)
+    data['receiver_err'] = dat.get("receiver_err", null)
+
+    # Add reference
+    data['primary_ref'] = np.array([p for p, _ in reference['primary']])
+    data['secondary_ref'] = np.array([p for p, _ in reference['secondary']])
+    data['receiver_ref'] = np.array([p for p, _ in reference['receiver']])
+
+    return data
+
+def _load_tracker_txt(path: str):
+    _ = path
+    raise NotImplementedError("Loading tracker data from a txt file not yet implemented")
+
+def _load_tracker_csv(path: str):
+    _ = path
+    raise NotImplementedError("Loading tracker data from a csv file not yet implemented")
+
+def load_tracker(path: str):
+    """
+    Load laser tracker data.
+    TODO: This interface needs to be unified with `load_photo` so all code can use either datatype interchangibly
+
+    Parameters
+    ----------
+    path : str
+        The path to the laser tracker data.
+        The type of data will be infered from the extension.
+
+    Returns
+    -------
+    data
+        The tracker data.
+        The return type will depend on the extension.
+        TODO: Make Dataset better for this.
+    """
+    ext = os.path.splitext(path)[1]
+    if ext == ".yaml":
+        return _load_tracker_yaml(path)
+    elif ext == ".txt":
+        return _load_tracker_txt(path)
+    elif ext == ".csv":
+        return _load_tracker_csv(path)
+    raise ValueError(f"Invalid tracker data with extension {ext}")
 
 def load_photo(
     path: str, err_thresh: float = 2, doubles_dist: float = 10, plot: bool = True
