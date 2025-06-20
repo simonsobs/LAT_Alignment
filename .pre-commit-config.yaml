@@ -1,3 +1,4 @@
+exclude: "scratch/*"
 repos:
 - repo: https://github.com/asottile/pyupgrade
   rev: v3.19.0
