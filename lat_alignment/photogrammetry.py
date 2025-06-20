@@ -10,7 +10,6 @@ from typing import Self
 
 import matplotlib.pyplot as plt
 import numpy as np
-from traitlets import ValidateHandler
 from megham.transform import apply_transform, decompose_rotation, get_affine, get_rigid
 from megham.utils import make_edm
 from numpy.typing import NDArray
