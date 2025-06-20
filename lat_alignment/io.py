@@ -1,7 +1,6 @@
 import logging
-from collections import defaultdict
 import os
-import yaml
+from collections import defaultdict
 from importlib.resources import files
 
 import matplotlib.pyplot as plt
@@ -14,6 +13,7 @@ from .photogrammetry import Dataset
 from .transforms import coord_transform
 
 logger = logging.getLogger("lat_alignment")
+
 
 def _load_tracker_yaml(path: str):
     with open(path) as file:
@@ -29,29 +29,36 @@ def _load_tracker_yaml(path: str):
     data = {}
 
     # Add optical eliments
-    data['primary'] = dat.get("primary", null)
-    data['secondary'] = dat.get("secondary", null)
-    data['receiver'] = dat.get("receiver", null)
+    data["primary"] = dat.get("primary", null)
+    data["secondary"] = dat.get("secondary", null)
+    data["receiver"] = dat.get("receiver", null)
 
     # Add errors
-    data['primary_err'] = dat.get("primary_err", null)
-    data['secondary_err'] = dat.get("secondary_err", null)
-    data['receiver_err'] = dat.get("receiver_err", null)
+    data["primary_err"] = dat.get("primary_err", null)
+    data["secondary_err"] = dat.get("secondary_err", null)
+    data["receiver_err"] = dat.get("receiver_err", null)
 
     # Add reference
-    data['primary_ref'] = np.array([p for p, _ in reference['primary']])
-    data['secondary_ref'] = np.array([p for p, _ in reference['secondary']])
-    data['receiver_ref'] = np.array([p for p, _ in reference['receiver']])
+    data["primary_ref"] = np.array([p for p, _ in reference["primary"]])
+    data["secondary_ref"] = np.array([p for p, _ in reference["secondary"]])
+    data["receiver_ref"] = np.array([p for p, _ in reference["receiver"]])
 
     return data
 
+
 def _load_tracker_txt(path: str):
     _ = path
-    raise NotImplementedError("Loading tracker data from a txt file not yet implemented")
+    raise NotImplementedError(
+        "Loading tracker data from a txt file not yet implemented"
+    )
+
 
 def _load_tracker_csv(path: str):
     _ = path
-    raise NotImplementedError("Loading tracker data from a csv file not yet implemented")
+    raise NotImplementedError(
+        "Loading tracker data from a csv file not yet implemented"
+    )
+
 
 def load_tracker(path: str):
     """
@@ -79,6 +86,7 @@ def load_tracker(path: str):
     elif ext == ".csv":
         return _load_tracker_csv(path)
     raise ValueError(f"Invalid tracker data with extension {ext}")
+
 
 def load_photo(
     path: str, err_thresh: float = 2, doubles_dist: float = 10, plot: bool = True
