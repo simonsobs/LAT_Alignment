@@ -1,3 +1,13 @@
+## 5.6.0 (2025-06-20)
+
+### Feat
+
+- add script and supporting code for computing hwfe from tracker data
+
+### Fix
+
+- remove unused import
+
 ## 5.5.0 (2025-06-18)
 
 ### Feat
