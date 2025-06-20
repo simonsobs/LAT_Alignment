@@ -39,28 +39,18 @@ bearing = {name: dat for name, dat in data.items() if "bearing" in name.lower()}
 m1 = {name: dat for name, dat in data.items() if "m1" in name.lower()}
 m2 = {name: dat for name, dat in data.items() if "m2" in name.lower()}
 
-static_90 = static["Static_Points_90"]
-phase_shifts = {
-    point["feature"].split("_Point")[0]: (
-        np.rad2deg(np.arctan2(point["z"], point["x"])) + 360
-    )
-    % 360
-    for point in static_90
-}
+# static_90 = static["Static_Points_90"]
+# phase_shifts = {point['feature'].split("_Point")[0]:(np.rad2deg(np.arctan2(point['z'], point['x'])) + 360)%360 for point in static_90}
 bearing = {name: get_angle(dat, 0.0) for name, dat in bearing.items()}
-m1 = {
-    name: get_angle(dat, phase_shifts["_".join(name.split("_")[:3])])
-    for name, dat in m1.items()
-}
-m2 = {
-    name: get_angle(dat, phase_shifts["_".join(name.split("_")[:3])])
-    for name, dat in m2.items()
-}
+m1 = {name: get_angle(dat, 0) for name, dat in m1.items()}
+m2 = {name: get_angle(dat, 0) for name, dat in m2.items()}
+# m1 = {name:get_angle(dat, phase_shifts["_".join(name.split('_')[:3])]) for name, dat in m1.items()}
+# m2 = {name:get_angle(dat, phase_shifts["_".join(name.split('_')[:3])]) for name, dat in m2.items()}
 
-name = "M2_Upper_Right_2"
-dat = m2[name]
-plt.scatter(dat["theta"], dat["deviation"], label=f"{name}")
-plt.show()
+# name = "M2_Upper_Right_2"
+# dat = m2[name]
+# plt.scatter(dat['theta'], dat['deviation'], label=f'{name}')
+# plt.show()
 
 for name, dat in bearing.items():
     direction = np.sign(np.gradient(dat["theta"]))

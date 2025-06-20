@@ -10,7 +10,6 @@ from typing import Self
 
 import matplotlib.pyplot as plt
 import numpy as np
-from traitlets import ValidateHandler
 from megham.transform import apply_transform, decompose_rotation, get_affine, get_rigid
 from megham.utils import make_edm
 from numpy.typing import NDArray
@@ -276,7 +275,9 @@ def align_photo(
         pts += found_coded
         ref += ref_coded
     if len(ref) < 3:
-        raise ValueError(f"Only {len(ref)} reference points found including codes! Can't align!")
+        raise ValueError(
+            f"Only {len(ref)} reference points found including codes! Can't align!"
+        )
     logger.debug(
         "\t\tFound %d reference points in measurements with labels:\n\t\t\t%s",
         len(pts),
@@ -298,8 +299,10 @@ def align_photo(
         rot, sft = get_rigid(pts[msk], ref[msk], method="mean")
         if scale:
             triu_idx = np.triu_indices(len(pts[msk]), 1)
-            scale_fac = np.nanmedian(make_edm(ref[msk])[triu_idx] / make_edm(pts[msk])[triu_idx])
-        pts_scaled = pts*scale_fac
+            scale_fac = np.nanmedian(
+                make_edm(ref[msk])[triu_idx] / make_edm(pts[msk])[triu_idx]
+            )
+        pts_scaled = pts * scale_fac
         logger.debug("\t\tScale factor of %f applied", scale_fac)
 
         new_rot, new_sft = get_rigid(pts_scaled[msk], ref[msk], method="mean")
