@@ -47,10 +47,10 @@ def _load_tracker_yaml(path: str):
 
 
 def _load_tracker_txt(path: str):
-    _ = path
-    raise NotImplementedError(
-        "Loading tracker data from a txt file not yet implemented"
-    )
+    data = np.genfromtxt(path, usecols=(3, 4, 5), skip_header=1, dtype=str)
+    data = np.char.replace(data, ",", "").astype(float)
+
+    return data
 
 
 def _load_tracker_csv(path: str):
