@@ -20,9 +20,10 @@ from megham.transform import (
     get_rigid,
 )
 from tqdm import tqdm
+from scipy.spatial.transform import Rotation as R
 
 from .io import load_tracker
-from .transforms import coord_transform
+from .transforms import coord_transform, affine_basis_transform
 
 elements = ["primary", "secondary", "receiver"]
 hwfe_factors = {
@@ -71,19 +72,26 @@ def get_hwfe(data, get_transform, add_err=False) -> float:
     return np.sqrt(hwfe)
 
 def get_pointing_error(data, get_transform, add_err=False):
-    rots = np.zeros((2, 2))
+    rots = np.zeros((2, 3))
     # Get rotations
     for i, (element, factor) in enumerate([("primary", 1), ("secondary", 2)]):
         src = np.array(data[element])
         if add_err:
             src += np.nan_to_num(data[f"{element}_err"])
+        # Put things in the local coords
         src = coord_transform(src, "opt_global", f"opt_{element}")[data[f"{element}_msk"]]
         dst = coord_transform(np.array(data[f"{element}_ref"]), "opt_global", f"opt_{element}")[data[f"{element}_msk"]]
-        # Put things in the local coords
+        # Get rotation
         aff, _= get_transform(src, dst)
         *_, rot = decompose_affine(aff)
         rot = decompose_rotation(rot)
-        rots[i] = rot[:-1]*factor
+        rot[-1] = 0 # clocking doesn't matter
+        # Put into global coords
+        aff = R.from_euler('xyz', rot, False).as_matrix()
+        aff, _ = affine_basis_transform(aff, np.zeros(3, np.float32), f"opt_{element}", "opt_global")
+        *_, rot = decompose_affine(aff)
+        rot = decompose_rotation(rot)
+        rots[i] = rot*factor
     tot_rot = np.linalg.norm(np.sum(rots, 0))
     return 3600*np.rad2deg(tot_rot)
 
