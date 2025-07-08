@@ -324,7 +324,6 @@ def affine_basis_transform(
     sft: NDArray[np.float32],
     cfrom: str,
     cto: str,
-    src_or_dst: bool = True,
 ) -> tuple[NDArray[np.float32], NDArray[np.float32]]:
     """
     Take an affine transform defined in one coordinate system and move it to another.
@@ -342,13 +341,6 @@ def affine_basis_transform(
         The coordinate system that `aff` and `sft` is currently in.
     cto : str
         The coordinate system to put `aff` and `sft` into.
-    src_or_dst : bool, default: True
-        If `True` then the coordinate transform is done on the source
-        points that we are affine transforming.
-        This is equivalent to doing `aff@(coord_transform(src)) + sft`.
-        If `False` then the coordinate transform is done on the destination
-        points obtained by the affine transform.
-        This is equivalent to doing `coord_transform(aff@src + sft)`
 
     Returns
     -------
@@ -366,10 +358,8 @@ def affine_basis_transform(
     xyz_transformed = apply_transform(xyz, aff, sft)
 
     # Move to the new coordinate system
-    if src_or_dst:
-        xyz = coord_transform(xyz, cfrom, cto)
-    else:
-        xyz_transformed = coord_transform(xyz_transformed, cfrom, cto)
+    xyz = coord_transform(xyz, cfrom, cto)
+    xyz_transformed = coord_transform(xyz_transformed, cfrom, cto)
 
     # Get the new affine transform
     aff, sft = get_affine(xyz, xyz_transformed)
