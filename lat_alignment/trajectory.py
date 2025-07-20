@@ -36,7 +36,7 @@ LABELS = {"primary": ["primary_lower_right", "primary_lower_left", "primary_uppe
 
 def _plot_point_and_hwfe(data, ref, get_transform, plt_root, logger):
     logger.info("Calculating pointing error and HWFE")
-    tods = {elem: data[elem]["tod"] for elem in data.keys() if "tod" in data[elem]}
+    tods = {elem: data[elem]["tod"] for elem in data.keys() if "tod" in data[elem] and data[elem]["tod"].size > 0}
     if len(tods) == 0:
         logger.error("\tNo TODs found! Can't calculate!")
         return
@@ -50,9 +50,12 @@ def _plot_point_and_hwfe(data, ref, get_transform, plt_root, logger):
     direction = direction[0]
     for elem in LABELS.keys():
         if elem in tods:
+            if tods[elem].shape[1] < 4:
+                logger.error("Only %d points found! Filling with reference...", tods[elem].shape[1])
+                tods[elem] = np.zeros((npts,) + ref[elem].shape) + ref[elem]
             continue
         logger.warning("No %s TOD found, filling with reference...", elem)
-        tods[elem] = np.zeros((npts, 3)) + ref[elem]
+        tods[elem] = np.zeros((npts,) + ref[elem].shape) + ref[elem]
 
     hwfes = np.zeros(npts) + np.nan
     pes = np.zeros(npts) + np.nan
@@ -92,9 +95,12 @@ def _plot_point_and_hwfe(data, ref, get_transform, plt_root, logger):
     plt.close()
 
     # Plot distribution
-    plt.hist(hwfes[direction == 0], bins='auto', color="black", alpha=.5, label="Stationary")
-    plt.hist(hwfes[direction < 0], bins='auto', color="blue", alpha=.5, label="Decreasing")
-    plt.hist(hwfes[direction > 0], bins='auto', color="red", alpha=.5, label="Increasing")
+    if len(direction == 0) > 0:
+        plt.hist(hwfes[direction == 0], bins='auto', color="black", alpha=.5, label="Stationary")
+    if len(direction < 0) > 0:
+        plt.hist(hwfes[direction < 0], bins='auto', color="blue", alpha=.5, label="Decreasing")
+    if len(direction > 0) > 0:
+        plt.hist(hwfes[direction > 0], bins='auto', color="red", alpha=.5, label="Increasing")
     plt.legend()
     plt.xlabel("HWFE (um-rms)")
     plt.ylabel("Counts")
@@ -135,8 +141,11 @@ def _plot_transform(data, ref, get_transform, plt_root, logger):
     logger.info("Plotting transformation information")
     for elem in data.keys():
         logger.info("\tGetting transforms for %s", elem)
-        if "tod" not in data[elem]:
+        if "tod" not in data[elem] or data[elem]["tod"].size == 0:
             logger.error("\t\t%s TOD not found! Skipping...", elem)
+            continue
+        if len(data[elem]["points"]) < 4:
+            logger.error("\t\tOnly %d points found! Skipping...", len(data[elem]["points"]))
             continue
         src = data[elem]["tod"]
         dst = ref[elem]
@@ -205,14 +214,12 @@ def _plot_transform(data, ref, get_transform, plt_root, logger):
         plt.close()
 
 def _add_tod(data, logger):
+    # TODO: dataclass just for TOD?
     npoints = np.hstack([[len(data[elem][point]["data"]) for point in data[elem].keys()] for elem in data.keys()])
     if not np.all(npoints == npoints[0]):
         raise ValueError("Not all points have the same number of measurements!")
     for elem in data.keys():
         logger.info("\tConstructing TOD for %s", elem)
-        if len(data[elem]) < 4:
-            logger.error("\t\tOnly %d points found! Skipping...", len(data[elem]))
-            continue
         angle = np.atleast_2d(np.array([data[elem][point]["angle"] for point in LABELS[elem] if point in data[elem]]))
         direction = np.atleast_2d(np.array([data[elem][point]["direction"] for point in LABELS[elem] if point in data[elem]]))
         if not (np.isclose(angle, angle[0]) | np.isnan(angle)).all():
@@ -220,67 +227,92 @@ def _add_tod(data, logger):
             continue
         angle = angle[0]
         direction = direction[0]
-        src = np.swapaxes(np.atleast_3d(np.array([data[elem][point]["data"] for point in LABELS[elem] if point in data[elem]])), 0, 1)
+        points = [point for point in LABELS[elem] if point in data[elem]]
+        src = np.swapaxes(np.atleast_3d(np.array([data[elem][point]["data"] for point in points])), 0, 1)
+        if src.size == 0:
+            logger.info("\t\tNo data found! Not making TOD")
         data[elem]["tod"] = src
         data[elem]["angle_tod"] = angle
         data[elem]["direction_tod"] = direction
+        data[elem]["points"] = points
+        data[elem]["meas_number"] = np.arange(len(src))
     return data
 
-def _plot_path(data, angle, direction, name, plt_root, logger):
-    # Plot raw trajectories
-    logger.info("\t\tPlotting %s trajectory", name)
-    os.makedirs(os.path.join(plt_root, "trajectory", name), exist_ok=True)
-    _, axs = plt.subplots(3, 1, sharex=True)
-    for i, dim in enumerate(["x", "y", "z"]):
-        axs[i].scatter(angle[direction == 0], data[direction == 0, i], color="black", marker="o", alpha=.25, label="Stationary")
-        axs[i].scatter(angle[direction < 0], data[direction < 0, i], color="blue", marker="x", alpha=.25, label="Decreasing")
-        axs[i].scatter(angle[direction > 0], data[direction > 0, i], color="red", marker="+", alpha=.25, label="Increasing")
-        axs[i].set_ylabel(f"{dim} (mm)")
-    axs[0].legend()
-    axs[-1].set_xlabel("Angle (deg)")
-    plt.suptitle(f"{name} Trajectory")
-    plt.savefig(os.path.join(plt_root, "trajectory", name, "trajectory.png"), bbox_inches = "tight")
-    plt.close()
+def _plot_path(data, plt_root, logger):
+    os.makedirs(os.path.join(plt_root, "trajectory"), exist_ok=True)
+    for elem in data.keys():
+        logger.info("Plotting %s trajectory", elem)
+        if "tod" not in data[elem] or data[elem]["tod"].size == 0:
+            logger.warning("\tNo TOD found! Skipping...")
+            continue
+        # Plot raw trajectories
+        for xax, xlab in [("angle_tod", "Angle (deg)"), ("meas_number", "Measurement (#)")]:
+            _, axs = plt.subplots(3, len(data[elem]["points"]), sharex=True, sharey=False, figsize=(24, 20), layout="constrained")
+            axs = np.reshape(np.array(axs), (int(3), len(data[elem]["points"])))
+            for i, point in enumerate(data[elem]["points"]):
+                dat = data[elem]["tod"]
+                x = data[elem][xax]
+                direction = data[elem]["direction_tod"]
+                for j, dim in enumerate(["x", "y", "z"]):
+                    axs[j, i].scatter(x[direction == 0], dat[direction == 0, i, j], color="black", marker="o", alpha=.25, label="Stationary")
+                    axs[j, i].scatter(x[direction < 0], dat[direction < 0, i, j], color="blue", marker="x", alpha=.25, label="Decreasing")
+                    axs[j, i].scatter(x[direction > 0], dat[direction > 0, i, j], color="red", marker="+", alpha=.25, label="Increasing")
+                    axs[0, i].set_title(point)
+                    axs[-1, i].set_xlabel(xlab)
+                    axs[j, 0].set_ylabel(f"{dim} (mm)")
+            axs[-1, 0].legend()
+            plt.suptitle(f"{elem} Trajectory")
+            plt.savefig(os.path.join(plt_root, "trajectory", f"{elem}_trajectory_{xax}.png"), bbox_inches = "tight")
+            plt.close()
 
     
-def _plot_traj_error(data, angle, direction, name, plt_root, logger):
-    logger.info("\t\tPlotting %s trajectory error", name)
-    os.makedirs(os.path.join(plt_root, "trajectory", name), exist_ok=True)
-    diffs = [[], [], []]
-    rmss = [[], [], []]
-    ang_u = np.unique(angle)
-    for ang in np.unique(angle):
-        msk = angle == ang
-        dat = data[msk]
-        dire = direction[msk]
-        rmss[0] += [np.linalg.norm(np.nanstd(dat[dire == 0], axis = 0))]
-        rmss[1] += [np.linalg.norm(np.nanstd(dat[dire < 0], axis = 0))]
-        rmss[2] += [np.linalg.norm(np.nanstd(dat[dire > 0], axis = 0))]
-        diffs[0] += [pdist(dat[dire == 0])]
-        diffs[1] += [pdist(dat[dire < 0])]
-        diffs[2] += [pdist(dat[dire > 0])]
+def _plot_traj_error(data, plt_root, logger):
+    for elem in data.keys():
+        logger.info("\t\tPlotting %s trajectory error", elem)
+        if "tod" not in data[elem] or data[elem]["tod"].size == 0:
+            logger.warning("\tNo TOD found! Skipping...")
+            continue
+        _, axs = plt.subplots(2, len(data[elem]["points"]), sharex=False, sharey=False, figsize=(24, 20), layout="constrained")
+        axs = np.reshape(np.array(axs), (int(2), len(data[elem]["points"])))
+        for i, point in enumerate(data[elem]["points"]):
+            dat = data[elem]["tod"][:, i, :]
+            angle = data[elem]["angle_tod"]
+            direction = data[elem]["direction_tod"]
+            diffs = [[], [], []]
+            rmss = [[], [], []]
+            ang_u = np.unique(angle)
+            for ang in np.unique(angle):
+                msk = angle == ang
+                _dat = dat[msk]
+                dire = direction[msk]
+                rmss[0] += [np.linalg.norm(np.nanstd(_dat[dire == 0], axis = 0))]
+                rmss[1] += [np.linalg.norm(np.nanstd(_dat[dire < 0], axis = 0))]
+                rmss[2] += [np.linalg.norm(np.nanstd(_dat[dire > 0], axis = 0))]
+                diffs[0] += [pdist(_dat[dire == 0])]
+                diffs[1] += [pdist(_dat[dire < 0])]
+                diffs[2] += [pdist(_dat[dire > 0])]
 
-    # Plot distribution
-    plt.hist(np.hstack(diffs[0]).ravel(), bins='auto', color="black", alpha=.5, label="Stationary")
-    plt.hist(np.hstack(diffs[1]).ravel(), bins='auto', color="blue", alpha=.5, label="Decreasing")
-    plt.hist(np.hstack(diffs[2]).ravel(), bins='auto', color="red", alpha=.5, label="Increasing")
-    plt.legend()
-    plt.xlabel("Distance Between Repeated Points (mm)")
-    plt.ylabel("Count")
-    plt.title("Repeatibility of {name} Motion")
-    plt.savefig(os.path.join(plt_root, "trajectory", name, "repeat.png"), bbox_inches = "tight")
-    plt.close()
+            # Plot distribution
+            for j, (label, color) in enumerate([("Stationary", "black"), ("Decreasing", "blue"), ("Increasing", "red")]):
+                d = np.hstack(diffs[j]).ravel()
+                if len(d) == 0:
+                    continue
+                axs[0, i].hist(d, bins='auto', color=color, alpha=.5, label=label)
+            axs[0, i].legend()
+            axs[0, i].set_xlabel("Distance Between Repeated Points (mm)")
+            axs[0, i].set_ylabel("Count")
+            axs[0, i].set_title(point)
+            axs[0, i].autoscale()
 
-    # Plot rms
-    plt.scatter(ang_u, rmss[0], color="black", marker="o", alpha=.25, label="Stationary")
-    plt.scatter(ang_u, rmss[1], color="blue", marker="x", alpha=.25, label="Decreasing")
-    plt.scatter(ang_u, rmss[2], color="red", marker="+", alpha=.25, label="Increasing")
-    plt.legend()
-    plt.xlabel("Angle (deg)")
-    plt.ylabel("RMS (mm)")
-    plt.title("RMS of {name} Across Motion")
-    plt.savefig(os.path.join(plt_root, "trajectory", name, "rms.png"), bbox_inches = "tight")
-    plt.close()
+            # Plot rms
+            axs[1, i].scatter(ang_u, rmss[0], color="black", marker="o", alpha=.25, label="Stationary")
+            axs[1, i].scatter(ang_u, rmss[1], color="blue", marker="x", alpha=.25, label="Decreasing")
+            axs[1, i].scatter(ang_u, rmss[2], color="red", marker="+", alpha=.25, label="Increasing")
+            axs[1, i].set_xlabel("Angle (deg)")
+            axs[1, i].set_ylabel("RMS (mm)")
+        plt.suptitle(f"{elem} Trajectory Error")
+        plt.savefig(os.path.join(plt_root, "trajectory", f"{elem}_error.png"), bbox_inches = "tight")
+        plt.close()
 
 
 def _get_angle_cont(data, start, sep, logger):
@@ -299,7 +331,7 @@ def _get_angle_cont(data, start, sep, logger):
     theta -= theta[0] - start
 
     # Convert delta to an angle delta
-    dtheta = np.rad2deg(sep/sphere.radius)/4.
+    dtheta = np.rad2deg(sep/sphere.radius)/32.
     
     # Quantize
     if dtheta != 0:
@@ -391,11 +423,11 @@ def main():
             angle, direction = get_angle(dat["data"], dat["mode"], dat["start"], dat["sep"], logger)
             data[elem][point]["angle"] = angle
             data[elem][point]["direction"] = direction 
-            _plot_path(data[elem][point]["data"], data[elem][point]["angle"], data[elem][point]["direction"], point, plt_root, logger)
-            _plot_traj_error(data[elem][point]["data"], data[elem][point]["angle"], data[elem][point]["direction"], point, plt_root, logger)
 
 
     # Check motion of each element
     data = _add_tod(data, logger)
+    _plot_path(data, plt_root, logger)
+    _plot_traj_error(data, plt_root, logger)
     _plot_transform(data, ref, get_transform, plt_root, logger)
     _plot_point_and_hwfe(data, ref, get_transform, plt_root, logger)
