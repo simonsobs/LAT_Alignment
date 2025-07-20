@@ -37,14 +37,14 @@ vg2og_shift = (-120, 0, 0)
 
 
 @cache
-def _opt_rot_mat(angle: float) -> NDArray[np.float32]:
+def _opt_rot_mat(angle: float) -> NDArray[np.float64]:
     rot_mat = np.array(
         [
             [1.0, 0.0, 0.0],
             [0.0, np.cos(angle), np.sin(angle)],
             [0.0, -np.sin(angle), np.cos(angle)],
         ],
-        dtype=np.float32,
+        dtype=np.float64,
     )
     return rot_mat
 
@@ -256,65 +256,65 @@ def coord_transform(
         return coords
     match f"{cfrom}-{cto}":
         case "opt_global-opt_primary":
-            return _opt_global_to_opt_primary(coords)
+            return _opt_global_to_opt_primary(coords).astype(np.float32)
         case "opt_global-opt_secondary":
-            return _opt_global_to_opt_secondary(coords)
+            return _opt_global_to_opt_secondary(coords).astype(np.float32)
         case "opt_primary-opt_global":
-            return _opt_primary_to_opt_global(coords)
+            return _opt_primary_to_opt_global(coords).astype(np.float32)
         case "opt_secondary-opt_global":
-            return _opt_secondary_to_opt_global(coords)
+            return _opt_secondary_to_opt_global(coords).astype(np.float32)
         case "opt_primary-opt_secondary":
-            return _opt_primary_to_opt_secondary(coords)
+            return _opt_primary_to_opt_secondary(coords).astype(np.float32)
         case "opt_secondary-opt_primary":
-            return _opt_secondary_to_opt_primary(coords)
+            return _opt_secondary_to_opt_primary(coords).astype(np.float32)
         case "va_global-va_primary":
-            return _va_global_to_va_primary(coords)
+            return _va_global_to_va_primary(coords).astype(np.float32)
         case "va_global-va_secondary":
-            return _va_global_to_va_secondary(coords)
+            return _va_global_to_va_secondary(coords).astype(np.float32)
         case "va_primary-va_global":
-            return _va_primary_to_va_global(coords)
+            return _va_primary_to_va_global(coords).astype(np.float32)
         case "va_secondary-va_global":
-            return _va_secondary_to_va_global(coords)
+            return _va_secondary_to_va_global(coords).astype(np.float32)
         case "va_primary-va_secondary":
-            return _va_primary_to_va_secondary(coords)
+            return _va_primary_to_va_secondary(coords).astype(np.float32)
         case "va_secondary-va_primary":
-            return _va_secondary_to_va_primary(coords)
+            return _va_secondary_to_va_primary(coords).astype(np.float32)
         case "opt_global-va_global":
-            return _opt_global_to_va_global(coords)
+            return _opt_global_to_va_global(coords).astype(np.float32)
         case "opt_global-va_primary":
-            return _opt_global_to_va_primary(coords)
+            return _opt_global_to_va_primary(coords).astype(np.float32)
         case "opt_global-va_secondary":
-            return _opt_global_to_va_secondary(coords)
+            return _opt_global_to_va_secondary(coords).astype(np.float32)
         case "opt_primary-va_global":
-            return _opt_primary_to_va_global(coords)
+            return _opt_primary_to_va_global(coords).astype(np.float32)
         case "opt_primary-va_primary":
-            return _opt_primary_to_va_primary(coords)
+            return _opt_primary_to_va_primary(coords).astype(np.float32)
         case "opt_primary-va_secondary":
-            return _opt_primary_to_va_secondary(coords)
+            return _opt_primary_to_va_secondary(coords).astype(np.float32)
         case "opt_secondary-va_global":
-            return _opt_secondary_to_va_global(coords)
+            return _opt_secondary_to_va_global(coords).astype(np.float32)
         case "opt_secondary-va_primary":
-            return _opt_secondary_to_va_primary(coords)
+            return _opt_secondary_to_va_primary(coords).astype(np.float32)
         case "opt_secondary-va_secondary":
-            return _opt_secondary_to_va_secondary(coords)
+            return _opt_secondary_to_va_secondary(coords).astype(np.float32)
         case "va_global-opt_global":
-            return _va_global_to_opt_global(coords)
+            return _va_global_to_opt_global(coords).astype(np.float32)
         case "va_global-opt_primary":
-            return _va_global_to_opt_primary(coords)
+            return _va_global_to_opt_primary(coords).astype(np.float32)
         case "va_global-opt_secondary":
-            return _va_global_to_opt_secondary(coords)
+            return _va_global_to_opt_secondary(coords).astype(np.float32)
         case "va_primary-opt_global":
-            return _va_primary_to_opt_global(coords)
+            return _va_primary_to_opt_global(coords).astype(np.float32)
         case "va_primary-opt_primary":
-            return _va_primary_to_opt_primary(coords)
+            return _va_primary_to_opt_primary(coords).astype(np.float32)
         case "va_primary-opt_secondary":
-            return _va_primary_to_opt_secondary(coords)
+            return _va_primary_to_opt_secondary(coords).astype(np.float32)
         case "va_secondary-opt_global":
-            return _va_secondary_to_opt_global(coords)
+            return _va_secondary_to_opt_global(coords).astype(np.float32)
         case "va_secondary-opt_primary":
-            return _va_secondary_to_opt_primary(coords)
+            return _va_secondary_to_opt_primary(coords).astype(np.float32)
         case "va_secondary-opt_secondary":
-            return _va_secondary_to_opt_secondary(coords)
+            return _va_secondary_to_opt_secondary(coords).astype(np.float32)
         case _:
             raise ValueError("Invalid coordinate system provided!")
 
