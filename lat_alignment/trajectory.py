@@ -254,9 +254,9 @@ def _plot_path(data, plt_root, logger):
                 x = data[elem][xax]
                 direction = data[elem]["direction_tod"]
                 for j, dim in enumerate(["x", "y", "z"]):
-                    axs[j, i].scatter(x[direction == 0], dat[direction == 0, i, j], color="black", marker="o", alpha=.25, label="Stationary")
-                    axs[j, i].scatter(x[direction < 0], dat[direction < 0, i, j], color="blue", marker="x", alpha=.25, label="Decreasing")
-                    axs[j, i].scatter(x[direction > 0], dat[direction > 0, i, j], color="red", marker="+", alpha=.25, label="Increasing")
+                    axs[j, i].scatter(x[direction == 0], dat[direction == 0, i, j], color="black", marker="o", alpha=.5, label="Stationary")
+                    axs[j, i].scatter(x[direction < 0], dat[direction < 0, i, j], color="blue", marker="x", alpha=.5, label="Decreasing")
+                    axs[j, i].scatter(x[direction > 0], dat[direction > 0, i, j], color="red", marker="+", alpha=.5, label="Increasing")
                     axs[0, i].set_title(point)
                     axs[-1, i].set_xlabel(xlab)
                     axs[j, 0].set_ylabel(f"{dim} (mm)")
@@ -305,19 +305,31 @@ def _plot_traj_error(data, plt_root, logger):
             axs[0, i].autoscale()
 
             # Plot rms
-            axs[1, i].scatter(ang_u, rmss[0], color="black", marker="o", alpha=.25, label="Stationary")
-            axs[1, i].scatter(ang_u, rmss[1], color="blue", marker="x", alpha=.25, label="Decreasing")
-            axs[1, i].scatter(ang_u, rmss[2], color="red", marker="+", alpha=.25, label="Increasing")
+            axs[1, i].scatter(ang_u, rmss[0], color="black", marker="o", alpha=.5, label="Stationary")
+            axs[1, i].scatter(ang_u, rmss[1], color="blue", marker="x", alpha=.5, label="Decreasing")
+            axs[1, i].scatter(ang_u, rmss[2], color="red", marker="+", alpha=.5, label="Increasing")
             axs[1, i].set_xlabel("Angle (deg)")
             axs[1, i].set_ylabel("RMS (mm)")
         plt.suptitle(f"{elem} Trajectory Error")
         plt.savefig(os.path.join(plt_root, "trajectory", f"{elem}_error.png"), bbox_inches = "tight")
         plt.close()
 
+def _quantize_angle(theta, dtheta, start):
+    if dtheta != 0:
+        theta_corr = theta - theta[0]
+        theta_corr = dtheta * np.round(theta_corr/dtheta, 0) + theta[0]
+    else:
+        theta_corr = np.ones_like(theta)*start
 
-def _get_angle_cont(data, start, sep, logger):
-    logger.warning("\t\tReconstructing angle from continious data, this is approximate and should not be used for pointing corrections! Trajectory Errors will also only be approximate!")
+    # Figure out left vs right vs static
+    direction = np.diff(theta_corr)
+    # Lets just make the last point keep the same direction
+    direction = np.hstack((direction, [direction[-1]]))
 
+    return theta_corr, direction
+
+
+def _get_sphere_and_angle(data, start, logger):
     # Get the best fit radius and center
     sphere = Sphere.best_fit(data)
     logger.debug("\t\tFit a radius of %s and a center at %s", str(sphere.radius), str(sphere.point))
@@ -330,33 +342,27 @@ def _get_angle_cont(data, start, sep, logger):
     # Correct based on start position
     theta -= theta[0] - start
 
-    # Convert delta to an angle delta
-    dtheta = np.rad2deg(sep/sphere.radius)/32.
-    
-    # Quantize
-    if dtheta != 0:
-        theta_corr = theta - theta[0]
-        theta_corr = dtheta * (theta_corr//dtheta) + theta[0]
-    else:
-        theta_corr = np.ones_like(theta)*start
+    return theta, sphere
 
-    # Figure out left vs right vs static
-    direction = np.diff(theta_corr)
-    # Lets just make the last point keep the same direction
-    direction = np.hstack((direction, [direction[-1]]))
-    
-    return theta_corr, direction
 
-def _get_angle_step(data, start, sep, logger):
-    raise NotImplementedError("Step wise angle reconstruction not implemented")
-    
 def get_angle(data, mode, start, sep, logger):
     logger.info("\tReconstructing angle in %s mode using a start of %f deg and a seperation of %f", mode, start, sep)
+    # Recover the angle
+    theta, sphere = _get_sphere_and_angle(data, start, logger)
+
+    # Convert delta to an angle delta
     if mode == "continious":
-        return _get_angle_cont(data, start, sep, logger)
+        logger.warning("\t\tReconstructing angle from continious data, this is approximate and should not be used for pointing corrections! Trajectory Errors will also only be approximate!")
+        dtheta = np.rad2deg(sep/sphere.radius)/32.
     elif mode == "step":
-        return _get_angle_step(data, start, sep, logger)
-    raise ValueError(f"Invalid mode: {mode}")
+        dtheta = sep
+    else:
+        raise ValueError(f"Invalid mode: {mode}")
+    
+    # Quantize
+    theta_corr, direction = _quantize_angle(theta, dtheta, start)
+    
+    return theta_corr, direction
 
 def main():
     parser = argparse.ArgumentParser()
