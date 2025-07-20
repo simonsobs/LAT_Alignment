@@ -12,6 +12,7 @@ from functools import partial
 from importlib.resources import files
 from scipy.interpolate import make_smoothing_spline
 from scipy.spatial.distance import pdist
+from scipy.spatial.transform import Rotation
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -238,6 +239,7 @@ def _add_tod(data, logger):
         data[elem]["meas_number"] = np.arange(len(src))
     return data
 
+
 def _plot_path(data, plt_root, logger):
     os.makedirs(os.path.join(plt_root, "trajectory"), exist_ok=True)
     for elem in data.keys():
@@ -361,8 +363,14 @@ def get_angle(data, mode, start, sep, logger):
     
     # Quantize
     theta_corr, direction = _quantize_angle(theta, dtheta, start)
-    
-    return theta_corr, direction
+
+    return theta_corr, direction, sphere.point
+
+def correct_rot(src, angle, cent):
+    for i, (pt, ang) in enumerate(zip(src, angle)):
+        rot = Rotation.from_euler("Y", -1*ang, degrees=True)
+        src[i] = rot.apply(pt - cent) + cent
+    return src
 
 def main():
     parser = argparse.ArgumentParser()
@@ -426,13 +434,16 @@ def main():
             data[elem][point]["start"] = cfg[elem][point]["start"] 
             data[elem][point]["sep"] = cfg[elem][point]["sep"] 
             dat = data[elem][point]
-            angle, direction = get_angle(dat["data"], dat["mode"], dat["start"], dat["sep"], logger)
+            angle, direction, cent = get_angle(dat["data"], dat["mode"], dat["start"], dat["sep"], logger)
+            if cfg.get("correct_rot", False):
+                corr = correct_rot(dat["data"], angle, cent)
+                data[elem][point]["data"] = corr 
             data[elem][point]["angle"] = angle
             data[elem][point]["direction"] = direction 
 
 
     # Check motion of each element
-    data = _add_tod(data, logger)
+    data = _add_tod(data,  logger)
     _plot_path(data, plt_root, logger)
     _plot_traj_error(data, plt_root, logger)
     _plot_transform(data, ref, get_transform, plt_root, logger)
