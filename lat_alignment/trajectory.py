@@ -4,30 +4,23 @@ Script for analyzing trajectory of a point on optical elements.
 import argparse
 import logging
 import os
-import sys
-from copy import deepcopy
-from numpy.lib import angle
 import yaml
 from functools import partial
 from importlib.resources import files
-from scipy.interpolate import make_smoothing_spline
 from scipy.spatial.distance import pdist
 from scipy.spatial.transform import Rotation
 
 import matplotlib.pyplot as plt
 import numpy as np
 from megham.transform import (
-    apply_transform,
     decompose_affine,
     decompose_rotation,
     get_affine,
     get_rigid,
 )
 from skspatial.objects import Sphere
-from tqdm import tqdm
 
 from .io import load_tracker
-from .transforms import coord_transform
 from .error import get_hwfe, get_pointing_error
 
 # This is dumb! Should get from the nominal file somehow!
