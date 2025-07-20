@@ -71,7 +71,8 @@ def get_hwfe(data, get_transform, add_err=False) -> float:
         hwfe += float(np.sum((np.array(hwfe_factors[element]) * vals) ** 2))
     return np.sqrt(hwfe)
 
-def get_pointing_error(data, get_transform, add_err=False):
+def get_pointing_error(data, get_transform, add_err=False, thresh=.1):
+    thresh = np.deg2rad(thresh/3600)
     rots = np.zeros((2, 3))
     # Get rotations
     for i, (element, factor) in enumerate([("primary", 1), ("secondary", 2)]):
@@ -85,12 +86,14 @@ def get_pointing_error(data, get_transform, add_err=False):
         aff, _= get_transform(src, dst)
         *_, rot = decompose_affine(aff)
         rot = decompose_rotation(rot)
+        rot[rot < thresh] = 0 # Help prevent float errors
         rot[-1] = 0 # clocking doesn't matter
         # Put into global coords
         aff = R.from_euler('xyz', rot, False).as_matrix()
         aff, _ = affine_basis_transform(aff, np.zeros(3, np.float32), f"opt_{element}", "opt_global")
         *_, rot = decompose_affine(aff)
         rot = decompose_rotation(rot)
+        rot[rot < thresh] = 0
         rots[i] = rot*factor
     tot_rot = np.linalg.norm(np.sum(rots, 0))
     return 3600*np.rad2deg(tot_rot)
