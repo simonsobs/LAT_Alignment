@@ -27,12 +27,12 @@ class Dataset:
 
     Attributes
     ----------
-    data_dict : dict[str, NDArray[np.float32]]
+    data_dict : dict[str, NDArray[np.float64]]
         Dict of photogrammetry points.
         You should genrally not touch this directly.
     """
 
-    data_dict: dict[str, NDArray[np.float32]]
+    data_dict: dict[str, NDArray[np.float64]]
 
     def _clear_cache(self):
         self.__dict__.pop("points", None)
@@ -71,7 +71,7 @@ class Dataset:
         return iter(self.data_dict)
 
     @cached_property
-    def points(self) -> NDArray[np.float32]:
+    def points(self) -> NDArray[np.float64]:
         """
         Get all points in the dataset as an array.
         This is cached.
@@ -87,7 +87,7 @@ class Dataset:
         return np.array(list(self.data_dict.keys()))
 
     @cached_property
-    def codes(self) -> NDArray[np.float32]:
+    def codes(self) -> NDArray[np.float64]:
         """
         Get all coded points in the dataset as an array.
         This is cached.
@@ -105,7 +105,7 @@ class Dataset:
         return self.labels[msk]
 
     @cached_property
-    def targets(self) -> NDArray[np.float32]:
+    def targets(self) -> NDArray[np.float64]:
         """
         Get all target points in the dataset as an array.
         This is cached.
@@ -134,7 +134,7 @@ class Dataset:
         return deepcopy(self)
 
 
-# def _blind_search(dataset: Dataset, refs: NDArray[np.float32], found: list[str], which: list[int], tol: float):
+# def _blind_search(dataset: Dataset, refs: NDArray[np.float64], found: list[str], which: list[int], tol: float):
 #     if len(found) == 0:
 #         raise ValueError("Cannot do blind search with zero located targets")
 #     edm_ref = make_edm(refs)
@@ -154,7 +154,7 @@ def align_photo(
     rms_thresh: float = 1.0,
 ) -> tuple[
     Dataset,
-    tuple[NDArray[np.float32], NDArray[np.float32]],
+    tuple[NDArray[np.float64], NDArray[np.float64]],
 ]:
     """
     Align photogrammetry data and then put it into mirror coordinates.
@@ -199,7 +199,7 @@ def align_photo(
     -------
     aligned : Dataset
         The photogrammetry data aligned to the reference points.
-    alignment : tuple[NDArray[np.float32], NDArray[np.float32]]
+    alignment : tuple[NDArray[np.float64], NDArray[np.float64]]
         The transformation that aligned the points.
         The first element is a rotation matrix and
         the second is the shift.

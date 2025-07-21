@@ -33,7 +33,7 @@ AXIS2_CODED = Vector.from_points(ORIGIN, ZERO_CODED).unit()
 
 def partition_points(
     dataset: Dataset,
-) -> tuple[Dataset, Dataset, NDArray[np.float32], NDArray[np.float32]]:
+) -> tuple[Dataset, Dataset, NDArray[np.float64], NDArray[np.float64]]:
     """
     Split up dataset into points on the bearing reference surface and inner surface.
     Also pulls out the bearing zero points.
@@ -52,10 +52,10 @@ def partition_points(
     face_points : Dataset
         Points on face of the bearing that we use as a reference surface.
         Only includes targets, codes are removed.
-    zero_point : NDArray[np.float32]
+    zero_point : NDArray[np.float64]
         Array of size (3,) that gives the coordinates of the target we treat
         as the bearing's zero point.
-    zero_code: NDArray[np.float32]
+    zero_code: NDArray[np.float64]
         Array of size (3,) that gives the coordinates of the coded target we use
         to identify the bearing's zero point.
 
@@ -111,7 +111,7 @@ def partition_points(
 
 def cylinder_fit(
     dataset: Dataset,
-) -> tuple[Dataset, tuple[NDArray[np.float32], NDArray[np.float32]]]:
+) -> tuple[Dataset, tuple[NDArray[np.float64], NDArray[np.float64]]]:
     """
     Fit for the bearing's position by fitting a cylinder to the bearing surface.
     This acts as a correction on top of the alignment to reference points.
@@ -127,7 +127,7 @@ def cylinder_fit(
     inside_points : Dataset
         Points on the inner surface of the bearing with alignment applied.
         Only includes targets, codes are removed.
-    alignment : tuple[NDArray[np.float32], NDArray[np.float32]]
+    alignment : tuple[NDArray[np.float64], NDArray[np.float64]]
         The transformation that aligned the bearing.
         The first element is a rotation matrix and
         the second is the shift.
@@ -159,7 +159,7 @@ def cylinder_fit(
     logger.info("\t\tError on bearing axis alignment: %f", err)
 
     shift = rot.apply(shift)
-    rot = np.array(rot.as_matrix(), dtype=np.float32).T
+    rot = np.array(rot.as_matrix(), dtype=np.float64).T
     logger.debug("\t\tShift is %s mm", str(shift))
     logger.debug("\t\tRotation is %s deg", str(np.rad2deg(decompose_rotation(rot))))
 

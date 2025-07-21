@@ -90,7 +90,7 @@ def get_pointing_error(data, get_transform, add_err=False, thresh=.01):
         rot[-1] = 0 # clocking doesn't matter
         # Put into global coords
         aff = R.from_euler('xyz', rot, False).as_matrix()
-        aff, _ = affine_basis_transform(aff, np.zeros(3, np.float32), f"opt_{element}", "opt_global")
+        aff, _ = affine_basis_transform(aff, np.zeros(3, np.float64), f"opt_{element}", "opt_global")
         *_, rot = decompose_affine(aff)
         rot = decompose_rotation(rot)
         rot[abs(rot) < thresh] = 0
