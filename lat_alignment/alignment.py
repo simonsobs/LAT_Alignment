@@ -275,7 +275,9 @@ def main():
                     **cfg.get("common_mode", {}),
                 )
                 full_alignment = mt.compose_transform(*common_mode_2, *full_alignment)
-            full_alignment = tf.affine_basis_transform(full_alignment[0], full_alignment[1], "opt_primary", "opt_global")
+            full_alignment = tf.affine_basis_transform(
+                full_alignment[0], full_alignment[1], "opt_primary", "opt_global"
+            )
             log_alignment(full_alignment, logger)
         except Exception as e:
             logger.warning(
@@ -322,7 +324,9 @@ def main():
                     **cfg.get("common_mode", {}),
                 )
                 full_alignment = mt.compose_transform(*common_mode_2, *full_alignment)
-            full_alignment = tf.affine_basis_transform(full_alignment[0], full_alignment[1], "opt_secondary", "opt_global")
+            full_alignment = tf.affine_basis_transform(
+                full_alignment[0], full_alignment[1], "opt_secondary", "opt_global"
+            )
             log_alignment(full_alignment, logger)
         except Exception as e:
             logger.warning(
