@@ -1,0 +1,20 @@
+Enabled	Feature                     	ID	x        	y         	z         	i	j	k	Dev From Fit	Device Position  	Probe	Device Name
+Checked	LATR_3_step_5deg_start_45deg	1 	947.6659 	6,997.1085	440.5638  	 	 	 	0.1576      	Device Position 1	38.1 	V20003907682
+Checked	LATR_3_step_5deg_start_45deg	2 	905.6867 	6,997.0651	521.5982  	 	 	 	0.0706      	Device Position 1	38.1 	V20003907682
+Checked	LATR_3_step_5deg_start_45deg	3 	856.8586 	6,997.0202	598.5693  	 	 	 	-0.0364     	Device Position 1	38.1 	V20003907682
+Checked	LATR_3_step_5deg_start_45deg	4 	801.5755 	6,997.0526	671.0005  	 	 	 	-0.1195     	Device Position 1	38.1 	V20003907682
+Checked	LATR_3_step_5deg_start_45deg	5 	740.0819 	6,996.9636	738.4546  	 	 	 	-0.1163     	Device Position 1	38.1 	V20003907682
+Checked	LATR_3_step_5deg_start_45deg	6 	673.0298 	6,996.8952	800.2385  	 	 	 	-0.1105     	Device Position 1	38.1 	V20003907682
+Checked	LATR_3_step_5deg_start_45deg	7 	600.8588 	6,996.7962	855.9610  	 	 	 	-0.0591     	Device Position 1	38.1 	V20003907682
+Checked	LATR_3_step_5deg_start_45deg	8 	524.0318 	6,996.7333	905.2303  	 	 	 	-0.0273     	Device Position 1	38.1 	V20003907682
+Checked	LATR_3_step_5deg_start_45deg	9 	443.2820 	6,996.6730	947.5460  	 	 	 	-0.0047     	Device Position 1	38.1 	V20003907682
+Checked	LATR_3_step_5deg_start_45deg	10	359.1738 	6,996.6310	982.6958  	 	 	 	0.0481      	Device Position 1	38.1 	V20003907682
+Checked	LATR_3_step_5deg_start_45deg	11	272.1962 	6,996.6199	1,010.3748	 	 	 	0.0502      	Device Position 1	38.1 	V20003907682
+Checked	LATR_3_step_5deg_start_45deg	12	183.2512 	6,996.6131	1,030.3635	 	 	 	0.0744      	Device Position 1	38.1 	V20003907682
+Checked	LATR_3_step_5deg_start_45deg	13	92.9436  	6,996.6335	1,042.4946	 	 	 	0.0676      	Device Position 1	38.1 	V20003907682
+Checked	LATR_3_step_5deg_start_45deg	14	1.7940   	6,996.6754	1,046.7023	 	 	 	0.0469      	Device Position 1	38.1 	V20003907682
+Checked	LATR_3_step_5deg_start_45deg	15	-89.2756 	6,996.7170	1,042.9736	 	 	 	0.0486      	Device Position 1	38.1 	V20003907682
+Checked	LATR_3_step_5deg_start_45deg	16	-179.6259	6,996.7840	1,031.3132	 	 	 	-0.0385     	Device Position 1	38.1 	V20003907682
+Checked	LATR_3_step_5deg_start_45deg	17	-268.7493	6,996.8708	1,011.8013	 	 	 	-0.0385     	Device Position 1	38.1 	V20003907682
+Checked	LATR_3_step_5deg_start_45deg	18	-355.7582	6,996.9963	984.6511  	 	 	 	-0.0378     	Device Position 1	38.1 	V20003907682
+Checked	LATR_3_step_5deg_start_45deg	19	-440.0357	6,997.1710	950.0482  	 	 	 	-0.1133     	Device Position 1	38.1 	V20003907682

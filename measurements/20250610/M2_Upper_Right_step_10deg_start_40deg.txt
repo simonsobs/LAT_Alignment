@@ -1,0 +1,22 @@
+Enabled	Feature                              	ID	x         	y          	z          	i	j	k	Dev From Fit	Device Position  	Probe	Device Name
+Checked	M2_Upper_Right_step_10deg_start_40deg	1 	3,238.0710	-3,764.5579	-111.1841  	 	 	 	-0.1734     	Device Position 1	38.1 	V20003907682
+Checked	M2_Upper_Right_step_10deg_start_40deg	2 	3,169.0787	-3,764.4356	-671.9340  	 	 	 	-0.0833     	Device Position 1	38.1 	V20003907682
+Checked	M2_Upper_Right_step_10deg_start_40deg	3 	3,003.7530	-3,764.3278	-1,212.2844	 	 	 	0.0674      	Device Position 1	38.1 	V20003907682
+Checked	M2_Upper_Right_step_10deg_start_40deg	4 	2,747.0285	-3,764.2186	-1,715.7179	 	 	 	0.1991      	Device Position 1	38.1 	V20003907682
+Checked	M2_Upper_Right_step_10deg_start_40deg	5 	2,406.7453	-3,764.1459	-2,166.7925	 	 	 	0.2629      	Device Position 1	38.1 	V20003907682
+Checked	M2_Upper_Right_step_10deg_start_40deg	6 	1,993.2415	-3,764.0825	-2,551.9302	 	 	 	0.3310      	Device Position 1	38.1 	V20003907682
+Checked	M2_Upper_Right_step_10deg_start_40deg	7 	1,518.4339	-3,764.2893	-2,859.1389	 	 	 	-0.1974     	Device Position 1	38.1 	V20003907682
+Checked	M2_Upper_Right_step_10deg_start_40deg	8 	997.7894  	-3,764.4072	-3,079.3998	 	 	 	-0.3213     	Device Position 1	38.1 	V20003907682
+Checked	M2_Upper_Right_step_10deg_start_40deg	9 	446.9487  	-3,764.4654	-3,205.9115	 	 	 	-0.3049     	Device Position 1	38.1 	V20003907682
+Checked	M2_Upper_Right_step_10deg_start_40deg	10	-117.4945 	-3,764.3740	-3,235.0869	 	 	 	0.0651      	Device Position 1	38.1 	V20003907682
+Checked	M2_Upper_Right_step_10deg_start_40deg	11	-678.4814 	-3,764.1934	-3,165.8962	 	 	 	0.6302      	Device Position 1	38.1 	V20003907682
+Checked	M2_Upper_Right_step_10deg_start_40deg	12	-117.4971 	-3,764.4035	-3,235.0712	 	 	 	0.0461      	Device Position 1	38.1 	V20003907682
+Checked	M2_Upper_Right_step_10deg_start_40deg	13	446.9623  	-3,764.5068	-3,205.8737	 	 	 	-0.3558     	Device Position 1	38.1 	V20003907682
+Checked	M2_Upper_Right_step_10deg_start_40deg	14	997.7698  	-3,764.4605	-3,079.3357	 	 	 	-0.4046     	Device Position 1	38.1 	V20003907682
+Checked	M2_Upper_Right_step_10deg_start_40deg	15	1,518.4581	-3,764.3096	-2,859.1263	 	 	 	-0.2023     	Device Position 1	38.1 	V20003907682
+Checked	M2_Upper_Right_step_10deg_start_40deg	16	1,993.2282	-3,764.1116	-2,551.8692	 	 	 	0.2677      	Device Position 1	38.1 	V20003907682
+Checked	M2_Upper_Right_step_10deg_start_40deg	17	2,406.7228	-3,764.1663	-2,166.7712	 	 	 	0.2264      	Device Position 1	38.1 	V20003907682
+Checked	M2_Upper_Right_step_10deg_start_40deg	18	2,747.0011	-3,764.2466	-1,715.6482	 	 	 	0.1332      	Device Position 1	38.1 	V20003907682
+Checked	M2_Upper_Right_step_10deg_start_40deg	19	3,003.7518	-3,764.3306	-1,212.2389	 	 	 	0.0490      	Device Position 1	38.1 	V20003907682
+Checked	M2_Upper_Right_step_10deg_start_40deg	20	3,169.0937	-3,764.4265	-671.9157  	 	 	 	-0.0698     	Device Position 1	38.1 	V20003907682
+Checked	M2_Upper_Right_step_10deg_start_40deg	21	3,238.0783	-3,764.5307	-111.1928  	 	 	 	-0.1569     	Device Position 1	38.1 	V20003907682
