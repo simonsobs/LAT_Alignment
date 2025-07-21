@@ -77,8 +77,6 @@ def _plot_point_and_hwfe(data, ref, get_transform, plt_root, logger):
             pes[i] = get_pointing_error(_data, get_transform, False)
         except ValueError:
             logger.error("\t\tFailed to get transform for a data point! Filling with nans")
-            hwfes[i] = np.nan
-            pes[i] = np.nan
             continue
 
     # Plot TOD
@@ -410,7 +408,7 @@ def _get_sphere_and_angle(data, start, logger):
     # Correct based on start position
     theta -= theta[0] - start
 
-    return theta%360.0, sphere
+    return theta, sphere
 
 
 def get_angle(data, mode, start, sep, logger):
@@ -501,10 +499,11 @@ def main():
             data[elem][point]["sep"] = cfg[elem][point]["sep"] 
             dat = data[elem][point]
             angle, direction, cent = get_angle(dat["data"], dat["mode"], dat["start"], dat["sep"], logger)
+            off = 0
+            if elem in ["primary", "secondary"]:
+                off = 90
+                angle = angle%360
             if cfg.get("correct_rot", False):
-                off = 0
-                if elem in ["primary", "secondary"]:
-                    off = 90
                 corr = correct_rot(dat["data"], angle, cent, off)
                 data[elem][point]["data"] = corr 
             data[elem][point]["angle"] = angle
