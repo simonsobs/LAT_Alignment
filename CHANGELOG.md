@@ -1,3 +1,26 @@
+## 6.0.0 (2025-07-21)
+
+### Feat
+
+- switch to 64 bit
+- add tod padding and mark padded points in plots
+- add angle correction
+- add loading of stepped data
+- add thresh to help with floating point errors
+- plot all points for a mirror on the same plot
+- add entrypoint script to analyze motions
+- add function to load tracker data from a txt file
+- genralize hwfe script to include pointing error and rename
+
+### Fix
+
+- consider sign when applying thresh
+- only branch angle for mirrors
+- remove unused imports
+- cast to float64 during basis transform
+- put angles into global basis before adding
+- don't include coordinate transform in affine basis shift
+
 ## 5.6.0 (2025-06-20)
 
 ### Feat
