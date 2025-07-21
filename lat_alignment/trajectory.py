@@ -1,6 +1,8 @@
 """
 Script for analyzing trajectory of a point on optical elements.
 """
+import functools
+import operator
 import argparse
 import logging
 import os
@@ -22,6 +24,9 @@ from skspatial.objects import Sphere
 
 from .io import load_tracker
 from .error import get_hwfe, get_pointing_error
+
+import matplotlib as mpl
+mpl.rcParams['lines.markersize'] *= 1.5
 
 # This is dumb! Should get from the nominal file somehow!
 LABELS = {"primary": ["primary_lower_right", "primary_lower_left", "primary_upper_right", "primary_upper_left"],
@@ -53,6 +58,7 @@ def _plot_point_and_hwfe(data, ref, get_transform, plt_root, logger):
 
     hwfes = np.zeros(npts) + np.nan
     pes = np.zeros(npts) + np.nan
+    missing = []
     for i in range(npts):
         _data = {}
         tot = 0
@@ -65,16 +71,21 @@ def _plot_point_and_hwfe(data, ref, get_transform, plt_root, logger):
             _data[f"{elem}_ref"] = ref[elem]
             _data[f"{elem}_msk"] = msk
         if tot < len(tods):
-            # TODO: implement work around when we only have 3 points
-            logger.error("Too few points in measurement! Skipping...")
+            missing += [i]
+        try:
+            hwfes[i] = get_hwfe(_data, get_transform, False)
+            pes[i] = get_pointing_error(_data, get_transform, False)
+        except ValueError:
+            logger.error("\t\tFailed to get transform for a data point! Filling with nans")
+            hwfes[i] = np.nan
+            pes[i] = np.nan
             continue
-        hwfes[i] = get_hwfe(_data, get_transform, False)
-        pes[i] = get_pointing_error(_data, get_transform, False)
 
     # Plot TOD
     os.makedirs(os.path.join(plt_root, "error"), exist_ok=True)
     t = np.arange(npts)
     plt.scatter(t, hwfes, alpha=.5)
+    plt.scatter(t[missing], hwfes[missing], color="gray", alpha=1, marker="1")
     plt.xlabel("Measurement #")
     plt.ylabel("HWFE (um-rms)")
     plt.title(f"HWFE over time")
@@ -82,6 +93,7 @@ def _plot_point_and_hwfe(data, ref, get_transform, plt_root, logger):
     plt.close()
 
     plt.scatter(t, pes, alpha=.5)
+    plt.scatter(t[missing], pes[missing], color="gray", alpha=1, marker="1")
     plt.xlabel("Measurement #")
     plt.ylabel('Pointing Error (")')
     plt.title(f"Pointing Error over time")
@@ -102,9 +114,12 @@ def _plot_point_and_hwfe(data, ref, get_transform, plt_root, logger):
     plt.savefig(os.path.join(plt_root, "error", "hwfe_dist.png"), bbox_inches = "tight")
     plt.close()
 
-    plt.hist(pes[direction == 0], bins='auto', color="black", alpha=.5, label="Stationary")
-    plt.hist(pes[direction < 0], bins='auto', color="blue", alpha=.5, label="Decreasing")
-    plt.hist(pes[direction > 0], bins='auto', color="red", alpha=.5, label="Increasing")
+    if len(direction == 0) > 0:
+        plt.hist(pes[direction == 0], bins='auto', color="black", alpha=.5, label="Stationary")
+    if len(direction < 0) > 0:
+        plt.hist(pes[direction < 0], bins='auto', color="blue", alpha=.5, label="Decreasing")
+    if len(direction > 0) > 0:
+        plt.hist(pes[direction > 0], bins='auto', color="red", alpha=.5, label="Increasing")
     plt.legend()
     plt.xlabel('Pointing Error (")')
     plt.ylabel("Counts")
@@ -116,6 +131,7 @@ def _plot_point_and_hwfe(data, ref, get_transform, plt_root, logger):
     plt.scatter(angle[direction == 0], hwfes[direction == 0], color="black", alpha=.5, label="Stationary")
     plt.scatter(angle[direction < 0], hwfes[direction < 0],  color="blue", alpha=.5, label="Decreasing")
     plt.scatter(angle[direction > 0], hwfes[direction > 0],  color="red", alpha=.5, label="Increasing")
+    plt.scatter(angle[missing], hwfes[missing], color="gray", alpha=1, marker="1")
     plt.legend()
     plt.xlabel("Angle (deg)")
     plt.suptitle(f"HWFE by Angle")
@@ -125,6 +141,7 @@ def _plot_point_and_hwfe(data, ref, get_transform, plt_root, logger):
     plt.scatter(angle[direction == 0], pes[direction == 0], color="black", alpha=.5, label="Stationary")
     plt.scatter(angle[direction < 0], pes[direction < 0],  color="blue", alpha=.5, label="Decreasing")
     plt.scatter(angle[direction > 0], pes[direction > 0],  color="red", alpha=.5, label="Increasing")
+    plt.scatter(angle[missing], pes[missing], color="gray", alpha=1, marker="1")
     plt.legend()
     plt.xlabel("Angle (deg)")
     plt.suptitle(f"Pointing Error by Angle")
@@ -145,7 +162,10 @@ def _plot_transform(data, ref, get_transform, plt_root, logger):
         dst = ref[elem]
         sfts = np.zeros((len(src), 3)) + np.nan
         rots = np.zeros((len(src), 3)) + np.nan
+        missing = []
         for i, _src in enumerate(src):
+            if not np.all(np.isfinite(_src)):
+                missing += [i]
             try:
                 aff, sft = get_transform(_src, dst)
             except ValueError:
@@ -163,6 +183,9 @@ def _plot_transform(data, ref, get_transform, plt_root, logger):
         plt.scatter(t, sfts[:, 0], alpha=.5, label="x")
         plt.scatter(t, sfts[:, 1], alpha=.5, label="y")
         plt.scatter(t, sfts[:, 2], alpha=.5, label="z")
+        plt.scatter(t[missing], sfts[missing, 0], color="gray", marker="1")
+        plt.scatter(t[missing], sfts[missing, 1], color="gray", marker="1")
+        plt.scatter(t[missing], sfts[missing, 2], color="gray", marker="1")
         plt.legend()
         plt.xlabel("Measurement #")
         plt.ylabel("Shift (mm)")
@@ -173,6 +196,9 @@ def _plot_transform(data, ref, get_transform, plt_root, logger):
         plt.scatter(t, rots[:, 0], alpha=.5, label="x")
         plt.scatter(t, rots[:, 1], alpha=.5, label="y")
         plt.scatter(t, rots[:, 2], alpha=.5, label="z")
+        plt.scatter(t[missing], rots[missing, 0], color="gray", marker="1")
+        plt.scatter(t[missing], rots[missing, 1], color="gray", marker="1")
+        plt.scatter(t[missing], rots[missing, 2], color="gray", marker="1")
         plt.legend()
         plt.xlabel("Measurement #")
         plt.ylabel("Rotation (deg)")
@@ -188,6 +214,7 @@ def _plot_transform(data, ref, get_transform, plt_root, logger):
             axs[i].scatter(angle[direction == 0], sfts[direction == 0, i], color="black", marker="o", alpha=.25, label="Stationary")
             axs[i].scatter(angle[direction < 0], sfts[direction < 0, i], color="blue", marker="x", alpha=.25, label="Decreasing")
             axs[i].scatter(angle[direction > 0], sfts[direction > 0, i], color="red", marker="+", alpha=.25, label="Increasing")
+            axs[i].scatter(angle[missing], sfts[missing, i], color="gray", marker="1")
             axs[i].set_ylabel(f"{dim} shift (mm)")
         axs[0].legend()
         axs[-1].set_xlabel("Angle (deg)")
@@ -200,38 +227,13 @@ def _plot_transform(data, ref, get_transform, plt_root, logger):
             axs[i].scatter(angle[direction == 0], rots[direction == 0, i], color="black", marker="o", alpha=.25, label="Stationary")
             axs[i].scatter(angle[direction < 0], rots[direction < 0, i], color="blue", marker="x", alpha=.25, label="Decreasing")
             axs[i].scatter(angle[direction > 0], rots[direction > 0, i], color="red", marker="+", alpha=.25, label="Increasing")
+            axs[i].scatter(angle[missing], rots[missing, i], color="gray", marker="1")
             axs[i].set_ylabel(f"{dim} rotation (deg)")
         axs[0].legend()
         axs[-1].set_xlabel("Angle (deg)")
         plt.suptitle(f"{elem} Rotation by Angle")
         plt.savefig(os.path.join(plt_root, elem, "rot_ang.png"), bbox_inches = "tight")
         plt.close()
-
-def _add_tod(data, logger):
-    # TODO: dataclass just for TOD?
-    npoints = np.hstack([[len(data[elem][point]["data"]) for point in data[elem].keys()] for elem in data.keys()])
-    if not np.all(npoints == npoints[0]):
-        raise ValueError("Not all points have the same number of measurements!")
-    for elem in data.keys():
-        logger.info("\tConstructing TOD for %s", elem)
-        angle = np.atleast_2d(np.array([data[elem][point]["angle"] for point in LABELS[elem] if point in data[elem]]))
-        direction = np.atleast_2d(np.array([data[elem][point]["direction"] for point in LABELS[elem] if point in data[elem]]))
-        if not (np.isclose(angle, angle[0]) | np.isnan(angle)).all():
-            logger.error("\t\tAngles don't match across all points! Skipping...")
-            continue
-        angle = angle[0]
-        direction = direction[0]
-        points = [point for point in LABELS[elem] if point in data[elem]]
-        src = np.swapaxes(np.atleast_3d(np.array([data[elem][point]["data"] for point in points])), 0, 1)
-        if src.size == 0:
-            logger.info("\t\tNo data found! Not making TOD")
-        data[elem]["tod"] = src
-        data[elem]["angle_tod"] = angle
-        data[elem]["direction_tod"] = direction
-        data[elem]["points"] = points
-        data[elem]["meas_number"] = np.arange(len(src))
-    return data
-
 
 def _plot_path(data, plt_root, logger):
     os.makedirs(os.path.join(plt_root, "trajectory"), exist_ok=True)
@@ -309,6 +311,77 @@ def _plot_traj_error(data, plt_root, logger):
         plt.savefig(os.path.join(plt_root, "trajectory", f"{elem}_error.png"), bbox_inches = "tight")
         plt.close()
 
+def _pad_missing(arr1, arr2):
+    master = arr1
+    to_pad = arr2
+    if len(arr2) > len(arr1):
+        master = arr2
+        to_pad = arr1
+    pad_msk = np.zeros_like(master, bool)
+    if len(master) == len(to_pad):
+        return to_pad, pad_msk
+    if not np.isclose(to_pad[0], master[0]):
+        pstart = np.where(np.isclose(master, to_pad[0]))[0][0]
+        to_pad = np.hstack((master[:pstart], to_pad))
+        pad_msk[:pstart] = True
+    dmaster = np.diff(master)
+    dpad = np.diff(to_pad)
+    while not np.allclose(dmaster[:len(dpad)], dpad):
+        didx = np.where(~np.isclose(dmaster[:len(dpad)], dpad))[0][0]
+        to_insert = master[didx+1:didx+2]
+        to_pad = np.hstack((to_pad[:didx+1], to_insert, to_pad[didx+1:]))
+        pad_msk[didx+1:didx+2] = True
+        dpad = np.diff(to_pad)
+        if len(to_pad) == len(master):
+            break
+    if not np.isclose(to_pad[-1], master[-1]):
+        pend = np.where(np.isclose(master, to_pad[-1]))[0][-1] + 1
+        to_pad = np.hstack((to_pad, master[pend:]))
+        pad_msk[pend:] = True
+    return to_pad, pad_msk
+
+def _add_tod(data, logger, pad=False):
+    # TODO: dataclass just for TOD?
+    npoints = np.hstack([[len(data[elem][point]["data"]) for point in data[elem].keys()] for elem in data.keys()])
+    if not np.all(npoints == npoints[0]):
+        if not pad:
+            raise ValueError("Not all points have the same number of measurements!")
+        logger.warning("\tPadding data with nans")
+        master_angle = [[data[elem][point]["angle"] for point in LABELS[elem] if point in data[elem]] for elem in LABELS.keys() if elem in data]
+        master_angle = functools.reduce(operator.iconcat, master_angle, [])
+        nangs = np.array([len(ang) for ang in master_angle])
+        master_angle = master_angle[np.argmax(nangs)]
+        for elem in data.keys():
+            for point in data[elem].keys():
+                ang_pad, pad_msk = _pad_missing(master_angle, data[elem][point]["angle"])
+                data[elem][point]["angle"] = ang_pad
+                dat_pad = np.zeros((len(ang_pad),) + data[elem][point]["data"].shape[1:]) + np.nan
+                dat_pad[~pad_msk] = data[elem][point]["data"]
+                data[elem][point]["data"] = dat_pad
+                direction = np.diff(ang_pad)
+                direction = np.hstack((direction, [direction[-1]]))
+                data[elem][point]["direction"] = direction
+
+    for elem in data.keys():
+        logger.info("\tConstructing TOD for %s", elem)
+        angle = np.atleast_2d(np.array([data[elem][point]["angle"] for point in LABELS[elem] if point in data[elem]]))
+        direction = np.atleast_2d(np.array([data[elem][point]["direction"] for point in LABELS[elem] if point in data[elem]]))
+        if not (np.isclose(angle, angle[0]) | np.isnan(angle)).all():
+            logger.error("\t\tAngles don't match across all points! Skipping...")
+            continue
+        angle = angle[0]
+        direction = direction[0]
+        points = [point for point in LABELS[elem] if point in data[elem]]
+        src = np.swapaxes(np.atleast_3d(np.array([data[elem][point]["data"] for point in points])), 0, 1)
+        if src.size == 0:
+            logger.info("\t\tNo data found! Not making TOD")
+        data[elem]["tod"] = src
+        data[elem]["angle_tod"] = angle
+        data[elem]["direction_tod"] = direction
+        data[elem]["points"] = points
+        data[elem]["meas_number"] = np.arange(len(src))
+    return data
+
 def _quantize_angle(theta, dtheta, start):
     if dtheta != 0:
         theta_corr = theta - theta[0]
@@ -337,7 +410,7 @@ def _get_sphere_and_angle(data, start, logger):
     # Correct based on start position
     theta -= theta[0] - start
 
-    return theta, sphere
+    return theta%360.0, sphere
 
 
 def get_angle(data, mode, start, sep, logger):
@@ -359,10 +432,10 @@ def get_angle(data, mode, start, sep, logger):
 
     return theta_corr, direction, sphere.point
 
-def correct_rot(src, angle, cent):
+def correct_rot(src, angle, cent, off=0):
     for i, (pt, ang) in enumerate(zip(src, angle)):
-        rot = Rotation.from_euler("Y", -1*ang, degrees=True)
-        src[i] = rot.apply(pt - cent) + cent
+        rot = Rotation.from_euler("Y", -1*(ang-off), degrees=True)
+        src[i] = rot.apply(pt - cent) + rot.apply(cent)
     return src
 
 def main():
@@ -429,14 +502,17 @@ def main():
             dat = data[elem][point]
             angle, direction, cent = get_angle(dat["data"], dat["mode"], dat["start"], dat["sep"], logger)
             if cfg.get("correct_rot", False):
-                corr = correct_rot(dat["data"], angle, cent)
+                off = 0
+                if elem in ["primary", "secondary"]:
+                    off = 90
+                corr = correct_rot(dat["data"], angle, cent, off)
                 data[elem][point]["data"] = corr 
             data[elem][point]["angle"] = angle
             data[elem][point]["direction"] = direction 
 
 
     # Check motion of each element
-    data = _add_tod(data,  logger)
+    data = _add_tod(data, logger, cfg.get("pad", False))
     _plot_path(data, plt_root, logger)
     _plot_traj_error(data, plt_root, logger)
     _plot_transform(data, ref, get_transform, plt_root, logger)
