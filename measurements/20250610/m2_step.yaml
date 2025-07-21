@@ -1,0 +1,23 @@
+correct_rot: True 
+pad: True
+secondary:
+  secondary_lower_right:
+    path: "./M2_Lower_Right_step_10deg_start40.txt"
+    mode: step
+    start: 40
+    sep: 10
+  secondary_lower_left:
+    path: "./M2_Lower_Left_step_10deg_start40.txt"
+    mode: step
+    start: 40
+    sep: 10
+  secondary_upper_right:
+    path: "./M2_Upper_Right_step_10deg_start_40deg.txt"
+    mode: step
+    start: 40
+    sep: 10
+  secondary_upper_left:
+    path: "./M2_Upper_Left_step_10deg_start_40deg.txt"
+    mode: step
+    start: 40
+    sep: 10

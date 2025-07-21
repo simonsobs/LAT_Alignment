@@ -1,6 +1,6 @@
 """
-Script for calculating HWFE.
-Also tells you how to move whatever elements are included
+Script for calculating HWFE and pointing error.
+Also tells you how to move whatever elements are included.
 """
 
 import argparse
@@ -19,10 +19,11 @@ from megham.transform import (
     get_affine,
     get_rigid,
 )
+from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
 
 from .io import load_tracker
-from .transforms import coord_transform
+from .transforms import affine_basis_transform, coord_transform
 
 elements = ["primary", "secondary", "receiver"]
 hwfe_factors = {
@@ -69,6 +70,40 @@ def get_hwfe(data, get_transform, add_err=False) -> float:
         vals = np.hstack([sft * mm_to_um, rot * rad_to_arcsec]).ravel()
         hwfe += float(np.sum((np.array(hwfe_factors[element]) * vals) ** 2))
     return np.sqrt(hwfe)
+
+
+def get_pointing_error(data, get_transform, add_err=False, thresh=0.01):
+    thresh = np.deg2rad(thresh / 3600)
+    rots = np.zeros((2, 3))
+    # Get rotations
+    for i, (element, factor) in enumerate([("primary", 1), ("secondary", 2)]):
+        src = np.array(data[element])
+        if add_err:
+            src += np.nan_to_num(data[f"{element}_err"])
+        # Put things in the local coords
+        src = coord_transform(src, "opt_global", f"opt_{element}")[
+            data[f"{element}_msk"]
+        ]
+        dst = coord_transform(
+            np.array(data[f"{element}_ref"]), "opt_global", f"opt_{element}"
+        )[data[f"{element}_msk"]]
+        # Get rotation
+        aff, _ = get_transform(src, dst)
+        *_, rot = decompose_affine(aff)
+        rot = decompose_rotation(rot)
+        rot[abs(rot) < thresh] = 0  # Help prevent float errors
+        rot[-1] = 0  # clocking doesn't matter
+        # Put into global coords
+        aff = R.from_euler("xyz", rot, False).as_matrix()
+        aff, _ = affine_basis_transform(
+            aff, np.zeros(3, np.float64), f"opt_{element}", "opt_global"
+        )
+        *_, rot = decompose_affine(aff)
+        rot = decompose_rotation(rot)
+        rot[abs(rot) < thresh] = 0
+        rots[i] = rot * factor
+    tot_rot = np.linalg.norm(np.sum(rots, 0))
+    return 3600 * np.rad2deg(tot_rot)
 
 
 def main():
@@ -128,13 +163,16 @@ def main():
         rot = decompose_rotation(rot)
         logger.info("\tShift is %s mm", str(sft))
         logger.info("\tRotation is %s deg", str(np.rad2deg(rot)))
-        logger.info("\tRotation is %s deg", str(rot))
         logger.info("\tScale is %s", scale)
         logger.info("\tShear is %s", shear)
 
     # Get HWFE
     hwfe = get_hwfe(data, get_transform)
     logger.info("HWFE is %f", hwfe)
+
+    # Get pointing offset
+    po = get_pointing_error(data, get_transform)
+    logger.info("Pointing offset is %f", po)
 
     # Error Propagation
     if not have_err:
@@ -143,6 +181,7 @@ def main():
 
     logger.info("Propagating errors")
     hwfe_werr = np.zeros(args.n_draws)
+    po_werr = np.zeros(args.n_draws)
     rng = np.random.default_rng(12345)
 
     for i in tqdm(range(args.n_draws)):
@@ -151,7 +190,9 @@ def main():
         _data["secondary_err"] *= rng.normal(size=(4, 3))
         _data["receiver_err"] *= rng.normal(size=(4, 3))
         hwfe_werr[i] = get_hwfe(_data, get_transform, True)
-    logger.info("\tStandard deviation of error dist is %f", np.std(hwfe_werr))
+        po_werr[i] = get_pointing_error(_data, get_transform, True)
+    logger.info("\tStandard deviation of HWFE error dist is %f", np.std(hwfe_werr))
+    logger.info("\tStandard deviation of pointing error dist is %f", np.std(po_werr))
     plt.hist(
         hwfe_werr,
         density=True,
@@ -164,4 +205,18 @@ def main():
     plt.xlabel("HWFE (um-rms)")
     plt.ylabel("Density")
     plt.title(f"HWFE With Uncorrellated Error ({transform_str})")
-    plt.savefig(os.path.splitext(args.path)[0] + f"_error_{transform_str}.png")
+    plt.savefig(os.path.splitext(args.path)[0] + f"_hwfe_error_{transform_str}.png")
+    plt.close()
+    plt.hist(
+        po_werr,
+        density=True,
+        bins="auto",
+        label=f"Mean: {np.mean(po_werr):.2f}\nSTD: {np.std(po_werr):.2f}",
+        alpha=0.7,
+    )
+    plt.axvline(po, label=f"Without Error: {po:.2f}", color="black")
+    plt.legend()
+    plt.xlabel('Pointing Error (")')
+    plt.ylabel("Density")
+    plt.title(f"Pointing Error With Uncorrellated Error ({transform_str})")
+    plt.savefig(os.path.splitext(args.path)[0] + f"_pointing_error_{transform_str}.png")

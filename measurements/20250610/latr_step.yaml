@@ -1,0 +1,22 @@
+correct_rot: True
+receiver:
+  receiver_1:
+    path: "./LATR_1_step_5deg_start_45deg.txt"
+    mode: step 
+    start: 45
+    sep: 5
+  receiver_2:
+    path: "./LATR_2_step_5deg_start_45deg.txt"
+    mode: step 
+    start: 45
+    sep: 5
+  receiver_3:
+    path: "./LATR_3_step_5deg_start_45deg.txt"
+    mode: step 
+    start: 45
+    sep: 5
+  receiver_4:
+    path: "./LATR_4_step_5deg_start_45deg.txt"
+    mode: step 
+    start: 45
+    sep: 5

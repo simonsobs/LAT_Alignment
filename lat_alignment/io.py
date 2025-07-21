@@ -47,10 +47,10 @@ def _load_tracker_yaml(path: str):
 
 
 def _load_tracker_txt(path: str):
-    _ = path
-    raise NotImplementedError(
-        "Loading tracker data from a txt file not yet implemented"
-    )
+    data = np.genfromtxt(path, usecols=(3, 4, 5), skip_header=1, dtype=str)
+    data = np.char.replace(data, ",", "").astype(float)
+
+    return data
 
 
 def _load_tracker_csv(path: str):
@@ -112,8 +112,8 @@ def load_photo(
     """
     logger.info("Loading measurement data")
     labels = np.genfromtxt(path, dtype=str, delimiter=",", usecols=(0,))
-    coords = np.genfromtxt(path, dtype=np.float32, delimiter=",", usecols=(1, 2, 3))
-    errs = np.genfromtxt(path, dtype=np.float32, delimiter=",", usecols=(4, 5, 6))
+    coords = np.genfromtxt(path, dtype=np.float64, delimiter=",", usecols=(1, 2, 3))
+    errs = np.genfromtxt(path, dtype=np.float64, delimiter=",", usecols=(4, 5, 6))
     msk = (np.char.find(labels, "TARGET") >= 0) + (np.char.find(labels, "CODE") >= 0)
 
     labels, coords, errs = labels[msk], coords[msk], errs[msk]
@@ -156,7 +156,7 @@ def load_photo(
     return Dataset(data)
 
 
-def load_corners(path: str) -> dict[tuple[int, int], NDArray[np.float32]]:
+def load_corners(path: str) -> dict[tuple[int, int], NDArray[np.float64]]:
     """
     Get panel corners from file.
 
@@ -167,7 +167,7 @@ def load_corners(path: str) -> dict[tuple[int, int], NDArray[np.float32]]:
 
     Returns
     -------
-    corners : dict[tuple[int, int], ndarray[np.float32]]
+    corners : dict[tuple[int, int], ndarray[np.float64]]
         The corners. This is indexed by a (row, col) tuple.
         Each entry is `(4, 3)` array where each row is a corner.
     """
@@ -176,7 +176,7 @@ def load_corners(path: str) -> dict[tuple[int, int], NDArray[np.float32]]:
 
     corners = {
         (panel[7], panel[9]): np.vstack(
-            [np.array(coord.split(), np.float32) for coord in coords]
+            [np.array(coord.split(), np.float64) for coord in coords]
         )
         for panel, coords in corners_raw.items()
     }
@@ -185,7 +185,7 @@ def load_corners(path: str) -> dict[tuple[int, int], NDArray[np.float32]]:
 
 def load_adjusters(
     path: str, mirror: str
-) -> dict[tuple[int, int], NDArray[np.float32]]:
+) -> dict[tuple[int, int], NDArray[np.float64]]:
     """
     Get nominal adjuster locations from file.
 
@@ -199,7 +199,7 @@ def load_adjusters(
 
     Returns
     -------
-    adjusters : dict[tuple[int, int], NDArray[np.float32]]
+    adjusters : dict[tuple[int, int], NDArray[np.float64]]
         Nominal adjuster locations.
         This is indexed by a (row, col) tuple.
         Each entry is `(5, 3)` array where each row is an adjuster.
@@ -218,7 +218,7 @@ def load_adjusters(
     for point in c_points:
         row = point[0][6]
         col = point[0][7]
-        adjusters[(row, col)] += [_transform(np.array(point[2:], dtype=np.float32))[0]]
+        adjusters[(row, col)] += [_transform(np.array(point[2:], dtype=np.float64))[0]]
     adjusters = {rc: np.vstack(pts) for rc, pts in adjusters.items()}
 
     return adjusters

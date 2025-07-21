@@ -13,28 +13,28 @@ from scipy.spatial.transform import Rotation as rot
 
 
 def rotate(
-    point: NDArray[np.float32],
-    end_point1: NDArray[np.float32],
-    end_point2: NDArray[np.float32],
-    theta: np.float32,
-) -> NDArray[np.float32]:
+    point: NDArray[np.float64],
+    end_point1: NDArray[np.float64],
+    end_point2: NDArray[np.float64],
+    theta: np.float64,
+) -> NDArray[np.float64]:
     """
     Rotate a point about an axis
 
     Parameters
     ----------
-    point : NDArray[np.float32]
+    point : NDArray[np.float64]
         The point to rotate
-    end_point1 : NDArray[np.float32]
+    end_point1 : NDArray[np.float64]
         A point on the axis of rotation
-    end_point2 : NDArray[np.float32]
+    end_point2 : NDArray[np.float64]
         Another point on the axis of rotation
-    theta: NDArray[np.float32]
+    theta: NDArray[np.float64]
         Angle in radians to rotate by
 
     Returns
     -------
-    point : NDArray[np.float32]
+    point : NDArray[np.float64]
         The rotated point
     """
     origin = np.mean((end_point1, end_point2))
@@ -46,34 +46,34 @@ def rotate(
 
 
 def rotate_panel(
-    points: NDArray[np.float32],
-    adjustors: NDArray[np.float32],
-    thetha_0: np.float32,
-    thetha_1: np.float32,
-) -> Tuple[NDArray[np.float32], NDArray[np.float32]]:
+    points: NDArray[np.float64],
+    adjustors: NDArray[np.float64],
+    thetha_0: np.float64,
+    thetha_1: np.float64,
+) -> Tuple[NDArray[np.float64], NDArray[np.float64]]:
     """
     Rotate panel about axes created by adjustors.
 
     Parameters
     ----------
-    points : NDArray[np.float32]
+    points : NDArray[np.float64]
         Points on panel to rotate.
-    adjustors : NDArray[np.float32]
+    adjustors : NDArray[np.float64]
         Adjustor positions.
-    thetha_0 : np.float32
+    thetha_0 : np.float64
         Angle to rotate about first adjustor axis
-    thetha_1 : np.float32.
+    thetha_1 : np.float64.
         Angle to rotate about second adjustor axis
 
     Returns
     -------
-    rot_points : NDArray[np.float32]
+    rot_points : NDArray[np.float64]
         The rotated points.
-    rot_adjustors : NDArray[np.float32]
+    rot_adjustors : NDArray[np.float64]
         The rotated adjustors.
     """
-    rot_points = np.zeros(points.shape, np.float32)
-    rot_adjustors = np.zeros(adjustors.shape, np.float32)
+    rot_points = np.zeros(points.shape, np.float64)
+    rot_adjustors = np.zeros(adjustors.shape, np.float64)
 
     n_points = len(points)
     n_adjustors = len(adjustors)
@@ -90,33 +90,33 @@ def rotate_panel(
 
 
 def translate_panel(
-    points: NDArray[np.float32],
-    adjustors: NDArray[np.float32],
-    dx: np.float32,
-    dy: np.float32,
-    dz: np.float32,
-) -> Tuple[NDArray[np.float32], NDArray[np.float32]]:
+    points: NDArray[np.float64],
+    adjustors: NDArray[np.float64],
+    dx: np.float64,
+    dy: np.float64,
+    dz: np.float64,
+) -> Tuple[NDArray[np.float64], NDArray[np.float64]]:
     """
     Translate a panel.
 
     Parameters
     ----------
-    points : NDArray[np.float32]
+    points : NDArray[np.float64]
         The points on panel to translate.
-    adjustors : NDArray[np.float32]
+    adjustors : NDArray[np.float64]
         Adjustor positions.
-    dx : np.float32
+    dx : np.float64
         Translation in x.
-    dy : np.float32
+    dy : np.float64
         Translation in y.
-    dz : np.float32
+    dz : np.float64
         Translation in z.
 
     Returns
     -------
-    points : NDArray[np.float32]
+    points : NDArray[np.float64]
         The translated points.
-    adjustors : NDArray[np.float32]
+    adjustors : NDArray[np.float64]
         The translated adjustors.
     """
     translation = np.array((dx, dy, dz))
@@ -124,17 +124,17 @@ def translate_panel(
 
 
 def adjustment_fit_func(
-    pars: NDArray[np.float32],
-    can_points: NDArray[np.float32],
-    points: NDArray[np.float32],
-    adjustors: NDArray[np.float32],
-) -> np.float32:
+    pars: NDArray[np.float64],
+    can_points: NDArray[np.float64],
+    points: NDArray[np.float64],
+    adjustors: NDArray[np.float64],
+) -> np.float64:
     r"""
     Function to minimize when calculating adjustments.
 
     Parameters
     ----------
-    pars : NDArray[np.float32]
+    pars : NDArray[np.float64]
         The parameters to fit for:
 
         * dx: Translation in x
@@ -143,16 +143,16 @@ def adjustment_fit_func(
         * thetha_0: Angle to rotate about first adjustor axis
         * thetha_1: Angle to rotate about second adjustor axis
         * z_t: Additional translation to tension the center point
-    can_points : NDArray[np.float32]
+    can_points : NDArray[np.float64]
         The cannonical positions of the points to align.
-    points : NDArray[np.float32]
+    points : NDArray[np.float64]
         The measured positions of the points to align.
-    adjustors : NDArray[np.float32]
+    adjustors : NDArray[np.float64]
         The measured positions of the adjustors.
 
     Returns
     -------
-    norm : np.float32
+    norm : np.float64
         The norm of $cannonical_positions - transformed_positions$.
     """
     dx, dy, dz, thetha_0, thetha_1, z_t = pars
@@ -163,43 +163,43 @@ def adjustment_fit_func(
 
 
 def calc_adjustments(
-    can_points: NDArray[np.float32],
-    points: NDArray[np.float32],
-    adjustors: NDArray[np.float32],
+    can_points: NDArray[np.float64],
+    points: NDArray[np.float64],
+    adjustors: NDArray[np.float64],
     **kwargs,
 ) -> Tuple[
-    np.float32,
-    np.float32,
-    NDArray[np.float32],
-    np.float32,
-    np.float32,
-    NDArray[np.float32],
+    np.float64,
+    np.float64,
+    NDArray[np.float64],
+    np.float64,
+    np.float64,
+    NDArray[np.float64],
 ]:
     """
     Calculate adjustments needed to align panel.
 
     Parameters
     ----------
-    can_points : NDArray[np.float32]
+    can_points : NDArray[np.float64]
         The cannonical position of the points to align.
-    points : NDArray[np.float32]
+    points : NDArray[np.float64]
         The measured positions of the points to align.
-    adjustors : NDArray[np.float32]
+    adjustors : NDArray[np.float64]
         The measured positions of the adjustors.
     **kwargs
         Arguments to be passed to `scipy.optimize.minimize`.
 
-    dx : np.float32
+    dx : np.float64
         The required translation of panel in x.
-    dy : np.float32
+    dy : np.float64
         The required translation of panel in y.
-    d_adj : NDArray[np.float32]
+    d_adj : NDArray[np.float64]
         The amount to move each adjustor.
-    dx_err : np.float32
+    dx_err : np.float64
         The error in the fit for `dx`.
-    dy_err : np.float32
+    dy_err : np.float64
         The error in the fit for `dy`.
-    d_adj_err : NDArray[np.float32]
+    d_adj_err : NDArray[np.float64]
         The error in the fit for `d_adj`.
     """
     res = opt.minimize(

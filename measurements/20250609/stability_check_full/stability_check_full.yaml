@@ -1,0 +1,63 @@
+receiver:
+  receiver_1:
+    path: "LATR_1.txt"
+    mode: continious
+    start: 60 
+    sep: 0.
+  receiver_2:
+    path: "LATR_2.txt"
+    mode: continious
+    start: 60 
+    sep: 0.
+  receiver_3:
+    path: "LATR_3.txt"
+    mode: continious
+    start: 60 
+    sep: 0
+  receiver_4:
+    path: "LATR_4.txt"
+    mode: continious
+    start: 60 
+    sep: 0.
+primary:
+  primary_lower_right:
+    path: "M1_Lower_Right.txt"
+    mode: continious
+    start: 60 
+    sep: 0.
+  primary_lower_left:
+    path: "M1_Lower_Left.txt"
+    mode: continious
+    start: 60 
+    sep: 0
+  primary_upper_right:
+    path: "M1_Upper_Right.txt"
+    mode: continious
+    start: 60 
+    sep: 0
+  primary_upper_left:
+    path: "M1_Upper_Left.txt"
+    mode: continious
+    start: 60 
+    sep: 0
+secondary:
+  secondary_lower_right:
+    path: "M2_Lower_Right.txt"
+    mode: continious
+    start: 60 
+    sep: 0.
+  secondary_lower_left:
+    path: "M2_Lower_Left.txt"
+    mode: continious
+    start: 60 
+    sep: 0.
+  secondary_upper_right:
+    path: "M2_Upper_Right.txt"
+    mode: continious
+    start: 60 
+    sep: 0.
+  secondary_upper_left:
+    path: "M2_Upper_Left.txt"
+    mode: continious
+    start: 60 
+    sep: 0.

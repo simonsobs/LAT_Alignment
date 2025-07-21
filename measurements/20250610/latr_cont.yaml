@@ -1,0 +1,7 @@
+correct_rot: True
+receiver:
+  receiver_1:
+    path: "LATR_1_Cont_start45deg_sep10mm.txt"
+    mode: continious
+    start: 45
+    sep: 10

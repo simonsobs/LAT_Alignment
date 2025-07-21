@@ -56,26 +56,26 @@ a = {'primary' :
 
 
 def mirror_surface(
-    x: NDArray[np.float32], y: NDArray[np.float32], a: NDArray[np.float32]
-) -> NDArray[np.float32]:
+    x: NDArray[np.float64], y: NDArray[np.float64], a: NDArray[np.float64]
+) -> NDArray[np.float64]:
     """
     Analytic form of the mirror surface.
 
     Parameters
     ----------
-    x : NDArray[np.float32]
+    x : NDArray[np.float64]
         X positions to calculate at in mm.
-    y : NDArray[np.float32]
+    y : NDArray[np.float64]
         Y positions to calculate at in mm.
         Should have the same shape as `x`.
-    a : NDArray[np.float32]
+    a : NDArray[np.float64]
         Coeffecients of the mirror function.
         Use `a_primary` for the primary mirror.
         Use `a_secondary` for the secondary mirror.
 
     Returns
     -------
-    z : NDArray[np.float32]
+    z : NDArray[np.float64]
         Z position of the mirror at each input coordinate.
         Has the same shape as `x`.
     """
@@ -88,26 +88,26 @@ def mirror_surface(
 
 
 def mirror_norm(
-    x: NDArray[np.float32], y: NDArray[np.float32], a: NDArray[np.float32]
-) -> NDArray[np.float32]:
+    x: NDArray[np.float64], y: NDArray[np.float64], a: NDArray[np.float64]
+) -> NDArray[np.float64]:
     """
     Analytic form of the vector normal to the mirror surface.
 
     Parameters
     ----------
-    x : NDArray[np.float32]
+    x : NDArray[np.float64]
         X positions to calculate at in mm.
-    y : NDArray[np.float32]
+    y : NDArray[np.float64]
         Y positions to calculate at in mm.
         Should have the same shape as `x`.
-    a : NDArray[np.float32]
+    a : NDArray[np.float64]
         Coeffecients of the mirror function.
         Use `a_primary` for the primary mirror.
         Use `a_secondary` for the secondary mirror.
 
     Returns
     -------
-    normals : NDArray[np.float32]
+    normals : NDArray[np.float64]
         Unit vector normal to the mirror surface at each input coordinate.
         Has shape `shape(x) + (3,)`.
     """
@@ -142,14 +142,14 @@ class Panel:
         The row of the panel.
     col : int
         The column of the panel.
-    corners : NDArray[np.float32]
+    corners : NDArray[np.float64]
         Array of panel corners.
         Should have shape `(4, 3)`.
-    measurements : NDArray[np.float32]
+    measurements : NDArray[np.float64]
         The measurement data for this panel.
         Should be in the mirror's internal coords.
         Should have shape `(npoint, 3)`.
-    nom_adj : NDArray[np.float32]
+    nom_adj : NDArray[np.float64]
         The nominal position of the adjusters in the mirror internal coordinates.
         Should have shape `(5, 3)`.
     compensate : float, default: 0
@@ -160,9 +160,9 @@ class Panel:
     mirror: str
     row: int
     col: int
-    corners: NDArray[np.float32]
-    measurements: NDArray[np.float32]
-    nom_adj: NDArray[np.float32]
+    corners: NDArray[np.float64]
+    measurements: NDArray[np.float64]
+    nom_adj: NDArray[np.float64]
     compensate: float = field(default=0.0)
     adjuster_radius: float = field(default=50.0)
 
@@ -336,8 +336,8 @@ class Panel:
 def gen_panels(
     mirror: str,
     dataset: Dataset,
-    corners: dict[tuple[int, int], NDArray[np.float32]],
-    adjusters: dict[tuple[int, int], NDArray[np.float32]],
+    corners: dict[tuple[int, int], NDArray[np.float64]],
+    adjusters: dict[tuple[int, int], NDArray[np.float64]],
     compensate: float = 0.0,
     adjuster_radius: float = 50.0,
 ) -> list[Panel]:
@@ -351,10 +351,10 @@ def gen_panels(
         Should be 'primary' or 'secondary'.
     dataset : Dataset
         The photogrammetry data.
-    corners : dict[tuple[int, int], ndarray[np.float32]]
+    corners : dict[tuple[int, int], ndarray[np.float64]]
         The corners. This is indexed by a (row, col) tuple.
         Each entry is `(4, 3)` array where each row is a corner.
-    adjusters : dict[tuple[int, int], NDArray[np.float32]]
+    adjusters : dict[tuple[int, int], NDArray[np.float64]]
         Nominal adjuster locations.
         This is indexed by a (row, col) tuple.
         Each entry is `(5, 3)` array where each row is an adjuster.
@@ -386,7 +386,7 @@ def gen_panels(
     # Now init the objects
     panels = []
     for (row, col), meas in points.items():
-        meas = np.vstack(meas, dtype=np.float32)
+        meas = np.vstack(meas, dtype=np.float64)
         panel = Panel(
             mirror,
             row,
@@ -408,7 +408,7 @@ def remove_cm(
     thresh: float = 10,
     cut_thresh: float = 50,
     niters: int = 10,
-) -> tuple[Dataset, tuple[NDArray[np.float32], NDArray[np.float32]]]:
+) -> tuple[Dataset, tuple[NDArray[np.float64], NDArray[np.float64]]]:
     """
     Fit for the common mode transformation from the model to the measurements of all panels and them remove it.
     Note that this will remove all coded targets from the dataset.
@@ -433,7 +433,7 @@ def remove_cm(
     -------
     kept_points: Dataset
         The points that were successfully fit with the common mode removed.
-    common_mode : tuple[NDArray[np.float32], NDArray[np.float32]]
+    common_mode : tuple[NDArray[np.float64], NDArray[np.float64]]
         The common mode that was removed.
         The first element is an affine matrix and
         the second is the shift.
@@ -470,9 +470,9 @@ def remove_cm(
         mirror,
         -1,
         -1,
-        np.zeros((4, 3), "float32"),
+        np.zeros((4, 3), "float64"),
         data,
-        np.zeros((5, 3), "float32"),
+        np.zeros((5, 3), "float64"),
         compensate,
     )
     data = data.copy()

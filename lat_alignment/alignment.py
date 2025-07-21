@@ -38,7 +38,7 @@ def log_alignment(alignment, logger):
 
 def adjust_panel(
     panel: mir.Panel, mnum: int, fit: bool, cfg: dict
-) -> NDArray[np.float32]:
+) -> NDArray[np.float64]:
     """
     Helper function to get the adjustments for a single panel.
 
@@ -57,12 +57,12 @@ def adjust_panel(
 
     Returns
     -------
-    adjustments : NDArray[np.float32]
+    adjustments : NDArray[np.float64]
         The adjustments to make for the panel.
         This is a 17 element array with the following structure:
         `[mnum, panel_row, panel_col, dx, dy, d_adj1, ..., d_adj5, dx_err, dy_err, d_adj1_err, ..., d_adj5_err]`.
     """
-    adjustments = np.zeros(17, np.float32)
+    adjustments = np.zeros(17, np.float64)
     adjustments[0] = mnum
     adjustments[1] = panel.row
     adjustments[2] = panel.col
@@ -245,7 +245,7 @@ def main():
         # Load data and compute the transformation to align with the model
         # We want to put all the transformations into opt_global
         elements = {}  # {element_name : full_alignment}
-        identity = (np.eye(3, dtype=np.float32), np.zeros(3, dtype=np.float32))
+        identity = (np.eye(3, dtype=np.float64), np.zeros(3, dtype=np.float64))
         try:
             meas, alignment = pg.align_photo(
                 dataset.copy(), reference, True, "primary", **cfg.get("align_photo", {})
@@ -276,7 +276,7 @@ def main():
                 )
                 full_alignment = mt.compose_transform(*common_mode_2, *full_alignment)
             full_alignment = tf.affine_basis_transform(
-                full_alignment[0], full_alignment[1], "opt_primary", "opt_global", False
+                full_alignment[0], full_alignment[1], "opt_primary", "opt_global"
             )
             log_alignment(full_alignment, logger)
         except Exception as e:
@@ -325,11 +325,7 @@ def main():
                 )
                 full_alignment = mt.compose_transform(*common_mode_2, *full_alignment)
             full_alignment = tf.affine_basis_transform(
-                full_alignment[0],
-                full_alignment[1],
-                "opt_secondary",
-                "opt_global",
-                False,
+                full_alignment[0], full_alignment[1], "opt_secondary", "opt_global"
             )
             log_alignment(full_alignment, logger)
         except Exception as e:
