@@ -12,7 +12,7 @@ requires-python = ">=3.9"
 keywords = ["LAT", "Simons Observatory", "Optical Alignment"]
 license = {text = "BSD-2-Clause"}
 classifiers = [ "Programming Language :: Python" ]
-dependencies = ["scipy", "numpy", "matplotlib", "pyyaml", "megham", "pqdm"]
+dependencies = ["scipy", "numpy", "matplotlib", "pyyaml", "megham", "pqdm", "cylinder_fitting"]
 
 [project.optional-dependencies]
 docs = [
