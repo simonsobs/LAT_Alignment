@@ -6,6 +6,6 @@ load:
   doubles_dist: 10
   err_thresh: 2
 common_mode:
-  cut_thresh: 5
-  niters: 10
+  cut_thresh: 50
+  niters: 1
 bootstrap_from: "secondary"

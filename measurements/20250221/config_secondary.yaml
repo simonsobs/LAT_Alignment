@@ -1,6 +1,6 @@
 mirror: "secondary"
-measurement: 20250221_Set04.csv 
-title: "M2 LATR_Full_Set04"
+measurement: 20250221_Set03.csv 
+title: "M2 LATR_Full_Set03"
 vmax: 50
 common_mode:
   cut_thresh: 10
