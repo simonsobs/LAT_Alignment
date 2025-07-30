@@ -1,3 +1,13 @@
+## 6.1.0 (2025-07-30)
+
+### Feat
+
+- add csv of measured surface to output
+
+### Fix
+
+- add cylinder_fitting to requirements
+
 ## 6.0.0 (2025-07-21)
 
 ### Feat
