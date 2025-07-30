@@ -219,6 +219,10 @@ def main():
         logger.info("Found measurements for %d panels", len(panels))
         fig = mir.plot_panels(panels, title_str, vmax=cfg.get("vmax", None))
         fig.savefig(os.path.join(cfgdir, f"{title_str.replace(' ', '_')}.png"))
+        res_all = np.vstack([panel.residuals for panel in panels])
+        model_all = np.vstack([panel.model for panel in panels])
+        mir_out = np.hstack([model_all, res_all])
+        np.savetxt(os.path.join(cfgdir, f"{title_str.replace(' ', '_')}_surface.txt"), mir_out, header="x y z x_res y_res z_res")
 
         # calc and save adjustments
         logger.info("Caluculating adjustments")
