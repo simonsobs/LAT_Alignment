@@ -27,6 +27,13 @@ from skspatial.objects import Sphere
 
 from .error import get_hwfe, get_pointing_error
 from .io import load_tracker
+from .traj_plots import (
+    plot_all_ax,
+    plot_all_dir,
+    plot_by_ax,
+    plot_by_ax_point,
+    plot_hist,
+)
 
 mpl.rcParams["lines.markersize"] *= 1.5
 
@@ -106,135 +113,61 @@ def _plot_point_and_hwfe(data, ref, get_transform, plt_root, logger, skip_missin
             continue
 
     # Plot TOD
-    os.makedirs(os.path.join(plt_root, "error"), exist_ok=True)
-    t = np.arange(npts)
-    plt.scatter(t, hwfes, alpha=0.5)
-    plt.scatter(t[missing], hwfes[missing], color="gray", alpha=1, marker="1")
-    plt.xlabel("Measurement #")
-    plt.ylabel("HWFE (um-rms)")
-    plt.title(f"HWFE over time")
-    plt.savefig(os.path.join(plt_root, "error", "hwfe_tod.png"), bbox_inches="tight")
-    plt.close()
-
-    plt.scatter(t, pes, alpha=0.5)
-    plt.scatter(t[missing], pes[missing], color="gray", alpha=1, marker="1")
-    plt.xlabel("Measurement #")
-    plt.ylabel('Pointing Error (")')
-    plt.title(f"Pointing Error over time")
-    plt.savefig(os.path.join(plt_root, "error", "pe_tod.png"), bbox_inches="tight")
-    plt.close()
+    plt_root_err = os.path.join(plt_root, "error")
+    os.makedirs(plt_root_err, exist_ok=True)
+    x = np.arange(npts)
+    plot_all_dir(
+        x,
+        hwfes,
+        direction,
+        missing,
+        "Measurement (#)",
+        "HWFE (um-rms)",
+        f"HWFE over time",
+        plt_root_err,
+    )
+    plot_all_dir(
+        x,
+        pes,
+        direction,
+        missing,
+        "Measurement (#)",
+        'Pointing Error (")',
+        f"Pointing Error over time",
+        plt_root_err,
+    )
 
     # Plot distribution
-    if len(direction == 0) > 0:
-        plt.hist(
-            hwfes[direction == 0],
-            bins="auto",
-            color="black",
-            alpha=0.5,
-            label="Stationary",
-        )
-    if len(direction < 0) > 0:
-        plt.hist(
-            hwfes[direction < 0],
-            bins="auto",
-            color="blue",
-            alpha=0.5,
-            label="Decreasing",
-        )
-    if len(direction > 0) > 0:
-        plt.hist(
-            hwfes[direction > 0],
-            bins="auto",
-            color="red",
-            alpha=0.5,
-            label="Increasing",
-        )
-    plt.legend()
-    plt.xlabel("HWFE (um-rms)")
-    plt.ylabel("Counts")
-    plt.title("HWFE Distribution")
-    plt.savefig(os.path.join(plt_root, "error", "hwfe_dist.png"), bbox_inches="tight")
-    plt.close()
-
-    if len(direction == 0) > 0:
-        plt.hist(
-            pes[direction == 0],
-            bins="auto",
-            color="black",
-            alpha=0.5,
-            label="Stationary",
-        )
-    if len(direction < 0) > 0:
-        plt.hist(
-            pes[direction < 0], bins="auto", color="blue", alpha=0.5, label="Decreasing"
-        )
-    if len(direction > 0) > 0:
-        plt.hist(
-            pes[direction > 0], bins="auto", color="red", alpha=0.5, label="Increasing"
-        )
-    plt.legend()
-    plt.xlabel('Pointing Error (")')
-    plt.ylabel("Counts")
-    plt.title("Pointing Error Distribution")
-    plt.savefig(os.path.join(plt_root, "error", "pe_dist.png"), bbox_inches="tight")
-    plt.close()
+    plot_hist(hwfes, direction, "HWFE (um-rms)", "HWFE Distribution", plt_root_err)
+    plot_hist(
+        pes,
+        direction,
+        'Pointing Error (")',
+        "Pointing Error Distribution",
+        plt_root_err,
+    )
 
     # Now by angle
-    plt.scatter(
-        angle[direction == 0],
-        hwfes[direction == 0],
-        color="black",
-        alpha=0.5,
-        label="Stationary",
+    plot_all_dir(
+        angle,
+        hwfes,
+        direction,
+        missing,
+        "Angle (deg)",
+        "HWFE (um-rms)",
+        f"HWFE by Angle",
+        plt_root_err,
     )
-    plt.scatter(
-        angle[direction < 0],
-        hwfes[direction < 0],
-        color="blue",
-        alpha=0.5,
-        label="Decreasing",
+    plot_all_dir(
+        angle,
+        pes,
+        direction,
+        missing,
+        "Angle (deg)",
+        'Pointing Error (")',
+        f"Pointing Error by Angle",
+        plt_root_err,
     )
-    plt.scatter(
-        angle[direction > 0],
-        hwfes[direction > 0],
-        color="red",
-        alpha=0.5,
-        label="Increasing",
-    )
-    plt.scatter(angle[missing], hwfes[missing], color="gray", alpha=1, marker="1")
-    plt.legend()
-    plt.xlabel("Angle (deg)")
-    plt.suptitle(f"HWFE by Angle")
-    plt.savefig(os.path.join(plt_root, "error", "hwfe_ang.png"), bbox_inches="tight")
-    plt.close()
-
-    plt.scatter(
-        angle[direction == 0],
-        pes[direction == 0],
-        color="black",
-        alpha=0.5,
-        label="Stationary",
-    )
-    plt.scatter(
-        angle[direction < 0],
-        pes[direction < 0],
-        color="blue",
-        alpha=0.5,
-        label="Decreasing",
-    )
-    plt.scatter(
-        angle[direction > 0],
-        pes[direction > 0],
-        color="red",
-        alpha=0.5,
-        label="Increasing",
-    )
-    plt.scatter(angle[missing], pes[missing], color="gray", alpha=1, marker="1")
-    plt.legend()
-    plt.xlabel("Angle (deg)")
-    plt.suptitle(f"Pointing Error by Angle")
-    plt.savefig(os.path.join(plt_root, "error", "pe_ang.png"), bbox_inches="tight")
-    plt.close()
 
 
 def _plot_transform(data, ref, get_transform, plt_root, logger, skip_missing):
@@ -278,210 +211,97 @@ def _plot_transform(data, ref, get_transform, plt_root, logger, skip_missing):
 
         # Lets plot shift and rotation
         # First with time
-        os.makedirs(os.path.join(plt_root, elem), exist_ok=True)
-        t = np.arange(len(sfts))
-        plt.scatter(t, sfts[:, 0], alpha=0.5, label="x")
-        plt.scatter(t, sfts[:, 1], alpha=0.5, label="y")
-        plt.scatter(t, sfts[:, 2], alpha=0.5, label="z")
-        plt.scatter(t[missing], sfts[missing, 0], color="gray", marker="1")
-        plt.scatter(t[missing], sfts[missing, 1], color="gray", marker="1")
-        plt.scatter(t[missing], sfts[missing, 2], color="gray", marker="1")
-        plt.legend()
-        plt.xlabel("Measurement #")
-        plt.ylabel("Shift (mm)")
-        plt.title(f"{elem} Shifts over time")
-        plt.savefig(os.path.join(plt_root, elem, "shift_tod.png"), bbox_inches="tight")
-        plt.close()
-
-        plt.scatter(t, rots[:, 0], alpha=0.5, label="x")
-        plt.scatter(t, rots[:, 1], alpha=0.5, label="y")
-        plt.scatter(t, rots[:, 2], alpha=0.5, label="z")
-        plt.scatter(t[missing], rots[missing, 0], color="gray", marker="1")
-        plt.scatter(t[missing], rots[missing, 1], color="gray", marker="1")
-        plt.scatter(t[missing], rots[missing, 2], color="gray", marker="1")
-        plt.legend()
-        plt.xlabel("Measurement #")
-        plt.ylabel("Rotation (deg)")
-        plt.title(f"{elem} Rotation over time")
-        plt.savefig(os.path.join(plt_root, elem, "rot_tod.png"), bbox_inches="tight")
-        plt.close()
-
-        plt.scatter(t, scales[:, 0], alpha=0.5, label="x")
-        plt.scatter(t, scales[:, 1], alpha=0.5, label="y")
-        plt.scatter(t, scales[:, 2], alpha=0.5, label="z")
-        plt.scatter(t[missing], scales[missing, 0], color="gray", marker="1")
-        plt.scatter(t[missing], scales[missing, 1], color="gray", marker="1")
-        plt.scatter(t[missing], scales[missing, 2], color="gray", marker="1")
-        plt.legend()
-        plt.xlabel("Measurement #")
-        plt.ylabel("Scale Factor")
-        plt.title(f"{elem} Scale over time")
-        plt.savefig(os.path.join(plt_root, elem, "scale_tod.png"), bbox_inches="tight")
-        plt.close()
+        plt_root_elem = os.path.join(plt_root, elem)
+        os.makedirs(plt_root_elem, exist_ok=True)
+        x = np.arange(len(sfts))
+        plot_all_ax(
+            x,
+            sfts,
+            missing,
+            "Measurement (#)",
+            "Shift (mm)",
+            f"{elem} Shifts over time",
+            plt_root_elem,
+        )
+        plot_all_ax(
+            x,
+            rots,
+            missing,
+            "Measurement (#)",
+            "Rotation (deg)",
+            f"{elem} Rotation over time",
+            plt_root_elem,
+        )
+        plot_all_ax(
+            x,
+            scales,
+            missing,
+            "Measurement (#)",
+            "Scale Factor",
+            f"{elem} Scale over time",
+            plt_root_elem,
+        )
 
         # Now by angle
-        angle = data[elem]["angle_tod"]
         direction = data[elem]["direction_tod"]
-        _, axs = plt.subplots(3, 1, sharex=True)
-        for i, dim in enumerate(["x", "y", "z"]):
-            axs[i].scatter(
-                angle[direction == 0],
-                sfts[direction == 0, i],
-                color="black",
-                marker="o",
-                alpha=0.25,
-                label="Stationary",
-            )
-            axs[i].scatter(
-                angle[direction < 0],
-                sfts[direction < 0, i],
-                color="blue",
-                marker="x",
-                alpha=0.25,
-                label="Decreasing",
-            )
-            axs[i].scatter(
-                angle[direction > 0],
-                sfts[direction > 0, i],
-                color="red",
-                marker="+",
-                alpha=0.25,
-                label="Increasing",
-            )
-            axs[i].scatter(angle[missing], sfts[missing, i], color="gray", marker="1")
-            axs[i].set_ylabel(f"{dim} shift (mm)")
-        axs[0].legend()
-        axs[-1].set_xlabel("Angle (deg)")
-        plt.suptitle(f"{elem} Shifts by Angle")
-        plt.savefig(os.path.join(plt_root, elem, "shift_ang.png"), bbox_inches="tight")
-        plt.close()
-
-        _, axs = plt.subplots(3, 1, sharex=True)
-        for i, dim in enumerate(["x", "y", "z"]):
-            axs[i].scatter(
-                angle[direction == 0],
-                rots[direction == 0, i],
-                color="black",
-                marker="o",
-                alpha=0.25,
-                label="Stationary",
-            )
-            axs[i].scatter(
-                angle[direction < 0],
-                rots[direction < 0, i],
-                color="blue",
-                marker="x",
-                alpha=0.25,
-                label="Decreasing",
-            )
-            axs[i].scatter(
-                angle[direction > 0],
-                rots[direction > 0, i],
-                color="red",
-                marker="+",
-                alpha=0.25,
-                label="Increasing",
-            )
-            axs[i].scatter(angle[missing], rots[missing, i], color="gray", marker="1")
-            axs[i].set_ylabel(f"{dim} rotation (deg)")
-        axs[0].legend()
-        axs[-1].set_xlabel("Angle (deg)")
-        plt.suptitle(f"{elem} Rotation by Angle")
-        plt.savefig(os.path.join(plt_root, elem, "rot_ang.png"), bbox_inches="tight")
-        plt.close()
-
-        _, axs = plt.subplots(3, 1, sharex=True)
-        for i, dim in enumerate(["x", "y", "z"]):
-            axs[i].scatter(
-                angle[direction == 0],
-                scales[direction == 0, i],
-                color="black",
-                marker="o",
-                alpha=0.25,
-                label="Stationary",
-            )
-            axs[i].scatter(
-                angle[direction < 0],
-                scales[direction < 0, i],
-                color="blue",
-                marker="x",
-                alpha=0.25,
-                label="Decreasing",
-            )
-            axs[i].scatter(
-                angle[direction > 0],
-                scales[direction > 0, i],
-                color="red",
-                marker="+",
-                alpha=0.25,
-                label="Increasing",
-            )
-            axs[i].scatter(angle[missing], scales[missing, i], color="gray", marker="1")
-            axs[i].set_ylabel(f"{dim} scale")
-        axs[0].legend()
-        axs[-1].set_xlabel("Angle (deg)")
-        plt.suptitle(f"{elem} Scale by Angle")
-        plt.savefig(os.path.join(plt_root, elem, "scale_ang.png"), bbox_inches="tight")
-        plt.close()
+        x = data[elem]["angle_tod"]
+        plot_by_ax(
+            x,
+            sfts,
+            direction,
+            missing,
+            "angle_tod",
+            "Angle (deg)",
+            "shift (mm)",
+            f"{elem} Shifts by Angle",
+            os.path.join(plt_root, elem),
+        )
+        plot_by_ax(
+            x,
+            rots,
+            direction,
+            missing,
+            "angle_tod",
+            "Angle (deg)",
+            "rotation (deg)",
+            f"{elem} Rotation by Angle",
+            os.path.join(plt_root, elem),
+        )
+        plot_by_ax(
+            x,
+            scales,
+            direction,
+            missing,
+            "angle_tod",
+            "Angle (deg)",
+            "scale ",
+            f"{elem} Scale by Angle",
+            os.path.join(plt_root, elem),
+        )
 
         # Plot resids
         for xax, xlab in [
             ("angle_tod", "Angle (deg)"),
             ("meas_number", "Measurement (#)"),
         ]:
-            _, axs = plt.subplots(
-                3,
-                len(data[elem]["points"]),
-                sharex=True,
-                sharey=False,
-                figsize=(24, 20),
-                layout="constrained",
+            x = data[elem][xax]
+            plot_by_ax_point(
+                data[elem]["points"],
+                x,
+                resids,
+                direction,
+                missing,
+                xax,
+                xlab,
+                f"{elem} Residuals",
+                os.path.join(plt_root, elem),
             )
-            axs = np.reshape(np.array(axs), (int(3), len(data[elem]["points"])))
-            for i, point in enumerate(data[elem]["points"]):
-                x = data[elem][xax]
-                direction = data[elem]["direction_tod"]
-                for j, dim in enumerate(["x", "y", "z"]):
-                    axs[j, i].scatter(
-                        x[direction == 0],
-                        resids[direction == 0, i, j],
-                        color="black",
-                        marker="o",
-                        alpha=0.5,
-                        label="Stationary",
-                    )
-                    axs[j, i].scatter(
-                        x[direction < 0],
-                        resids[direction < 0, i, j],
-                        color="blue",
-                        marker="x",
-                        alpha=0.5,
-                        label="Decreasing",
-                    )
-                    axs[j, i].scatter(
-                        x[direction > 0],
-                        resids[direction > 0, i, j],
-                        color="red",
-                        marker="+",
-                        alpha=0.5,
-                        label="Increasing",
-                    )
-                    axs[0, i].set_title(point)
-                    axs[-1, i].set_xlabel(xlab)
-                    axs[j, 0].set_ylabel(f"{dim} (mm)")
-            axs[-1, 0].legend()
-            plt.suptitle(f"{elem} Residuals")
-            plt.savefig(
-                os.path.join(plt_root, elem, f"resids_{xax}.png"),
-                bbox_inches="tight",
-            )
-            plt.close()
 
 
 def _plot_path(data, plt_root, logger):
-    os.makedirs(os.path.join(plt_root, "trajectory"), exist_ok=True)
     for elem in data.keys():
         logger.info("Plotting %s trajectory", elem)
+        os.makedirs(os.path.join(plt_root, elem), exist_ok=True)
         if "tod" not in data[elem] or data[elem]["tod"].size == 0:
             logger.warning("\tNo TOD found! Skipping...")
             continue
@@ -490,54 +310,20 @@ def _plot_path(data, plt_root, logger):
             ("angle_tod", "Angle (deg)"),
             ("meas_number", "Measurement (#)"),
         ]:
-            _, axs = plt.subplots(
-                3,
-                len(data[elem]["points"]),
-                sharex=True,
-                sharey=False,
-                figsize=(24, 20),
-                layout="constrained",
+            x = data[elem][xax]
+            dat = data[elem]["tod"]
+            direction = data[elem]["direction_tod"]
+            plot_by_ax_point(
+                data[elem]["points"],
+                x,
+                dat,
+                direction,
+                [],
+                xax,
+                xlab,
+                f"{elem} Trajectory",
+                os.path.join(plt_root, elem),
             )
-            axs = np.reshape(np.array(axs), (int(3), len(data[elem]["points"])))
-            for i, point in enumerate(data[elem]["points"]):
-                dat = data[elem]["tod"]
-                x = data[elem][xax]
-                direction = data[elem]["direction_tod"]
-                for j, dim in enumerate(["x", "y", "z"]):
-                    axs[j, i].scatter(
-                        x[direction == 0],
-                        dat[direction == 0, i, j],
-                        color="black",
-                        marker="o",
-                        alpha=0.5,
-                        label="Stationary",
-                    )
-                    axs[j, i].scatter(
-                        x[direction < 0],
-                        dat[direction < 0, i, j],
-                        color="blue",
-                        marker="x",
-                        alpha=0.5,
-                        label="Decreasing",
-                    )
-                    axs[j, i].scatter(
-                        x[direction > 0],
-                        dat[direction > 0, i, j],
-                        color="red",
-                        marker="+",
-                        alpha=0.5,
-                        label="Increasing",
-                    )
-                    axs[0, i].set_title(point)
-                    axs[-1, i].set_xlabel(xlab)
-                    axs[j, 0].set_ylabel(f"{dim} (mm)")
-            axs[-1, 0].legend()
-            plt.suptitle(f"{elem} Trajectory")
-            plt.savefig(
-                os.path.join(plt_root, "trajectory", f"{elem}_trajectory_{xax}.png"),
-                bbox_inches="tight",
-            )
-            plt.close()
 
 
 def _plot_traj_error(data, plt_root, logger):
@@ -601,7 +387,7 @@ def _plot_traj_error(data, plt_root, logger):
             axs[1, i].set_ylabel("RMS (mm)")
         plt.suptitle(f"{elem} Trajectory Error")
         plt.savefig(
-            os.path.join(plt_root, "trajectory", f"{elem}_error.png"),
+            os.path.join(plt_root, elem, f"{elem}_error.png"),
             bbox_inches="tight",
         )
         plt.close()
