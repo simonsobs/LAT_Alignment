@@ -1,3 +1,13 @@
+## 6.2.0 (2025-07-31)
+
+### Feat
+
+- add plots for residual and scale factors
+
+### Fix
+
+- include skspatial in deps
+
 ## 6.1.0 (2025-07-30)
 
 ### Feat
