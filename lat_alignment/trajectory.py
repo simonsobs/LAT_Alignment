@@ -14,7 +14,13 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import yaml
-from megham.transform import decompose_affine, decompose_rotation, get_affine, get_rigid
+from megham.transform import (
+    apply_transform,
+    decompose_affine,
+    decompose_rotation,
+    get_affine,
+    get_rigid,
+)
 from scipy.spatial.distance import pdist
 from scipy.spatial.transform import Rotation
 from skspatial.objects import Sphere
@@ -42,7 +48,7 @@ LABELS = {
 }
 
 
-def _plot_point_and_hwfe(data, ref, get_transform, plt_root, logger):
+def _plot_point_and_hwfe(data, ref, get_transform, plt_root, logger, skip_missing):
     logger.info("Calculating pointing error and HWFE")
     tods = {
         elem: data[elem]["tod"]
@@ -87,6 +93,8 @@ def _plot_point_and_hwfe(data, ref, get_transform, plt_root, logger):
             _data[f"{elem}_ref"] = ref[elem]
             _data[f"{elem}_msk"] = msk
         if tot < len(tods):
+            if skip_missing:
+                continue
             missing += [i]
         try:
             hwfes[i] = get_hwfe(_data, get_transform, False)
@@ -229,7 +237,7 @@ def _plot_point_and_hwfe(data, ref, get_transform, plt_root, logger):
     plt.close()
 
 
-def _plot_transform(data, ref, get_transform, plt_root, logger):
+def _plot_transform(data, ref, get_transform, plt_root, logger, skip_missing):
     logger.info("Plotting transformation information")
     for elem in data.keys():
         logger.info("\tGetting transforms for %s", elem)
@@ -245,9 +253,13 @@ def _plot_transform(data, ref, get_transform, plt_root, logger):
         dst = ref[elem]
         sfts = np.zeros((len(src), 3)) + np.nan
         rots = np.zeros((len(src), 3)) + np.nan
+        scales = np.zeros((len(src), 3)) + np.nan
+        resids = np.zeros((len(src), len(dst), 3)) + np.nan
         missing = []
         for i, _src in enumerate(src):
             if not np.all(np.isfinite(_src)):
+                if skip_missing:
+                    continue
                 missing += [i]
             try:
                 aff, sft = get_transform(_src, dst)
@@ -256,10 +268,13 @@ def _plot_transform(data, ref, get_transform, plt_root, logger):
                     "\t\tFailed to get transform for a data point! Filling with nans"
                 )
                 continue
-            _, _, rot = decompose_affine(aff)
+            scale, _, rot = decompose_affine(aff)
             rot = np.rad2deg(decompose_rotation(rot))
             sfts[i] = sft
             rots[i] = rot
+            scales[i] = scale
+            trf = apply_transform(_src, aff, sft)
+            resids[i] = dst - trf
 
         # Lets plot shift and rotation
         # First with time
@@ -289,6 +304,19 @@ def _plot_transform(data, ref, get_transform, plt_root, logger):
         plt.ylabel("Rotation (deg)")
         plt.title(f"{elem} Rotation over time")
         plt.savefig(os.path.join(plt_root, elem, "rot_tod.png"), bbox_inches="tight")
+        plt.close()
+
+        plt.scatter(t, scales[:, 0], alpha=0.5, label="x")
+        plt.scatter(t, scales[:, 1], alpha=0.5, label="y")
+        plt.scatter(t, scales[:, 2], alpha=0.5, label="z")
+        plt.scatter(t[missing], scales[missing, 0], color="gray", marker="1")
+        plt.scatter(t[missing], scales[missing, 1], color="gray", marker="1")
+        plt.scatter(t[missing], scales[missing, 2], color="gray", marker="1")
+        plt.legend()
+        plt.xlabel("Measurement #")
+        plt.ylabel("Scale Factor")
+        plt.title(f"{elem} Scale over time")
+        plt.savefig(os.path.join(plt_root, elem, "scale_tod.png"), bbox_inches="tight")
         plt.close()
 
         # Now by angle
@@ -361,6 +389,93 @@ def _plot_transform(data, ref, get_transform, plt_root, logger):
         plt.suptitle(f"{elem} Rotation by Angle")
         plt.savefig(os.path.join(plt_root, elem, "rot_ang.png"), bbox_inches="tight")
         plt.close()
+
+        _, axs = plt.subplots(3, 1, sharex=True)
+        for i, dim in enumerate(["x", "y", "z"]):
+            axs[i].scatter(
+                angle[direction == 0],
+                scales[direction == 0, i],
+                color="black",
+                marker="o",
+                alpha=0.25,
+                label="Stationary",
+            )
+            axs[i].scatter(
+                angle[direction < 0],
+                scales[direction < 0, i],
+                color="blue",
+                marker="x",
+                alpha=0.25,
+                label="Decreasing",
+            )
+            axs[i].scatter(
+                angle[direction > 0],
+                scales[direction > 0, i],
+                color="red",
+                marker="+",
+                alpha=0.25,
+                label="Increasing",
+            )
+            axs[i].scatter(angle[missing], scales[missing, i], color="gray", marker="1")
+            axs[i].set_ylabel(f"{dim} scale")
+        axs[0].legend()
+        axs[-1].set_xlabel("Angle (deg)")
+        plt.suptitle(f"{elem} Scale by Angle")
+        plt.savefig(os.path.join(plt_root, elem, "scale_ang.png"), bbox_inches="tight")
+        plt.close()
+
+        # Plot resids
+        for xax, xlab in [
+            ("angle_tod", "Angle (deg)"),
+            ("meas_number", "Measurement (#)"),
+        ]:
+            _, axs = plt.subplots(
+                3,
+                len(data[elem]["points"]),
+                sharex=True,
+                sharey=False,
+                figsize=(24, 20),
+                layout="constrained",
+            )
+            axs = np.reshape(np.array(axs), (int(3), len(data[elem]["points"])))
+            for i, point in enumerate(data[elem]["points"]):
+                x = data[elem][xax]
+                direction = data[elem]["direction_tod"]
+                for j, dim in enumerate(["x", "y", "z"]):
+                    axs[j, i].scatter(
+                        x[direction == 0],
+                        resids[direction == 0, i, j],
+                        color="black",
+                        marker="o",
+                        alpha=0.5,
+                        label="Stationary",
+                    )
+                    axs[j, i].scatter(
+                        x[direction < 0],
+                        resids[direction < 0, i, j],
+                        color="blue",
+                        marker="x",
+                        alpha=0.5,
+                        label="Decreasing",
+                    )
+                    axs[j, i].scatter(
+                        x[direction > 0],
+                        resids[direction > 0, i, j],
+                        color="red",
+                        marker="+",
+                        alpha=0.5,
+                        label="Increasing",
+                    )
+                    axs[0, i].set_title(point)
+                    axs[-1, i].set_xlabel(xlab)
+                    axs[j, 0].set_ylabel(f"{dim} (mm)")
+            axs[-1, 0].legend()
+            plt.suptitle(f"{elem} Residuals")
+            plt.savefig(
+                os.path.join(plt_root, elem, f"resids_{xax}.png"),
+                bbox_inches="tight",
+            )
+            plt.close()
 
 
 def _plot_path(data, plt_root, logger):
@@ -751,5 +866,9 @@ def main():
     data = _add_tod(data, logger, cfg.get("pad", False))
     _plot_path(data, plt_root, logger)
     _plot_traj_error(data, plt_root, logger)
-    _plot_transform(data, ref, get_transform, plt_root, logger)
-    _plot_point_and_hwfe(data, ref, get_transform, plt_root, logger)
+    _plot_transform(
+        data, ref, get_transform, plt_root, logger, cfg.get("skip_missing", False)
+    )
+    _plot_point_and_hwfe(
+        data, ref, get_transform, plt_root, logger, cfg.get("skip_missing", False)
+    )
