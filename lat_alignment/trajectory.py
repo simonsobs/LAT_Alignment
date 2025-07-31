@@ -14,7 +14,13 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import yaml
-from megham.transform import decompose_affine, decompose_rotation, get_affine, get_rigid, apply_transform
+from megham.transform import (
+    apply_transform,
+    decompose_affine,
+    decompose_rotation,
+    get_affine,
+    get_rigid,
+)
 from scipy.spatial.distance import pdist
 from scipy.spatial.transform import Rotation
 from skspatial.objects import Sphere
@@ -860,5 +866,9 @@ def main():
     data = _add_tod(data, logger, cfg.get("pad", False))
     _plot_path(data, plt_root, logger)
     _plot_traj_error(data, plt_root, logger)
-    _plot_transform(data, ref, get_transform, plt_root, logger, cfg.get("skip_missing", False))
-    _plot_point_and_hwfe(data, ref, get_transform, plt_root, logger, cfg.get("skip_missing", False))
+    _plot_transform(
+        data, ref, get_transform, plt_root, logger, cfg.get("skip_missing", False)
+    )
+    _plot_point_and_hwfe(
+        data, ref, get_transform, plt_root, logger, cfg.get("skip_missing", False)
+    )
