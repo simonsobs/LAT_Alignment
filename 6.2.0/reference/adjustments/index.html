@@ -1,0 +1,2097 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://simonsobs.github.io/LAT_Alignment/6.2.0/reference/adjustments/">
+      
+      
+        <link rel="prev" href="../../ixb/">
+      
+      
+        <link rel="next" href="../alignment/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.16">
+    
+    
+      
+        <title>adjustments - LAT_Alignment</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#lat_alignment.adjustments" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="LAT_Alignment" class="md-header__button md-logo" aria-label="LAT_Alignment" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            LAT_Alignment
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              adjustments
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="LAT_Alignment" class="md-nav__button md-logo" aria-label="LAT_Alignment" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    LAT_Alignment
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../coordinate_systems/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Coordinate Systems
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../panel_numbers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Panel Numbering Scheme
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config_file/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuration File
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../alignment_procedure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Alignment Procedure
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ixb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    IxB Tool
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    API Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            API Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    adjustments
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    adjustments
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#lat_alignment.adjustments" class="md-nav__link">
+    <span class="md-ellipsis">
+      adjustments
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lat_alignment.adjustments.adjustment_fit_func" class="md-nav__link">
+    <span class="md-ellipsis">
+      adjustment_fit_func
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lat_alignment.adjustments.calc_adjustments" class="md-nav__link">
+    <span class="md-ellipsis">
+      calc_adjustments
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lat_alignment.adjustments.rotate" class="md-nav__link">
+    <span class="md-ellipsis">
+      rotate
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lat_alignment.adjustments.rotate_panel" class="md-nav__link">
+    <span class="md-ellipsis">
+      rotate_panel
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lat_alignment.adjustments.translate_panel" class="md-nav__link">
+    <span class="md-ellipsis">
+      translate_panel
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../alignment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    alignment
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bearing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    bearing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../error/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    error
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fitting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    fitting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../io/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    io
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ixb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    ixb
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mirror/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    mirror
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../photogrammetry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    photogrammetry
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../trajectory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    trajectory
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../transforms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    transforms
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#lat_alignment.adjustments" class="md-nav__link">
+    <span class="md-ellipsis">
+      adjustments
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lat_alignment.adjustments.adjustment_fit_func" class="md-nav__link">
+    <span class="md-ellipsis">
+      adjustment_fit_func
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lat_alignment.adjustments.calc_adjustments" class="md-nav__link">
+    <span class="md-ellipsis">
+      calc_adjustments
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lat_alignment.adjustments.rotate" class="md-nav__link">
+    <span class="md-ellipsis">
+      rotate
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lat_alignment.adjustments.rotate_panel" class="md-nav__link">
+    <span class="md-ellipsis">
+      rotate_panel
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lat_alignment.adjustments.translate_panel" class="md-nav__link">
+    <span class="md-ellipsis">
+      translate_panel
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>adjustments</h1>
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="lat_alignment.adjustments"></a>
+    <div class="doc doc-contents first">
+
+        <p>Calculate adjustments needed to align LAT mirror panel</p>
+<p>Author: Saianeesh Keshav Haridas</p>
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="lat_alignment.adjustments.adjustment_fit_func" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">adjustment_fit_func</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="n">can_points</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">adjustors</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Function to minimize when calculating adjustments.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>pars</code>
+            </td>
+            <td>
+                  <code><span title="numpy.typing.NDArray">NDArray</span>[<span title="numpy.float64">float64</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The parameters to fit for:</p>
+<ul>
+<li>dx: Translation in x</li>
+<li>dy: Translation in y</li>
+<li>dz: Translation in z</li>
+<li>thetha_0: Angle to rotate about first adjustor axis</li>
+<li>thetha_1: Angle to rotate about second adjustor axis</li>
+<li>z_t: Additional translation to tension the center point</li>
+</ul>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>can_points</code>
+            </td>
+            <td>
+                  <code><span title="numpy.typing.NDArray">NDArray</span>[<span title="numpy.float64">float64</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The cannonical positions of the points to align.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>points</code>
+            </td>
+            <td>
+                  <code><span title="numpy.typing.NDArray">NDArray</span>[<span title="numpy.float64">float64</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The measured positions of the points to align.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>adjustors</code>
+            </td>
+            <td>
+                  <code><span title="numpy.typing.NDArray">NDArray</span>[<span title="numpy.float64">float64</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The measured positions of the adjustors.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>norm</code></td>            <td>
+                  <code><span title="numpy.float64">float64</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The norm of <span class="arithmatex">\(cannonical_positions - transformed_positions\)</span>.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>lat_alignment/adjustments.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">adjustment_fit_func</span><span class="p">(</span>
+    <span class="n">pars</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+    <span class="n">can_points</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+    <span class="n">points</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+    <span class="n">adjustors</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to minimize when calculating adjustments.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pars : NDArray[np.float64]</span>
+<span class="sd">        The parameters to fit for:</span>
+
+<span class="sd">        * dx: Translation in x</span>
+<span class="sd">        * dy: Translation in y</span>
+<span class="sd">        * dz: Translation in z</span>
+<span class="sd">        * thetha_0: Angle to rotate about first adjustor axis</span>
+<span class="sd">        * thetha_1: Angle to rotate about second adjustor axis</span>
+<span class="sd">        * z_t: Additional translation to tension the center point</span>
+<span class="sd">    can_points : NDArray[np.float64]</span>
+<span class="sd">        The cannonical positions of the points to align.</span>
+<span class="sd">    points : NDArray[np.float64]</span>
+<span class="sd">        The measured positions of the points to align.</span>
+<span class="sd">    adjustors : NDArray[np.float64]</span>
+<span class="sd">        The measured positions of the adjustors.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    norm : np.float64</span>
+<span class="sd">        The norm of $cannonical_positions - transformed_positions$.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">dz</span><span class="p">,</span> <span class="n">thetha_0</span><span class="p">,</span> <span class="n">thetha_1</span><span class="p">,</span> <span class="n">z_t</span> <span class="o">=</span> <span class="n">pars</span>
+    <span class="n">points</span><span class="p">,</span> <span class="n">adjustors</span> <span class="o">=</span> <span class="n">translate_panel</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">adjustors</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">dz</span><span class="p">)</span>
+    <span class="n">points</span><span class="p">,</span> <span class="n">adjustors</span> <span class="o">=</span> <span class="n">rotate_panel</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">adjustors</span><span class="p">,</span> <span class="n">thetha_0</span><span class="p">,</span> <span class="n">thetha_1</span><span class="p">)</span>
+    <span class="n">points</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">z_t</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">can_points</span> <span class="o">-</span> <span class="n">points</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="lat_alignment.adjustments.calc_adjustments" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">calc_adjustments</span><span class="p">(</span><span class="n">can_points</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">adjustors</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Calculate adjustments needed to align panel.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>can_points</code>
+            </td>
+            <td>
+                  <code><span title="numpy.typing.NDArray">NDArray</span>[<span title="numpy.float64">float64</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The cannonical position of the points to align.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>points</code>
+            </td>
+            <td>
+                  <code><span title="numpy.typing.NDArray">NDArray</span>[<span title="numpy.float64">float64</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The measured positions of the points to align.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>adjustors</code>
+            </td>
+            <td>
+                  <code><span title="numpy.typing.NDArray">NDArray</span>[<span title="numpy.float64">float64</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The measured positions of the adjustors.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>**kwargs</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Arguments to be passed to <code>scipy.optimize.minimize</code>.</p>
+              </div>
+            </td>
+            <td>
+                  <code>{}</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>dx</code>
+            </td>
+            <td>
+                  <code><span title="numpy.float64">float64</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The required translation of panel in x.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>dy</code>
+            </td>
+            <td>
+                  <code><span title="numpy.float64">float64</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The required translation of panel in y.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>d_adj</code>
+            </td>
+            <td>
+                  <code><span title="numpy.typing.NDArray">NDArray</span>[<span title="numpy.float64">float64</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The amount to move each adjustor.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>dx_err</code>
+            </td>
+            <td>
+                  <code><span title="numpy.float64">float64</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The error in the fit for <code>dx</code>.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>dy_err</code>
+            </td>
+            <td>
+                  <code><span title="numpy.float64">float64</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The error in the fit for <code>dy</code>.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>d_adj_err</code>
+            </td>
+            <td>
+                  <code><span title="numpy.typing.NDArray">NDArray</span>[<span title="numpy.float64">float64</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The error in the fit for <code>d_adj</code>.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>lat_alignment/adjustments.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">calc_adjustments</span><span class="p">(</span>
+    <span class="n">can_points</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+    <span class="n">points</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+    <span class="n">adjustors</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+    <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+    <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+<span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate adjustments needed to align panel.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    can_points : NDArray[np.float64]</span>
+<span class="sd">        The cannonical position of the points to align.</span>
+<span class="sd">    points : NDArray[np.float64]</span>
+<span class="sd">        The measured positions of the points to align.</span>
+<span class="sd">    adjustors : NDArray[np.float64]</span>
+<span class="sd">        The measured positions of the adjustors.</span>
+<span class="sd">    **kwargs</span>
+<span class="sd">        Arguments to be passed to `scipy.optimize.minimize`.</span>
+
+<span class="sd">    dx : np.float64</span>
+<span class="sd">        The required translation of panel in x.</span>
+<span class="sd">    dy : np.float64</span>
+<span class="sd">        The required translation of panel in y.</span>
+<span class="sd">    d_adj : NDArray[np.float64]</span>
+<span class="sd">        The amount to move each adjustor.</span>
+<span class="sd">    dx_err : np.float64</span>
+<span class="sd">        The error in the fit for `dx`.</span>
+<span class="sd">    dy_err : np.float64</span>
+<span class="sd">        The error in the fit for `dy`.</span>
+<span class="sd">    d_adj_err : NDArray[np.float64]</span>
+<span class="sd">        The error in the fit for `d_adj`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span>
+        <span class="n">adjustment_fit_func</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="n">can_points</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">adjustors</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span>
+
+    <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">dz</span><span class="p">,</span> <span class="n">thetha_0</span><span class="p">,</span> <span class="n">thetha_1</span><span class="p">,</span> <span class="n">z_t</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">x</span>
+    <span class="n">_points</span><span class="p">,</span> <span class="n">_adjustors</span> <span class="o">=</span> <span class="n">translate_panel</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">adjustors</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">dz</span><span class="p">)</span>
+    <span class="n">_points</span><span class="p">,</span> <span class="n">_adjustors</span> <span class="o">=</span> <span class="n">rotate_panel</span><span class="p">(</span><span class="n">_points</span><span class="p">,</span> <span class="n">_adjustors</span><span class="p">,</span> <span class="n">thetha_0</span><span class="p">,</span> <span class="n">thetha_1</span><span class="p">)</span>
+    <span class="n">_adjustors</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">z_t</span>
+    <span class="n">d_adj</span> <span class="o">=</span> <span class="n">_adjustors</span> <span class="o">-</span> <span class="n">adjustors</span>
+
+    <span class="n">ftol</span> <span class="o">=</span> <span class="mf">2.220446049250313e-09</span>
+    <span class="k">if</span> <span class="s2">&quot;ftol&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">ftol</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;ftol&quot;</span><span class="p">]</span>
+    <span class="n">perr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">ftol</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">hess_inv</span><span class="p">))</span>
+    <span class="n">dx_err</span><span class="p">,</span> <span class="n">dy_err</span><span class="p">,</span> <span class="n">dz_err</span><span class="p">,</span> <span class="n">thetha_0_err</span><span class="p">,</span> <span class="n">thetha_1_err</span><span class="p">,</span> <span class="n">z_t_err</span> <span class="o">=</span> <span class="n">perr</span>
+    <span class="n">_points</span><span class="p">,</span> <span class="n">_adjustors</span> <span class="o">=</span> <span class="n">translate_panel</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">adjustors</span><span class="p">,</span> <span class="n">dx_err</span><span class="p">,</span> <span class="n">dy_err</span><span class="p">,</span> <span class="n">dz_err</span><span class="p">)</span>
+    <span class="n">_points</span><span class="p">,</span> <span class="n">_adjustors</span> <span class="o">=</span> <span class="n">rotate_panel</span><span class="p">(</span><span class="n">_points</span><span class="p">,</span> <span class="n">_adjustors</span><span class="p">,</span> <span class="n">thetha_0_err</span><span class="p">,</span> <span class="n">thetha_1_err</span><span class="p">)</span>
+    <span class="n">_adjustors</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">z_t_err</span>
+    <span class="n">d_adj_err</span> <span class="o">=</span> <span class="n">_adjustors</span> <span class="o">-</span> <span class="n">adjustors</span>
+
+    <span class="k">return</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">d_adj</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">dx_err</span><span class="p">,</span> <span class="n">dy_err</span><span class="p">,</span> <span class="n">d_adj_err</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="lat_alignment.adjustments.rotate" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">rotate</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">end_point1</span><span class="p">,</span> <span class="n">end_point2</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Rotate a point about an axis</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>point</code>
+            </td>
+            <td>
+                  <code><span title="numpy.typing.NDArray">NDArray</span>[<span title="numpy.float64">float64</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The point to rotate</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>end_point1</code>
+            </td>
+            <td>
+                  <code><span title="numpy.typing.NDArray">NDArray</span>[<span title="numpy.float64">float64</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A point on the axis of rotation</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>end_point2</code>
+            </td>
+            <td>
+                  <code><span title="numpy.typing.NDArray">NDArray</span>[<span title="numpy.float64">float64</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Another point on the axis of rotation</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>theta</code>
+            </td>
+            <td>
+                  <code><span title="numpy.float64">float64</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Angle in radians to rotate by</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>point</code></td>            <td>
+                  <code><span title="numpy.typing.NDArray">NDArray</span>[<span title="numpy.float64">float64</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The rotated point</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>lat_alignment/adjustments.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">rotate</span><span class="p">(</span>
+    <span class="n">point</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+    <span class="n">end_point1</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+    <span class="n">end_point2</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+    <span class="n">theta</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Rotate a point about an axis</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    point : NDArray[np.float64]</span>
+<span class="sd">        The point to rotate</span>
+<span class="sd">    end_point1 : NDArray[np.float64]</span>
+<span class="sd">        A point on the axis of rotation</span>
+<span class="sd">    end_point2 : NDArray[np.float64]</span>
+<span class="sd">        Another point on the axis of rotation</span>
+<span class="sd">    theta: NDArray[np.float64]</span>
+<span class="sd">        Angle in radians to rotate by</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    point : NDArray[np.float64]</span>
+<span class="sd">        The rotated point</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">origin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">end_point1</span><span class="p">,</span> <span class="n">end_point2</span><span class="p">))</span>
+    <span class="n">point_0</span> <span class="o">=</span> <span class="n">point</span> <span class="o">-</span> <span class="n">origin</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">end_point2</span> <span class="o">-</span> <span class="n">end_point1</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">rot</span><span class="o">.</span><span class="n">from_rotvec</span><span class="p">(</span><span class="n">theta</span> <span class="o">*</span> <span class="n">ax</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">ax</span><span class="p">))</span>
+    <span class="n">point_0</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">point_0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">point_0</span> <span class="o">+</span> <span class="n">origin</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="lat_alignment.adjustments.rotate_panel" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">rotate_panel</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">adjustors</span><span class="p">,</span> <span class="n">thetha_0</span><span class="p">,</span> <span class="n">thetha_1</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Rotate panel about axes created by adjustors.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>points</code>
+            </td>
+            <td>
+                  <code><span title="numpy.typing.NDArray">NDArray</span>[<span title="numpy.float64">float64</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Points on panel to rotate.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>adjustors</code>
+            </td>
+            <td>
+                  <code><span title="numpy.typing.NDArray">NDArray</span>[<span title="numpy.float64">float64</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Adjustor positions.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>thetha_0</code>
+            </td>
+            <td>
+                  <code><span title="numpy.float64">float64</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Angle to rotate about first adjustor axis</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>thetha_1</code>
+            </td>
+            <td>
+                  <code>np.float64.</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Angle to rotate about second adjustor axis</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>rot_points</code></td>            <td>
+                  <code><span title="numpy.typing.NDArray">NDArray</span>[<span title="numpy.float64">float64</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The rotated points.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+<td><code>rot_adjustors</code></td>            <td>
+                  <code><span title="numpy.typing.NDArray">NDArray</span>[<span title="numpy.float64">float64</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The rotated adjustors.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>lat_alignment/adjustments.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">rotate_panel</span><span class="p">(</span>
+    <span class="n">points</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+    <span class="n">adjustors</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+    <span class="n">thetha_0</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+    <span class="n">thetha_1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Rotate panel about axes created by adjustors.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    points : NDArray[np.float64]</span>
+<span class="sd">        Points on panel to rotate.</span>
+<span class="sd">    adjustors : NDArray[np.float64]</span>
+<span class="sd">        Adjustor positions.</span>
+<span class="sd">    thetha_0 : np.float64</span>
+<span class="sd">        Angle to rotate about first adjustor axis</span>
+<span class="sd">    thetha_1 : np.float64.</span>
+<span class="sd">        Angle to rotate about second adjustor axis</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    rot_points : NDArray[np.float64]</span>
+<span class="sd">        The rotated points.</span>
+<span class="sd">    rot_adjustors : NDArray[np.float64]</span>
+<span class="sd">        The rotated adjustors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rot_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">rot_adjustors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">adjustors</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+    <span class="n">n_points</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+    <span class="n">n_adjustors</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">adjustors</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_points</span><span class="p">):</span>
+        <span class="n">rot_points</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">rotate</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">adjustors</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">adjustors</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">thetha_0</span><span class="p">)</span>
+        <span class="n">rot_points</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">rotate</span><span class="p">(</span><span class="n">rot_points</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">adjustors</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">adjustors</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">thetha_1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_adjustors</span><span class="p">):</span>
+        <span class="n">rot_adjustors</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">rotate</span><span class="p">(</span><span class="n">adjustors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">adjustors</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">adjustors</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">thetha_0</span><span class="p">)</span>
+        <span class="n">rot_adjustors</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">rotate</span><span class="p">(</span>
+            <span class="n">rot_adjustors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">adjustors</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">adjustors</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">thetha_1</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">rot_points</span><span class="p">,</span> <span class="n">rot_adjustors</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="lat_alignment.adjustments.translate_panel" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">translate_panel</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">adjustors</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">dz</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Translate a panel.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>points</code>
+            </td>
+            <td>
+                  <code><span title="numpy.typing.NDArray">NDArray</span>[<span title="numpy.float64">float64</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The points on panel to translate.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>adjustors</code>
+            </td>
+            <td>
+                  <code><span title="numpy.typing.NDArray">NDArray</span>[<span title="numpy.float64">float64</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Adjustor positions.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>dx</code>
+            </td>
+            <td>
+                  <code><span title="numpy.float64">float64</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Translation in x.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>dy</code>
+            </td>
+            <td>
+                  <code><span title="numpy.float64">float64</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Translation in y.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>dz</code>
+            </td>
+            <td>
+                  <code><span title="numpy.float64">float64</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Translation in z.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>points</code></td>            <td>
+                  <code><span title="numpy.typing.NDArray">NDArray</span>[<span title="numpy.float64">float64</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The translated points.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+<td><code>adjustors</code></td>            <td>
+                  <code><span title="numpy.typing.NDArray">NDArray</span>[<span title="numpy.float64">float64</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The translated adjustors.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>lat_alignment/adjustments.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">translate_panel</span><span class="p">(</span>
+    <span class="n">points</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+    <span class="n">adjustors</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+    <span class="n">dx</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+    <span class="n">dy</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+    <span class="n">dz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Translate a panel.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    points : NDArray[np.float64]</span>
+<span class="sd">        The points on panel to translate.</span>
+<span class="sd">    adjustors : NDArray[np.float64]</span>
+<span class="sd">        Adjustor positions.</span>
+<span class="sd">    dx : np.float64</span>
+<span class="sd">        Translation in x.</span>
+<span class="sd">    dy : np.float64</span>
+<span class="sd">        Translation in y.</span>
+<span class="sd">    dz : np.float64</span>
+<span class="sd">        Translation in z.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    points : NDArray[np.float64]</span>
+<span class="sd">        The translated points.</span>
+<span class="sd">    adjustors : NDArray[np.float64]</span>
+<span class="sd">        The translated adjustors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">translation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">dz</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">points</span> <span class="o">+</span> <span class="n">translation</span><span class="p">,</span> <span class="n">adjustors</span> <span class="o">+</span> <span class="n">translation</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.50899def.min.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
