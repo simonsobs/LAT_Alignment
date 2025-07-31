@@ -27,7 +27,13 @@ from skspatial.objects import Sphere
 
 from .error import get_hwfe, get_pointing_error
 from .io import load_tracker
-from .traj_plots import plot_by_ax_point, plot_by_ax, plot_all_ax, plot_all_dir, plot_hist
+from .traj_plots import (
+    plot_all_ax,
+    plot_all_dir,
+    plot_by_ax,
+    plot_by_ax_point,
+    plot_hist,
+)
 
 mpl.rcParams["lines.markersize"] *= 1.5
 
@@ -47,6 +53,7 @@ LABELS = {
     ],
     "receiver": ["receiver_1", "receiver_2", "receiver_3", "receiver_4"],
 }
+
 
 def _plot_point_and_hwfe(data, ref, get_transform, plt_root, logger, skip_missing):
     logger.info("Calculating pointing error and HWFE")
@@ -109,16 +116,59 @@ def _plot_point_and_hwfe(data, ref, get_transform, plt_root, logger, skip_missin
     plt_root_err = os.path.join(plt_root, "error")
     os.makedirs(plt_root_err, exist_ok=True)
     x = np.arange(npts)
-    plot_all_dir(x, hwfes, direction, missing, "Measurement (#)", "HWFE (um-rms)", f"HWFE over time", plt_root_err)
-    plot_all_dir(x, pes, direction, missing, "Measurement (#)", 'Pointing Error (")', f"Pointing Error over time", plt_root_err)
+    plot_all_dir(
+        x,
+        hwfes,
+        direction,
+        missing,
+        "Measurement (#)",
+        "HWFE (um-rms)",
+        f"HWFE over time",
+        plt_root_err,
+    )
+    plot_all_dir(
+        x,
+        pes,
+        direction,
+        missing,
+        "Measurement (#)",
+        'Pointing Error (")',
+        f"Pointing Error over time",
+        plt_root_err,
+    )
 
     # Plot distribution
     plot_hist(hwfes, direction, "HWFE (um-rms)", "HWFE Distribution", plt_root_err)
-    plot_hist(pes, direction, 'Pointing Error (")', "Pointing Error Distribution", plt_root_err)
+    plot_hist(
+        pes,
+        direction,
+        'Pointing Error (")',
+        "Pointing Error Distribution",
+        plt_root_err,
+    )
 
     # Now by angle
-    plot_all_dir(angle, hwfes, direction, missing, "Angle (deg)", "HWFE (um-rms)", f"HWFE by Angle", plt_root_err)
-    plot_all_dir(angle, pes, direction, missing, "Angle (deg)", 'Pointing Error (")', f"Pointing Error by Angle", plt_root_err)
+    plot_all_dir(
+        angle,
+        hwfes,
+        direction,
+        missing,
+        "Angle (deg)",
+        "HWFE (um-rms)",
+        f"HWFE by Angle",
+        plt_root_err,
+    )
+    plot_all_dir(
+        angle,
+        pes,
+        direction,
+        missing,
+        "Angle (deg)",
+        'Pointing Error (")',
+        f"Pointing Error by Angle",
+        plt_root_err,
+    )
+
 
 def _plot_transform(data, ref, get_transform, plt_root, logger, skip_missing):
     logger.info("Plotting transformation information")
@@ -164,21 +214,89 @@ def _plot_transform(data, ref, get_transform, plt_root, logger, skip_missing):
         plt_root_elem = os.path.join(plt_root, elem)
         os.makedirs(plt_root_elem, exist_ok=True)
         x = np.arange(len(sfts))
-        plot_all_ax(x, sfts, missing, "Measurement (#)", "Shift (mm)", f"{elem} Shifts over time", plt_root_elem)
-        plot_all_ax(x, rots, missing, "Measurement (#)", "Rotation (deg)", f"{elem} Rotation over time", plt_root_elem)
-        plot_all_ax(x, scales, missing, "Measurement (#)", "Scale Factor", f"{elem} Scale over time", plt_root_elem)
+        plot_all_ax(
+            x,
+            sfts,
+            missing,
+            "Measurement (#)",
+            "Shift (mm)",
+            f"{elem} Shifts over time",
+            plt_root_elem,
+        )
+        plot_all_ax(
+            x,
+            rots,
+            missing,
+            "Measurement (#)",
+            "Rotation (deg)",
+            f"{elem} Rotation over time",
+            plt_root_elem,
+        )
+        plot_all_ax(
+            x,
+            scales,
+            missing,
+            "Measurement (#)",
+            "Scale Factor",
+            f"{elem} Scale over time",
+            plt_root_elem,
+        )
 
         # Now by angle
         direction = data[elem]["direction_tod"]
         x = data[elem]["angle_tod"]
-        plot_by_ax(x, sfts, direction, missing, "angle_tod", "Angle (deg)", "shift (mm)", f"{elem} Shifts by Angle", os.path.join(plt_root, elem))
-        plot_by_ax(x, rots, direction, missing, "angle_tod", "Angle (deg)", "rotation (deg)", f"{elem} Rotation by Angle", os.path.join(plt_root, elem))
-        plot_by_ax(x, scales, direction, missing, "angle_tod", "Angle (deg)", "scale ", f"{elem} Scale by Angle", os.path.join(plt_root, elem))
+        plot_by_ax(
+            x,
+            sfts,
+            direction,
+            missing,
+            "angle_tod",
+            "Angle (deg)",
+            "shift (mm)",
+            f"{elem} Shifts by Angle",
+            os.path.join(plt_root, elem),
+        )
+        plot_by_ax(
+            x,
+            rots,
+            direction,
+            missing,
+            "angle_tod",
+            "Angle (deg)",
+            "rotation (deg)",
+            f"{elem} Rotation by Angle",
+            os.path.join(plt_root, elem),
+        )
+        plot_by_ax(
+            x,
+            scales,
+            direction,
+            missing,
+            "angle_tod",
+            "Angle (deg)",
+            "scale ",
+            f"{elem} Scale by Angle",
+            os.path.join(plt_root, elem),
+        )
 
         # Plot resids
-        for xax, xlab in [ ("angle_tod", "Angle (deg)"), ("meas_number", "Measurement (#)"), ]:
+        for xax, xlab in [
+            ("angle_tod", "Angle (deg)"),
+            ("meas_number", "Measurement (#)"),
+        ]:
             x = data[elem][xax]
-            plot_by_ax_point(data[elem]["points"], x, resids, direction, missing, xax, xlab, f"{elem} Residuals", os.path.join(plt_root, elem))
+            plot_by_ax_point(
+                data[elem]["points"],
+                x,
+                resids,
+                direction,
+                missing,
+                xax,
+                xlab,
+                f"{elem} Residuals",
+                os.path.join(plt_root, elem),
+            )
+
 
 def _plot_path(data, plt_root, logger):
     for elem in data.keys():
@@ -195,7 +313,18 @@ def _plot_path(data, plt_root, logger):
             x = data[elem][xax]
             dat = data[elem]["tod"]
             direction = data[elem]["direction_tod"]
-            plot_by_ax_point(data[elem]["points"], x, dat, direction, [], xax, xlab, f"{elem} Trajectory", os.path.join(plt_root, elem))
+            plot_by_ax_point(
+                data[elem]["points"],
+                x,
+                dat,
+                direction,
+                [],
+                xax,
+                xlab,
+                f"{elem} Trajectory",
+                os.path.join(plt_root, elem),
+            )
+
 
 def _plot_traj_error(data, plt_root, logger):
     for elem in data.keys():

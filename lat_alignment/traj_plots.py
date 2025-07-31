@@ -1,9 +1,12 @@
 """
 Helper module with plotting functions for the trajectory module.
 """
+
 import os
+
 import matplotlib.pyplot as plt
 import numpy as np
+
 
 def plot_by_ax_point(points, x, dat, direction, missing, xax, xlab, title, plt_root):
     _, axs = plt.subplots(
@@ -17,9 +20,30 @@ def plot_by_ax_point(points, x, dat, direction, missing, xax, xlab, title, plt_r
     axs = np.reshape(np.array(axs), (int(3), len(points)))
     for i, point in enumerate(points):
         for j, dim in enumerate(["x", "y", "z"]):
-            axs[j, i].scatter( x[direction == 0], dat[direction == 0, i, j], color="black", marker="o", alpha=0.5, label="Stationary",)
-            axs[j, i].scatter( x[direction < 0], dat[direction < 0, i, j], color="blue", marker="x", alpha=0.5, label="Decreasing",)
-            axs[j, i].scatter( x[direction > 0], dat[direction > 0, i, j], color="red", marker="+", alpha=0.5, label="Increasing",)
+            axs[j, i].scatter(
+                x[direction == 0],
+                dat[direction == 0, i, j],
+                color="black",
+                marker="o",
+                alpha=0.5,
+                label="Stationary",
+            )
+            axs[j, i].scatter(
+                x[direction < 0],
+                dat[direction < 0, i, j],
+                color="blue",
+                marker="x",
+                alpha=0.5,
+                label="Decreasing",
+            )
+            axs[j, i].scatter(
+                x[direction > 0],
+                dat[direction > 0, i, j],
+                color="red",
+                marker="+",
+                alpha=0.5,
+                label="Increasing",
+            )
             axs[j, i].scatter(x[missing], dat[missing, i, j], color="gray", marker="1")
             axs[0, i].set_title(point)
             axs[-1, i].set_xlabel(xlab)
@@ -32,18 +56,43 @@ def plot_by_ax_point(points, x, dat, direction, missing, xax, xlab, title, plt_r
     )
     plt.close()
 
+
 def plot_by_ax(x, dat, direction, missing, xax, xlab, ylab, title, plt_root):
     _, axs = plt.subplots(3, 1, sharex=True)
     for i, dim in enumerate(["x", "y", "z"]):
-        axs[i].scatter( x[direction == 0], dat[direction == 0, i], color="black", marker="o", alpha=0.25, label="Stationary",)
-        axs[i].scatter( x[direction < 0], dat[direction < 0, i], color="blue", marker="x", alpha=0.25, label="Decreasing",)
-        axs[i].scatter( x[direction > 0], dat[direction > 0, i], color="red", marker="+", alpha=0.25, label="Increasing",)
+        axs[i].scatter(
+            x[direction == 0],
+            dat[direction == 0, i],
+            color="black",
+            marker="o",
+            alpha=0.25,
+            label="Stationary",
+        )
+        axs[i].scatter(
+            x[direction < 0],
+            dat[direction < 0, i],
+            color="blue",
+            marker="x",
+            alpha=0.25,
+            label="Decreasing",
+        )
+        axs[i].scatter(
+            x[direction > 0],
+            dat[direction > 0, i],
+            color="red",
+            marker="+",
+            alpha=0.25,
+            label="Increasing",
+        )
         axs[i].scatter(x[missing], dat[missing, i], color="gray", marker="1")
         axs[i].set_ylabel(f"{dim} {ylab}")
     axs[0].legend()
     axs[-1].set_xlabel(xlab)
     plt.suptitle(title)
-    plt.savefig(os.path.join(plt_root, f"{title.lower().replace(' ' , '_')}_{xax}.png"), bbox_inches="tight")
+    plt.savefig(
+        os.path.join(plt_root, f"{title.lower().replace(' ' , '_')}_{xax}.png"),
+        bbox_inches="tight",
+    )
     plt.close()
 
 
@@ -58,21 +107,46 @@ def plot_all_ax(x, dat, missing, xlab, ylab, title, plt_root):
     plt.xlabel(xlab)
     plt.ylabel(ylab)
     plt.title(title)
-    plt.savefig(os.path.join(plt_root,  f"{title.lower().replace(' ' , '_')}.png"), bbox_inches="tight")
+    plt.savefig(
+        os.path.join(plt_root, f"{title.lower().replace(' ' , '_')}.png"),
+        bbox_inches="tight",
+    )
     plt.close()
 
 
 def plot_all_dir(x, dat, direction, missing, xlab, ylab, title, plt_root):
-    plt.scatter( x[direction == 0], dat[direction == 0], color="black", alpha=0.5, label="Stationary",)
-    plt.scatter( x[direction < 0], dat[direction < 0], color="blue", alpha=0.5, label="Decreasing",)
-    plt.scatter( x[direction > 0], dat[direction > 0], color="red", alpha=0.5, label="Increasing",)
+    plt.scatter(
+        x[direction == 0],
+        dat[direction == 0],
+        color="black",
+        alpha=0.5,
+        label="Stationary",
+    )
+    plt.scatter(
+        x[direction < 0],
+        dat[direction < 0],
+        color="blue",
+        alpha=0.5,
+        label="Decreasing",
+    )
+    plt.scatter(
+        x[direction > 0],
+        dat[direction > 0],
+        color="red",
+        alpha=0.5,
+        label="Increasing",
+    )
     plt.scatter(x[missing], dat[missing], color="gray", alpha=1, marker="1")
     plt.legend()
     plt.xlabel(xlab)
     plt.ylabel(ylab)
     plt.title(title)
-    plt.savefig(os.path.join(plt_root,  f"{title.lower().replace(' ' , '_')}.png"), bbox_inches="tight")
+    plt.savefig(
+        os.path.join(plt_root, f"{title.lower().replace(' ' , '_')}.png"),
+        bbox_inches="tight",
+    )
     plt.close()
+
 
 def plot_hist(dat, direction, xlab, title, plt_root):
     if len(direction == 0) > 0:
@@ -103,5 +177,8 @@ def plot_hist(dat, direction, xlab, title, plt_root):
     plt.xlabel(xlab)
     plt.ylabel("Counts (#)")
     plt.title(title)
-    plt.savefig(os.path.join(plt_root,  f"{title.lower().replace(' ' , '_')}.png"), bbox_inches="tight")
+    plt.savefig(
+        os.path.join(plt_root, f"{title.lower().replace(' ' , '_')}.png"),
+        bbox_inches="tight",
+    )
     plt.close()
