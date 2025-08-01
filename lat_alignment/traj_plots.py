@@ -149,7 +149,7 @@ def plot_all_dir(x, dat, direction, missing, xlab, ylab, title, plt_root):
 
 
 def plot_hist(dat, direction, xlab, title, plt_root):
-    if len(direction == 0) > 0:
+    if len(direction == 0) > 0 and np.sum(np.isfinite(dat[direction == 0])) > 0:
         plt.hist(
             dat[direction == 0],
             bins="auto",
@@ -157,7 +157,7 @@ def plot_hist(dat, direction, xlab, title, plt_root):
             alpha=0.5,
             label="Stationary",
         )
-    if len(direction < 0) > 0:
+    if len(direction < 0) > 0 and np.sum(np.isfinite(dat[direction < 0])) > 0:
         plt.hist(
             dat[direction < 0],
             bins="auto",
@@ -165,7 +165,7 @@ def plot_hist(dat, direction, xlab, title, plt_root):
             alpha=0.5,
             label="Decreasing",
         )
-    if len(direction > 0) > 0:
+    if len(direction > 0) > 0 and np.sum(np.isfinite(dat[direction > 0])) > 0:
         plt.hist(
             dat[direction > 0],
             bins="auto",
