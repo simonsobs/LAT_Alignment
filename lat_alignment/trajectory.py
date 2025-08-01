@@ -532,3 +532,19 @@ def main():
     _plot_point_and_hwfe(
         data, ref, get_transform, plt_root, logger, cfg.get("skip_missing", False)
     )
+
+    # Save if we want
+    if not cfg.get("save", False):
+        sys.exit(0)
+    logger.info("Saving reconstructed TODs")
+    if cfg.get("local", False):
+        logger.info("\tSaving in local coordinates")
+        outdir = os.path.join(plt_root, "tods")
+        os.makedirs(outdir, exist_ok=True)
+        for elem in data.elems:
+            for tod in elem.tods:
+                dat = tod.data
+                if cfg.get("local", False):
+                    dat = coord_transform(dat, "opt_global", local_coords[elem.name])
+                to_save = np.column_stack([tod.angle, np.sign(tod.direction), tod.data])
+                np.savetxt(os.path.join(outdir, f"{tod.name}.csv"), to_save, header="angle direction x y z")

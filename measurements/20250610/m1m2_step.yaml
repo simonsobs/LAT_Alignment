@@ -1,6 +1,7 @@
 correct_rot: True 
 local: True 
 pad: True
+save: True
 primary:
   primary_lower_right:
     path: "./M1_Lower_Right_step_10deg_start_40deg.txt"
