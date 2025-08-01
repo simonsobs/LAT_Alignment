@@ -33,6 +33,7 @@ from .traj_plots import (
     plot_hist,
 )
 from .refpoint import RefTOD, RefCollection
+from .transforms import coord_transform 
 
 mpl.rcParams["lines.markersize"] *= 1.5
 
@@ -52,6 +53,8 @@ LABELS = {
     ],
     "receiver": ["receiver_1", "receiver_2", "receiver_3", "receiver_4"],
 }
+
+local_coords = {"primary":"opt_primary", "secondary":"opt_secondary", "receiver":"opt_global"}
 
 
 def _plot_point_and_hwfe(data, ref, get_transform, plt_root, logger, skip_missing):
@@ -160,7 +163,7 @@ def _plot_point_and_hwfe(data, ref, get_transform, plt_root, logger, skip_missin
     )
 
 
-def _plot_transform(data, ref, get_transform, plt_root, logger, skip_missing):
+def _plot_transform(data, ref, get_transform, plt_root, logger, skip_missing, local=False):
     logger.info("Plotting transformation information")
     for elem in data.keys():
         logger.info("\tGetting transforms for %s", elem)
@@ -172,6 +175,8 @@ def _plot_transform(data, ref, get_transform, plt_root, logger, skip_missing):
             continue
         src = data[elem].data
         dst = ref[elem]
+        if local:
+            dst = coord_transform(dst, "opt_global", local_coords[elem]) 
         sfts = np.zeros((len(src), 3)) + np.nan
         rots = np.zeros((len(src), 3)) + np.nan
         scales = np.zeros((len(src), 3)) + np.nan
@@ -182,6 +187,8 @@ def _plot_transform(data, ref, get_transform, plt_root, logger, skip_missing):
                 if skip_missing:
                     continue
                 missing += [i]
+            if local:
+                _src = coord_transform(_src, "opt_global", local_coords[elem])
             try:
                 aff, sft = get_transform(_src, dst)
             except ValueError:
@@ -520,7 +527,7 @@ def main():
     _plot_path(data, plt_root, logger)
     _plot_traj_error(data, plt_root, logger)
     _plot_transform(
-        data, ref, get_transform, plt_root, logger, cfg.get("skip_missing", False)
+        data, ref, get_transform, plt_root, logger, cfg.get("skip_missing", False), cfg.get("local", False)
     )
     _plot_point_and_hwfe(
         data, ref, get_transform, plt_root, logger, cfg.get("skip_missing", False)
