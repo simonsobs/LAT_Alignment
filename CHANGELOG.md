@@ -1,3 +1,11 @@
+## 6.3.0 (2025-08-03)
+
+### Feat
+
+- add option to save reconstructed TODs
+- add option to plot transforms in local coordindates
+- reorganize trajectory data into dataclasses
+
 ## 6.2.0 (2025-07-31)
 
 ### Feat
