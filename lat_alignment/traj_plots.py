@@ -6,19 +6,50 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+from numpy.typing import NDArray
 
 
-def plot_by_ax_point(points, x, dat, direction, missing, xax, xlab, title, plt_root):
+def plot_by_ax_point(names: list[str] | NDArray[np.str_], x: NDArray[np.float64], dat: NDArray[np.float64], direction: NDArray[np.float64], missing: list[int], xax: str, xlab: str, title: str, plt_root: str):
+    """
+    Plot data with subplots organized such that each row is a different dimension
+    and each collumn is a different physical location that was measured.
+    The plot will be saved to `plt_root/{title.lower().replace(' ' , '_')}_{xax}.png`.
+
+    Parameters
+    ----------
+    names : list[str] | NDArray[np.str_]
+        The names of the physically measured locations.
+    x : NDArray[np.float64]
+        The x data to plot against.
+        Should have shape `(npoint,)`.
+    dat : NDArray[np.float64]
+        The data to plot.
+        Should have shape `(npoint, nloc, ndim)`.
+    direction : NDArray[np.float64]
+        The direction of motion at each data point.
+        Should have shape `(npoint,)`.
+    missing : list[int]
+        A list of indices that will be flagged in the plot
+        as only having partial data.
+    xax : str
+        A description of the x axis for the file name.
+    xlab : str
+        The x label to use in the plot.
+    title : str
+        The title of the plot.
+    plt_root : str
+        The directory to save plots to.
+    """
     _, axs = plt.subplots(
         3,
-        len(points),
+        len(names),
         sharex=True,
         sharey=False,
         figsize=(24, 20),
         layout="constrained",
     )
-    axs = np.reshape(np.array(axs), (int(3), len(points)))
-    for i, point in enumerate(points):
+    axs = np.reshape(np.array(axs), (int(3), len(names)))
+    for i, point in enumerate(names):
         for j, dim in enumerate(["x", "y", "z"]):
             axs[j, i].scatter(
                 x[direction == 0],
@@ -57,7 +88,36 @@ def plot_by_ax_point(points, x, dat, direction, missing, xax, xlab, title, plt_r
     plt.close()
 
 
-def plot_by_ax(x, dat, direction, missing, xax, xlab, ylab, title, plt_root):
+def plot_by_ax(x: NDArray[np.float64], dat: NDArray[np.float64], direction: NDArray[np.float64], missing: list[int], xax: str, xlab: str, ylab: str, title: str, plt_root: str):
+    """
+    Plot data with seperate subplots for each dimension. 
+    The plot will be saved to `plt_root/{title.lower().replace(' ' , '_')}_{xax}.png`.
+
+    Parameters
+    ----------
+    x : NDArray[np.float64]
+        The x data to plot against.
+        Should have shape `(npoint,)`.
+    dat : NDArray[np.float64]
+        The data to plot.
+        Should have shape `(npoint, ndim)`.
+    direction : NDArray[np.float64]
+        The direction of motion at each data point.
+        Should have shape `(npoint,)`.
+    missing : list[int]
+        A list of indices that will be flagged in the plot
+        as only having partial data.
+    xax : str
+        A description of the x axis for the file name.
+    xlab : str
+        The x label to use in the plot.
+    ylab : str
+        The y label to use in the plot.
+    title : str
+        The title of the plot.
+    plt_root : str
+        The directory to save plots to.
+    """
     _, axs = plt.subplots(3, 1, sharex=True)
     for i, dim in enumerate(["x", "y", "z"]):
         axs[i].scatter(
@@ -96,7 +156,32 @@ def plot_by_ax(x, dat, direction, missing, xax, xlab, ylab, title, plt_root):
     plt.close()
 
 
-def plot_all_ax(x, dat, missing, xlab, ylab, title, plt_root):
+def plot_all_ax(x: NDArray[np.float64], dat: NDArray[np.float64],  missing: list[int], xlab: str, ylab: str, title: str, plt_root: str):
+    """
+    Plot data with dimensions as seperate lines on the same plot. 
+    This doesn't show the direction of motions on the plot.
+    The plot will be saved to `plt_root/{title.lower().replace(' ' , '_')}.png`.
+
+    Parameters
+    ----------
+    x : NDArray[np.float64]
+        The x data to plot against.
+        Should have shape `(npoint,)`.
+    dat : NDArray[np.float64]
+        The data to plot.
+        Should have shape `(npoint, ndim)`.
+    missing : list[int]
+        A list of indices that will be flagged in the plot
+        as only having partial data.
+    xlab : str
+        The x label to use in the plot.
+    ylab : str
+        The y label to use in the plot.
+    title : str
+        The title of the plot.
+    plt_root : str
+        The directory to save plots to.
+    """
     plt.scatter(x, dat[:, 0], alpha=0.5, label="x")
     plt.scatter(x, dat[:, 1], alpha=0.5, label="y")
     plt.scatter(x, dat[:, 2], alpha=0.5, label="z")
@@ -114,7 +199,34 @@ def plot_all_ax(x, dat, missing, xlab, ylab, title, plt_root):
     plt.close()
 
 
-def plot_all_dir(x, dat, direction, missing, xlab, ylab, title, plt_root):
+def plot_all_dir(x: NDArray[np.float64], dat: NDArray[np.float64], direction: NDArray[np.float64], missing: list[int], xlab: str, ylab: str, title: str, plt_root: str):
+    """
+    Plot data with directions as seperate lines on the same plot. 
+    The plot will be saved to `plt_root/{title.lower().replace(' ' , '_')}.png`.
+
+    Parameters
+    ----------
+    x : NDArray[np.float64]
+        The x data to plot against.
+        Should have shape `(npoint,)`.
+    dat : NDArray[np.float64]
+        The data to plot.
+        Should have shape `(npoint,)`.
+    direction : NDArray[np.float64]
+        The direction of motion at each data point.
+        Should have shape `(npoint,)`.
+    missing : list[int]
+        A list of indices that will be flagged in the plot
+        as only having partial data.
+    xlab : str
+        The x label to use in the plot.
+    ylab : str
+        The y label to use in the plot.
+    title : str
+        The title of the plot.
+    plt_root : str
+        The directory to save plots to.
+    """
     plt.scatter(
         x[direction == 0],
         dat[direction == 0],
@@ -148,7 +260,26 @@ def plot_all_dir(x, dat, direction, missing, xlab, ylab, title, plt_root):
     plt.close()
 
 
-def plot_hist(dat, direction, xlab, title, plt_root):
+def plot_hist(dat: NDArray[np.float64], direction: NDArray[np.float64], xlab: str, title: str, plt_root: str):
+    """
+    Plot a histogram of data with directions as seperate histograms on the same plot. 
+    The plot will be saved to `plt_root/{title.lower().replace(' ' , '_')}.png`.
+
+    Parameters
+    ----------
+    dat : NDArray[np.float64]
+        The data to plot.
+        Should have shape `(npoint,)`.
+    direction : NDArray[np.float64]
+        The direction of motion at each data point.
+        Should have shape `(npoint,)`.
+    xlab : str
+        The x label to use in the plot.
+    title : str
+        The title of the plot.
+    plt_root : str
+        The directory to save plots to.
+    """
     if len(direction == 0) > 0 and np.sum(np.isfinite(dat[direction == 0])) > 0:
         plt.hist(
             dat[direction == 0],

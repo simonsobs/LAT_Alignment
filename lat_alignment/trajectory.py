@@ -11,6 +11,7 @@ from importlib.resources import files
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
+from numpy.typing import NDArray
 import yaml
 from megham.transform import (
     apply_transform,
@@ -417,7 +418,35 @@ def _get_sphere_and_angle(data, start, logger):
     return theta, sphere
 
 
-def get_angle(data, mode, start, sep, logger):
+def get_angle(data: NDArray[np.float64], mode: str, start: float, sep: float, logger: logging.Logger) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
+    """
+    Reconstruct the angle of an opitcal element from data of a point.
+
+    Parameters
+    ----------
+    data : NDArray[np.float64]
+        A `(npoint, ndim)` array describing the motion of a point.
+    mode : str
+        The mode this data was taken in.
+        Should be `continious` or `step`.
+    start : float
+        The angle of the element at the first data point.
+        Should be in degrees.
+    sep : float
+        The seperation between measurements.
+        If we are in `continious` mode this should be in mm.
+        If we are in `step` mode this should be in deg.
+    logger : logging.Logger
+        The logger object to use.
+
+    Returns
+    -------
+    angle : NDArray[np.float64]
+        The reconstructed angle in degrees.
+        Will be a `(npoint,)` array.
+    center : NDArray[np.float64]
+        The center of rotation.
+    """
     logger.info(
         "\tReconstructing angle in %s mode using a start of %f deg and a seperation of %f",
         mode,
@@ -441,10 +470,32 @@ def get_angle(data, mode, start, sep, logger):
     # Quantize
     theta_corr = _quantize_angle(theta, dtheta, start)
 
-    return theta_corr, sphere.point
+    return theta_corr, np.array(sphere.point, np.float64)
 
 
-def correct_rot(src, angle, cent, off=0):
+def correct_rot(src : NDArray[np.float64], angle : NDArray[np.float64], cent : NDArray[np.float64], off: float=0) -> NDArray[np.float64]:
+    """
+    Remove the rotation of an element from a point.
+    For example undo corotation from a point on the LATR.
+
+    Parameters
+    ----------
+    src : NDArray[np.float64]
+        The data to rotate.
+        Should be `(npoint, ndim)`.
+    angle : NDArray[np.float64]
+        The angle in degrees of the element at each data point.
+        Should by `(npoint,)`.
+    cent : NDArray[np.float64]
+        The center of rotation of the point.
+        Should be `(ndim,)`.
+
+    Returns
+    -------
+    src : NDArray[np.float64]
+        The data with the rotation removed.
+        The input is also modified in place.
+    """
     for i, (pt, ang) in enumerate(zip(src, angle)):
         rot = Rotation.from_euler("Y", -1 * (ang - off), degrees=True)
         src[i] = rot.apply(pt - cent) + rot.apply(cent)
