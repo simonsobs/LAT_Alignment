@@ -193,7 +193,7 @@ class Panel:
         return super().__setattr__(name, value)
 
     @cached_property
-    def model(self):
+    def model(self) -> NDArray[np.float64]:
         """
         The modeled mirror surface at the locations of the measurementss.
         """
@@ -207,25 +207,25 @@ class Panel:
         return model
 
     @cached_property
-    def _transform(self):
+    def _transform(self) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
         return get_rigid(self.model, self.measurements, center_dst=True, method="mean")
 
     @property
-    def rot(self):
+    def rot(self) -> NDArray[np.float64]:
         """
         Rotation that aligns the model to the measurements.
         """
         return self._transform[0]
 
     @property
-    def shift(self):
+    def shift(self) -> NDArray[np.float64]:
         """
         Shift that aligns the model to the measurements.
         """
         return self._transform[1]
 
     @cached_property
-    def can_surface(self):
+    def can_surface(self) -> NDArray[np.float64]:
         """
         Get the cannonical points to define the panel surface.
         These are the adjuster positions projected only the mirror surface.
@@ -237,21 +237,21 @@ class Panel:
         return points
 
     @cached_property
-    def meas_surface(self):
+    def meas_surface(self) -> NDArray[np.float64]:
         """
         The cannonical surface transformed to be in the measured coordinates.
         """
         return apply_transform(self.can_surface, self.rot, self.shift)
 
     @cached_property
-    def meas_adj(self):
+    def meas_adj(self) -> NDArray[np.float64]:
         """
         The adjuster points transformed to be in the measured coordinates.
         """
         return apply_transform(self.nom_adj, self.rot, self.shift)
 
     @cached_property
-    def meas_adj_resid(self):
+    def meas_adj_resid(self) -> NDArray[np.float64]:
         """
         A correction that can be applied to `meas_adj` where we compute
         the average residual of measured points from the transformed model
@@ -268,7 +268,7 @@ class Panel:
         return resid
 
     @cached_property
-    def adj_resid(self):
+    def adj_resid(self) -> NDArray[np.float64]:
         """
         A correction that can be applied to `nom_adj` where we compute
         the average residual of measured points from the model
@@ -285,7 +285,7 @@ class Panel:
         return resid
 
     @property
-    def adj_msk(self):
+    def adj_msk(self) -> NDArray[np.float64]:
         """
         Get a mask that only is True for measurements that are close to an adjustor.
         """
@@ -298,35 +298,35 @@ class Panel:
         return msk
 
     @cached_property
-    def model_transformed(self):
+    def model_transformed(self) -> NDArray[np.float64]:
         """
         The model transformed to be in the measured coordinates.
         """
         return apply_transform(self.model, self.rot, self.shift)
 
     @cached_property
-    def residuals(self):
+    def residuals(self) -> NDArray[np.float64]:
         """
         Get residuals between model and measurements.
         """
         return self.measurements - self.model
 
     @cached_property
-    def transformed_residuals(self):
+    def transformed_residuals(self) -> NDArray[np.float64]:
         """
         Get residuals between transformed model and measurements.
         """
         return self.measurements - self.model_transformed
 
     @cached_property
-    def res_norm(self):
+    def res_norm(self) -> NDArray[np.float64]:
         """
         Get norm of residuals between transformed model and measurements.
         """
         return np.linalg.norm(self.residuals, axis=-1)
 
     @cached_property
-    def rms(self):
+    def rms(self) -> float:
         """
         Get rms between model and measurements.
         """

@@ -9,6 +9,7 @@ import os
 import sys
 from copy import deepcopy
 from functools import partial
+from typing import Callable
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -19,6 +20,7 @@ from megham.transform import (
     get_affine,
     get_rigid,
 )
+from numpy.typing import NDArray
 from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
 
@@ -34,11 +36,44 @@ mm_to_um = 1000
 rad_to_arcsec = 3600 * 180 / np.pi
 
 
-def get_hwfe(data, get_transform, add_err=False) -> float:
+def get_hwfe(
+    data: dict[str, NDArray],
+    get_transform: Callable[
+        [NDArray[np.float64], NDArray[np.float64]],
+        tuple[NDArray[np.float64], NDArray[np.float64]],
+    ],
+    add_err: bool = False,
+) -> float:
+    """
+    Get the HWFE errors based on the mirror and receiver positions.
+    This calculation is from Parshely et al.
+
+    Parameters
+    ----------
+    data : dict[str, NDArray]
+        Dict that contains the following for each included element:
+
+        * {element} : `(npoint, ndim)` array with the measured points
+        * {element}_ref : `(npoint, ndim)` array with the nominal points
+        * {element}_msk: `(npoint,)` boolean array that is False for points to exclude
+        * {element}_err: `(npoint, ndim)` array of error to add to the measured points.
+        `np.nan` is treated as 0.
+
+        This dict must at least contain the primary mirror.
+    get_transform : Callable[[NDArray[np.float64], NDArray[np.float64]], tuple[NDArray[np.float64], NDArray[np.float64]]]
+        Function that takes in two point clouds and returns an affine matrix and a shift to align them.
+    add_err : bool, default: False
+        If True add the error term to the data.
+
+    Returns
+    -------
+    hwfe : float
+        The HWFE in um-rms.
+    """
     # Put everything in M1 coordinates
     data_m1 = deepcopy(data)
     for element in elements:
-        dat = data_m1[element]
+        dat = np.array(data_m1[element], np.float64)
         if add_err:
             dat += np.nan_to_num(data_m1[f"{element}_err"])
         data_m1[element] = coord_transform(dat, "opt_global", "opt_primary")
@@ -50,7 +85,6 @@ def get_hwfe(data, get_transform, add_err=False) -> float:
     aff_m1, sft_m1 = get_transform(
         data_m1["primary"][data_m1["primary_msk"]],
         data_m1["primary_ref"][data_m1["primary_msk"]],
-        method="mean",
     )
 
     hwfe = 0
@@ -62,7 +96,7 @@ def get_hwfe(data, get_transform, add_err=False) -> float:
         src = apply_transform(src, aff_m1, sft_m1)
 
         # Get the new transform
-        aff, sft = get_transform(src, dst, method="mean")
+        aff, sft = get_transform(src, dst)
         _, _, rot = decompose_affine(aff)
         rot = decompose_rotation(rot)
 
@@ -72,7 +106,42 @@ def get_hwfe(data, get_transform, add_err=False) -> float:
     return np.sqrt(hwfe)
 
 
-def get_pointing_error(data, get_transform, add_err=False, thresh=0.01):
+def get_pointing_error(
+    data: dict[str, NDArray],
+    get_transform: Callable[
+        [NDArray[np.float64], NDArray[np.float64]],
+        tuple[NDArray[np.float64], NDArray[np.float64]],
+    ],
+    add_err: bool = False,
+    thresh: float = 0.01,
+) -> float:
+    """
+    Get the pointing error based on the mirror and receiver positions.
+
+    Parameters
+    ----------
+    data : dict[str, NDArray]
+        Dict that contains the following for each included element:
+
+        * {element} : `(npoint, ndim)` array with the measured points
+        * {element}_ref : `(npoint, ndim)` array with the nominal points
+        * {element}_msk: `(npoint,)` boolean array that is False for points to exclude
+        * {element}_err: `(npoint, ndim)` array of error to add to the measured points.
+        `np.nan` is treated as 0.
+
+        This dict must at least contain the primary mirror.
+    get_transform : Callable[[NDArray[np.float64], NDArray[np.float64]], tuple[NDArray[np.float64], NDArray[np.float64]]]
+        Function that takes in two point clouds and returns an affine matrix and a shift to align them.
+    add_err : bool, default: False
+        If True add the error term to the data.
+    thresh : float, default: .01
+        The threshold in arcsecs to discard a rotation.
+
+    Returns
+    -------
+    pe : float
+        The pointing error in arcsecs.
+    """
     thresh = np.deg2rad(thresh / 3600)
     rots = np.zeros((2, 3))
     # Get rotations
@@ -131,10 +200,10 @@ def main():
     logger.setLevel(args.log_level.upper())
 
     # Pick the fitter
-    get_transform = get_rigid
+    get_transform = partial(get_rigid, method="mean")
     transform_str = "rigid"
     if args.affine:
-        get_transform = partial(get_affine, force_svd=True)
+        get_transform = partial(get_affine, force_svd=True, method="mean")
         transform_str = "affine"
     # Load data
     logger.info("Loading data from %s", args.path)
