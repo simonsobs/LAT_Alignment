@@ -9,7 +9,17 @@ import numpy as np
 from numpy.typing import NDArray
 
 
-def plot_by_ax_point(names: list[str] | NDArray[np.str_], x: NDArray[np.float64], dat: NDArray[np.float64], direction: NDArray[np.float64], missing: list[int], xax: str, xlab: str, title: str, plt_root: str):
+def plot_by_ax_point(
+    names: list[str] | NDArray[np.str_],
+    x: NDArray[np.float64],
+    dat: NDArray[np.float64],
+    direction: NDArray[np.float64],
+    missing: list[int],
+    xax: str,
+    xlab: str,
+    title: str,
+    plt_root: str,
+):
     """
     Plot data with subplots organized such that each row is a different dimension
     and each collumn is a different physical location that was measured.
@@ -88,9 +98,19 @@ def plot_by_ax_point(names: list[str] | NDArray[np.str_], x: NDArray[np.float64]
     plt.close()
 
 
-def plot_by_ax(x: NDArray[np.float64], dat: NDArray[np.float64], direction: NDArray[np.float64], missing: list[int], xax: str, xlab: str, ylab: str, title: str, plt_root: str):
+def plot_by_ax(
+    x: NDArray[np.float64],
+    dat: NDArray[np.float64],
+    direction: NDArray[np.float64],
+    missing: list[int],
+    xax: str,
+    xlab: str,
+    ylab: str,
+    title: str,
+    plt_root: str,
+):
     """
-    Plot data with seperate subplots for each dimension. 
+    Plot data with seperate subplots for each dimension.
     The plot will be saved to `plt_root/{title.lower().replace(' ' , '_')}_{xax}.png`.
 
     Parameters
@@ -156,9 +176,17 @@ def plot_by_ax(x: NDArray[np.float64], dat: NDArray[np.float64], direction: NDAr
     plt.close()
 
 
-def plot_all_ax(x: NDArray[np.float64], dat: NDArray[np.float64],  missing: list[int], xlab: str, ylab: str, title: str, plt_root: str):
+def plot_all_ax(
+    x: NDArray[np.float64],
+    dat: NDArray[np.float64],
+    missing: list[int],
+    xlab: str,
+    ylab: str,
+    title: str,
+    plt_root: str,
+):
     """
-    Plot data with dimensions as seperate lines on the same plot. 
+    Plot data with dimensions as seperate lines on the same plot.
     This doesn't show the direction of motions on the plot.
     The plot will be saved to `plt_root/{title.lower().replace(' ' , '_')}.png`.
 
@@ -199,9 +227,18 @@ def plot_all_ax(x: NDArray[np.float64], dat: NDArray[np.float64],  missing: list
     plt.close()
 
 
-def plot_all_dir(x: NDArray[np.float64], dat: NDArray[np.float64], direction: NDArray[np.float64], missing: list[int], xlab: str, ylab: str, title: str, plt_root: str):
+def plot_all_dir(
+    x: NDArray[np.float64],
+    dat: NDArray[np.float64],
+    direction: NDArray[np.float64],
+    missing: list[int],
+    xlab: str,
+    ylab: str,
+    title: str,
+    plt_root: str,
+):
     """
-    Plot data with directions as seperate lines on the same plot. 
+    Plot data with directions as seperate lines on the same plot.
     The plot will be saved to `plt_root/{title.lower().replace(' ' , '_')}.png`.
 
     Parameters
@@ -260,9 +297,15 @@ def plot_all_dir(x: NDArray[np.float64], dat: NDArray[np.float64], direction: ND
     plt.close()
 
 
-def plot_hist(dat: NDArray[np.float64], direction: NDArray[np.float64], xlab: str, title: str, plt_root: str):
+def plot_hist(
+    dat: NDArray[np.float64],
+    direction: NDArray[np.float64],
+    xlab: str,
+    title: str,
+    plt_root: str,
+):
     """
-    Plot a histogram of data with directions as seperate histograms on the same plot. 
+    Plot a histogram of data with directions as seperate histograms on the same plot.
     The plot will be saved to `plt_root/{title.lower().replace(' ' , '_')}.png`.
 
     Parameters

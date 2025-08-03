@@ -13,7 +13,6 @@ from typing import Callable
 
 import matplotlib.pyplot as plt
 import numpy as np
-from numpy.typing import NDArray
 from megham.transform import (
     apply_transform,
     decompose_affine,
@@ -21,6 +20,7 @@ from megham.transform import (
     get_affine,
     get_rigid,
 )
+from numpy.typing import NDArray
 from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
 
@@ -36,7 +36,14 @@ mm_to_um = 1000
 rad_to_arcsec = 3600 * 180 / np.pi
 
 
-def get_hwfe(data: dict[str, NDArray], get_transform: Callable[[NDArray[np.float64], NDArray[np.float64]], tuple[NDArray[np.float64], NDArray[np.float64]]], add_err: bool=False) -> float:
+def get_hwfe(
+    data: dict[str, NDArray],
+    get_transform: Callable[
+        [NDArray[np.float64], NDArray[np.float64]],
+        tuple[NDArray[np.float64], NDArray[np.float64]],
+    ],
+    add_err: bool = False,
+) -> float:
     """
     Get the HWFE errors based on the mirror and receiver positions.
     This calculation is from Parshely et al.
@@ -51,7 +58,7 @@ def get_hwfe(data: dict[str, NDArray], get_transform: Callable[[NDArray[np.float
         * {element}_msk: `(npoint,)` boolean array that is False for points to exclude
         * {element}_err: `(npoint, ndim)` array of error to add to the measured points.
         `np.nan` is treated as 0.
-        
+
         This dict must at least contain the primary mirror.
     get_transform : Callable[[NDArray[np.float64], NDArray[np.float64]], tuple[NDArray[np.float64], NDArray[np.float64]]]
         Function that takes in two point clouds and returns an affine matrix and a shift to align them.
@@ -99,7 +106,15 @@ def get_hwfe(data: dict[str, NDArray], get_transform: Callable[[NDArray[np.float
     return np.sqrt(hwfe)
 
 
-def get_pointing_error(data: dict[str, NDArray], get_transform: Callable[[NDArray[np.float64], NDArray[np.float64]], tuple[NDArray[np.float64], NDArray[np.float64]]], add_err: bool=False, thresh: float=0.01) -> float:
+def get_pointing_error(
+    data: dict[str, NDArray],
+    get_transform: Callable[
+        [NDArray[np.float64], NDArray[np.float64]],
+        tuple[NDArray[np.float64], NDArray[np.float64]],
+    ],
+    add_err: bool = False,
+    thresh: float = 0.01,
+) -> float:
     """
     Get the pointing error based on the mirror and receiver positions.
 
@@ -113,7 +128,7 @@ def get_pointing_error(data: dict[str, NDArray], get_transform: Callable[[NDArra
         * {element}_msk: `(npoint,)` boolean array that is False for points to exclude
         * {element}_err: `(npoint, ndim)` array of error to add to the measured points.
         `np.nan` is treated as 0.
-        
+
         This dict must at least contain the primary mirror.
     get_transform : Callable[[NDArray[np.float64], NDArray[np.float64]], tuple[NDArray[np.float64], NDArray[np.float64]]]
         Function that takes in two point clouds and returns an affine matrix and a shift to align them.

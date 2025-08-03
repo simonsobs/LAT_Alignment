@@ -11,7 +11,6 @@ from importlib.resources import files
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
-from numpy.typing import NDArray
 import yaml
 from megham.transform import (
     apply_transform,
@@ -20,12 +19,14 @@ from megham.transform import (
     get_affine,
     get_rigid,
 )
+from numpy.typing import NDArray
 from scipy.spatial.distance import pdist
 from scipy.spatial.transform import Rotation
 from skspatial.objects import Sphere
 
 from .error import get_hwfe, get_pointing_error
 from .io import load_tracker
+from .refpoint import RefCollection, RefTOD
 from .traj_plots import (
     plot_all_ax,
     plot_all_dir,
@@ -33,8 +34,7 @@ from .traj_plots import (
     plot_by_ax_point,
     plot_hist,
 )
-from .refpoint import RefTOD, RefCollection
-from .transforms import coord_transform 
+from .transforms import coord_transform
 
 mpl.rcParams["lines.markersize"] *= 1.5
 
@@ -55,7 +55,11 @@ LABELS = {
     "receiver": ["receiver_1", "receiver_2", "receiver_3", "receiver_4"],
 }
 
-local_coords = {"primary":"opt_primary", "secondary":"opt_secondary", "receiver":"opt_global"}
+local_coords = {
+    "primary": "opt_primary",
+    "secondary": "opt_secondary",
+    "receiver": "opt_global",
+}
 
 
 def _plot_point_and_hwfe(data, ref, get_transform, plt_root, logger, skip_missing):
@@ -164,7 +168,9 @@ def _plot_point_and_hwfe(data, ref, get_transform, plt_root, logger, skip_missin
     )
 
 
-def _plot_transform(data, ref, get_transform, plt_root, logger, skip_missing, local=False):
+def _plot_transform(
+    data, ref, get_transform, plt_root, logger, skip_missing, local=False
+):
     logger.info("Plotting transformation information")
     for elem in data.keys():
         logger.info("\tGetting transforms for %s", elem)
@@ -177,7 +183,7 @@ def _plot_transform(data, ref, get_transform, plt_root, logger, skip_missing, lo
         src = data[elem].data
         dst = ref[elem]
         if local:
-            dst = coord_transform(dst, "opt_global", local_coords[elem]) 
+            dst = coord_transform(dst, "opt_global", local_coords[elem])
         sfts = np.zeros((len(src), 3)) + np.nan
         rots = np.zeros((len(src), 3)) + np.nan
         scales = np.zeros((len(src), 3)) + np.nan
@@ -418,7 +424,13 @@ def _get_sphere_and_angle(data, start, logger):
     return theta, sphere
 
 
-def get_angle(data: NDArray[np.float64], mode: str, start: float, sep: float, logger: logging.Logger) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
+def get_angle(
+    data: NDArray[np.float64],
+    mode: str,
+    start: float,
+    sep: float,
+    logger: logging.Logger,
+) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
     """
     Reconstruct the angle of an opitcal element from data of a point.
 
@@ -473,7 +485,12 @@ def get_angle(data: NDArray[np.float64], mode: str, start: float, sep: float, lo
     return theta_corr, np.array(sphere.point, np.float64)
 
 
-def correct_rot(src : NDArray[np.float64], angle : NDArray[np.float64], cent : NDArray[np.float64], off: float=0) -> NDArray[np.float64]:
+def correct_rot(
+    src: NDArray[np.float64],
+    angle: NDArray[np.float64],
+    cent: NDArray[np.float64],
+    off: float = 0,
+) -> NDArray[np.float64]:
     """
     Remove the rotation of an element from a point.
     For example undo corotation from a point on the LATR.
@@ -578,7 +595,13 @@ def main():
     _plot_path(data, plt_root, logger)
     _plot_traj_error(data, plt_root, logger)
     _plot_transform(
-        data, ref, get_transform, plt_root, logger, cfg.get("skip_missing", False), cfg.get("local", False)
+        data,
+        ref,
+        get_transform,
+        plt_root,
+        logger,
+        cfg.get("skip_missing", False),
+        cfg.get("local", False),
     )
     _plot_point_and_hwfe(
         data, ref, get_transform, plt_root, logger, cfg.get("skip_missing", False)
@@ -598,4 +621,8 @@ def main():
                 if cfg.get("local", False):
                     dat = coord_transform(dat, "opt_global", local_coords[elem.name])
                 to_save = np.column_stack([tod.angle, np.sign(tod.direction), tod.data])
-                np.savetxt(os.path.join(outdir, f"{tod.name}.csv"), to_save, header="angle direction x y z")
+                np.savetxt(
+                    os.path.join(outdir, f"{tod.name}.csv"),
+                    to_save,
+                    header="angle direction x y z",
+                )
