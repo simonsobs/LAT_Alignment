@@ -9,7 +9,7 @@ import yaml
 from megham.utils import make_edm
 from numpy.typing import NDArray
 
-from .photogrammetry import Dataset
+from .dataset import Dataset, DatasetPhotogrammetry
 from .transforms import coord_transform
 
 logger = logging.getLogger("lat_alignment")
@@ -153,7 +153,7 @@ def load_photo(
         plt.show()
 
     data = {label: coord for label, coord in zip(labels, coords)}
-    return Dataset(data)
+    return DatasetPhotogrammetry(data)
 
 
 def load_corners(path: str) -> dict[tuple[int, int], NDArray[np.float64]]:

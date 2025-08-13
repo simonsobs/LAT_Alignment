@@ -12,7 +12,7 @@ from numpy.typing import NDArray
 from scipy.spatial.transform import Rotation as R
 from skspatial.objects import Line, Plane, Vector
 
-from .photogrammetry import Dataset
+from .dataset import DatasetPhotogrammetry
 
 logger = logging.getLogger("lat_alignment")
 
@@ -32,24 +32,24 @@ AXIS2_CODED = Vector.from_points(ORIGIN, ZERO_CODED).unit()
 
 
 def partition_points(
-    dataset: Dataset,
-) -> tuple[Dataset, Dataset, NDArray[np.float64], NDArray[np.float64]]:
+    dataset: DatasetPhotogrammetry,
+) -> tuple[DatasetPhotogrammetry, DatasetPhotogrammetry, NDArray[np.float64], NDArray[np.float64]]:
     """
     Split up dataset into points on the bearing reference surface and inner surface.
     Also pulls out the bearing zero points.
 
     Parameters
     ----------
-    dataset : Dataset
+    dataset : DatasetPhotogrammetry
         Photogrammetry dataset.
         Should already be aligned to the bearing referance points.
 
     Returns
     -------
-    inside_points : Dataset
+    inside_points : DatasetPhotogrammetry
         Points on the inner surface of the bearing.
         Only includes targets, codes are removed.
-    face_points : Dataset
+    face_points : DatasetPhotogrammetry
         Points on face of the bearing that we use as a reference surface.
         Only includes targets, codes are removed.
     zero_point : NDArray[np.float64]
@@ -76,7 +76,7 @@ def partition_points(
     inside_msk = (dataset.targets[:, 1] > ORIGIN[1] - 100) * (
         dataset.targets[:, 1] < ORIGIN[1] - 10
     )
-    inside_points = Dataset(
+    inside_points = DatasetPhotogrammetry(
         {
             l: p
             for l, p in zip(
@@ -100,7 +100,7 @@ def partition_points(
     face_msk = (dataset.points[:, 1] > face_origin[1] - FACE_TOL) * (
         dataset.points[:, 1] < face_origin[1] + FACE_TOL
     )
-    face_points = Dataset(
+    face_points = DatasetPhotogrammetry(
         {l: p for l, p in zip(dataset.labels[face_msk], dataset.points[face_msk])}
     )
     if len(face_points) < 4:
@@ -110,21 +110,21 @@ def partition_points(
 
 
 def cylinder_fit(
-    dataset: Dataset,
-) -> tuple[Dataset, tuple[NDArray[np.float64], NDArray[np.float64]]]:
+    dataset: DatasetPhotogrammetry,
+) -> tuple[DatasetPhotogrammetry, tuple[NDArray[np.float64], NDArray[np.float64]]]:
     """
     Fit for the bearing's position by fitting a cylinder to the bearing surface.
     This acts as a correction on top of the alignment to reference points.
 
     Parameters
     ----------
-    dataset : Dataset
+    dataset : DatasetPhotogrammetry
         Photogrammetry dataset.
         Should already be aligned to the bearing referance points.
 
     Returns
     -------
-    inside_points : Dataset
+    inside_points : DatasetPhotogrammetry
         Points on the inner surface of the bearing with alignment applied.
         Only includes targets, codes are removed.
     alignment : tuple[NDArray[np.float64], NDArray[np.float64]]
@@ -168,4 +168,4 @@ def cylinder_fit(
         label: coord for label, coord in zip(inside_points.labels, coords_transformed)
     }
 
-    return Dataset(data), (rot, shift)
+    return DatasetPhotogrammetry(data), (rot, shift)

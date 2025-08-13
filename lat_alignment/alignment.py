@@ -21,7 +21,7 @@ from . import adjustments as adj
 from . import bearing as br
 from . import io
 from . import mirror as mir
-from . import photogrammetry as pg
+from . import dataset as ds
 from . import transforms as tf
 
 
@@ -160,14 +160,14 @@ def main():
 
         # init, fit, and plot panels
         try:
-            dataset, _ = pg.align_photo(
+            dataset, _ = tf.align_photo(
                 dataset, reference, True, mirror, **cfg.get("align_photo", {})
             )
         except Exception as e:
             logger.error("Failed to align to reference points, with error %s", str(e))
             bootstrap_from = cfg.get("bootstrap_from", "all")
             logger.info("Bootstrapping from %s", bootstrap_from)
-            dataset, _ = pg.align_photo(
+            dataset, _ = tf.align_photo(
                 dataset,
                 reference,
                 True,
@@ -187,7 +187,7 @@ def main():
                 points = tf.coord_transform(
                     dataset.points, "opt_global", f"opt_{mirror}"
                 )
-            dataset = pg.Dataset({l: p for l, p in zip(dataset.labels, points)})
+            dataset = ds.DatasetPhotogrammetry({l: p for l, p in zip(dataset.labels, points)})
         dataset, _ = mir.remove_cm(
             dataset, mirror, cfg.get("compensate", 0), **cfg.get("common_mode", {})
         )
@@ -204,7 +204,7 @@ def main():
                 panel.measurements = panel.measurements[panel.adj_msk]
             measurements = np.vstack([panel.measurements for panel in panels])
             data = {"TARGET" + str(i): meas for i, meas in enumerate(measurements)}
-            dataset = io.Dataset(data)
+            dataset = io.DatasetPhotogrammetry(data)
             dataset, _ = mir.remove_cm(
                 dataset, mirror, cfg.get("compensate", 0), **cfg.get("common_mode", {})
             )
@@ -246,7 +246,7 @@ def main():
         if align_to not in ["primary", "secondary", "receiver", "bearing"]:
             raise ValueError(f"Invalid element specified for 'align_to': {align_to}")
         logger.info("Aligning all optical elements to the %s", align_to)
-        dataset, _ = pg.align_photo(
+        dataset, _ = tf.align_photo(
             dataset, reference, False, "all", False, **cfg.get("align_photo", {})
         )
 
@@ -255,7 +255,7 @@ def main():
         elements = {}  # {element_name : full_alignment}
         identity = (np.eye(3, dtype=np.float64), np.zeros(3, dtype=np.float64))
         try:
-            meas, alignment = pg.align_photo(
+            meas, alignment = tf.align_photo(
                 dataset.copy(), reference, True, "primary", **cfg.get("align_photo", {})
             )
             meas, common_mode = mir.remove_cm(
@@ -297,7 +297,7 @@ def main():
         if len(meas) >= 4:
             elements["primary"] = full_alignment
         try:
-            meas, alignment = pg.align_photo(
+            meas, alignment = tf.align_photo(
                 dataset.copy(),
                 reference,
                 True,
@@ -346,7 +346,7 @@ def main():
         if len(meas) >= 4:
             elements["secondary"] = full_alignment
         try:
-            meas, alignment = pg.align_photo(
+            meas, alignment = tf.align_photo(
                 dataset.copy(),
                 reference,
                 False,
@@ -365,7 +365,7 @@ def main():
         if len(meas) >= 4:
             elements["bearing"] = full_alignment
         try:
-            meas, full_alignment = pg.align_photo(
+            meas, full_alignment = tf.align_photo(
                 dataset.copy(),
                 reference,
                 False,

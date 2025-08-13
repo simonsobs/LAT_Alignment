@@ -25,7 +25,7 @@ from numpy.typing import NDArray
 from scipy.optimize import minimize
 from scipy.spatial.transform import Rotation
 
-from .photogrammetry import Dataset
+from .dataset import Dataset
 
 logger = logging.getLogger("lat_alignment")
 
@@ -285,7 +285,7 @@ class Panel:
         return resid
 
     @property
-    def adj_msk(self) -> NDArray[np.float64]:
+    def adj_msk(self) -> NDArray[np.bool_]:
         """
         Get a mask that only is True for measurements that are close to an adjustor.
         """
