@@ -7,6 +7,7 @@ import logging
 import os
 from functools import partial
 from importlib.resources import files
+import sys
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
