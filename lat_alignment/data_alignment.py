@@ -1,19 +1,20 @@
 """
 Functions for aligning datasets to a well defined reference frame.
 """
+
 import logging
 from functools import partial
-
-import numpy as np
 from typing import cast
+
+import matplotlib.pyplot as plt
+import numpy as np
 from megham.transform import apply_transform, decompose_rotation, get_affine, get_rigid
 from megham.utils import make_edm
-import matplotlib.pyplot as plt
 from numpy.typing import NDArray
 
+from . import io
 from .dataset import Dataset, DatasetPhotogrammetry, DatasetReference
 from .transforms import coord_transform
-from . import io
 
 logger = logging.getLogger("lat_alignment")
 
@@ -255,6 +256,7 @@ def align_photo(
 
     return transformed, (rot, sft)
 
+
 def align_tracker(
     dataset: Dataset,
     tracker_yaml: str,
@@ -303,17 +305,11 @@ def align_tracker(
     if element not in reference.elem_names and element != "all":
         raise ValueError("Element not found in reference dict")
     if element == "primary":
-        transform = partial(
-            coord_transform, cfrom="opt_global", cto="opt_primary"
-        )
+        transform = partial(coord_transform, cfrom="opt_global", cto="opt_primary")
     elif element == "secondary":
-        transform = partial(
-            coord_transform, cfrom="opt_global", cto="opt_secondary"
-        )
+        transform = partial(coord_transform, cfrom="opt_global", cto="opt_secondary")
     else:
-        transform = partial(
-            coord_transform, cfrom="opt_global", cto="opt_global"
-        )
+        transform = partial(coord_transform, cfrom="opt_global", cto="opt_global")
     if element == "all":
         for el in elements:
             if el not in reference.elem_names:
@@ -355,7 +351,10 @@ def align_tracker(
         plt.show()
     diff = pts_t - ref[msk]
     rms = np.sqrt(np.mean((diff) ** 2))
-    logger.info( "\t\tRMS of reference points after alignment: %f", rms,)
+    logger.info(
+        "\t\tRMS of reference points after alignment: %f",
+        rms,
+    )
 
     coords_transformed = apply_transform(dataset.points * scale_fac, rot, sft)
     labels = dataset.labels

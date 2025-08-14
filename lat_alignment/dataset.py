@@ -2,12 +2,14 @@
 Dataclasses for storing datasets.
 """
 
-from typing import Self
 from copy import deepcopy
 from dataclasses import dataclass
 from functools import cached_property
-from numpy.typing import NDArray
+from typing import Self
+
 import numpy as np
+from numpy.typing import NDArray
+
 
 @dataclass
 class Dataset:
@@ -117,6 +119,7 @@ class DatasetReference(Dataset):
         Dict of data points.
         You should genrally not touch this directly.
     """
+
     def _clear_cache(self):
         self.__dict__.pop("points", None)
         self.__dict__.pop("labels", None)
@@ -136,17 +139,23 @@ class DatasetReference(Dataset):
     def __setitem__(self, key, item):
         if key in self.elem_names:
             if item.shape != self.elements[key].shape:
-                raise ValueError("Can't set {key} with shape {item.shape} when original shape is {self.elements[key]}")
+                raise ValueError(
+                    "Can't set {key} with shape {item.shape} when original shape is {self.elements[key]}"
+                )
             for i, l in enumerate(self.elem_labels[key]):
                 self.data_dict[l] = item[i]
         elif key[:-4] in self.elem_names and "_ref" in key:
             if item.shape != self.reference[key[:-4]].shape:
-                raise ValueError("Can't set {key} with shape {item.shape} when original shape is {self.reference[key]}")
+                raise ValueError(
+                    "Can't set {key} with shape {item.shape} when original shape is {self.reference[key]}"
+                )
             for i, l in enumerate(self.ref_labels[key[:-4]]):
                 self.data_dict[l] = item[i]
         elif key[:-4] in self.elem_names and "_err" in key:
             if item.shape != self.errors[key[:-4]].shape:
-                raise ValueError("Can't set {key} with shape {item.shape} when original shape is {self.error[key]}")
+                raise ValueError(
+                    "Can't set {key} with shape {item.shape} when original shape is {self.error[key]}"
+                )
             for i, l in enumerate(self.err_labels[key[:-4]]):
                 self.data_dict[l] = item[i]
         else:
@@ -159,27 +168,49 @@ class DatasetReference(Dataset):
 
     @cached_property
     def elem_labels(self) -> dict[str, list[str]]:
-        return {e : [k for k in self.labels if (e in k and k[-4:] != "_ref" and k[-4:] != "_err")] for e in self.elem_names}
+        return {
+            e: [
+                k
+                for k in self.labels
+                if (e in k and k[-4:] != "_ref" and k[-4:] != "_err")
+            ]
+            for e in self.elem_names
+        }
 
     @cached_property
     def elements(self) -> dict[str, NDArray[np.float64]]:
-        return {e : np.array([self.data_dict[k] for k in self.elem_labels[e]]) for e in self.elem_names}
+        return {
+            e: np.array([self.data_dict[k] for k in self.elem_labels[e]])
+            for e in self.elem_names
+        }
 
     @cached_property
     def ref_labels(self) -> dict[str, list[str]]:
-        return {e : [k for k in self.labels if (e in k and k[-4:] == "_ref")] for e in self.elem_names}
+        return {
+            e: [k for k in self.labels if (e in k and k[-4:] == "_ref")]
+            for e in self.elem_names
+        }
 
     @cached_property
     def reference(self) -> dict[str, NDArray[np.float64]]:
-        return {e : np.array([self.data_dict[k] for k in self.ref_labels[e]]) for e in self.elem_names}
+        return {
+            e: np.array([self.data_dict[k] for k in self.ref_labels[e]])
+            for e in self.elem_names
+        }
 
     @cached_property
     def err_labels(self) -> dict[str, list[str]]:
-        return {e : [k for k in self.labels if (e in k and k[-4:] == "_err")] for e in self.elem_names}
+        return {
+            e: [k for k in self.labels if (e in k and k[-4:] == "_err")]
+            for e in self.elem_names
+        }
 
     @cached_property
     def errors(self) -> dict[str, NDArray[np.float64]]:
-        return {e : np.array([self.data_dict[k] for k in self.err_labels[e]]) for e in self.elem_names}
+        return {
+            e: np.array([self.data_dict[k] for k in self.err_labels[e]])
+            for e in self.elem_names
+        }
 
 
 @dataclass

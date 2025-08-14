@@ -18,11 +18,12 @@ from pqdm.processes import pqdm
 
 from . import adjustments as adj
 from . import bearing as br
+from . import data_alignment as da
+from . import dataset as ds
 from . import io
 from . import mirror as mir
-from . import dataset as ds
 from . import transforms as tf
-from . import data_alignment as da
+
 
 def log_alignment(alignment, logger):
     aff, shift = alignment
@@ -159,11 +160,11 @@ def main():
 
         # init, fit, and plot panels
         try:
-            if isinstance(dataset, ds.DatasetPhotogrammetry): 
+            if isinstance(dataset, ds.DatasetPhotogrammetry):
                 dataset, _ = da.align_photo(
                     dataset, reference, True, mirror, **cfg.get("align_photo", {})
                 )
-            else: 
+            else:
                 dataset, _ = da.align_tracker(
                     dataset, cfg["tracker_yaml"], mirror, **cfg.get("align_tracker", {})
                 )
@@ -171,13 +172,20 @@ def main():
             logger.error("Failed to align to reference points, with error %s", str(e))
             bootstrap_from = cfg.get("bootstrap_from", "all")
             logger.info("Bootstrapping from %s", bootstrap_from)
-            if isinstance(dataset, ds.DatasetPhotogrammetry): 
+            if isinstance(dataset, ds.DatasetPhotogrammetry):
                 dataset, _ = da.align_photo(
-                    dataset, reference, True, bootstrap_from, **cfg.get("align_photo", {})
+                    dataset,
+                    reference,
+                    True,
+                    bootstrap_from,
+                    **cfg.get("align_photo", {}),
                 )
-            else: 
+            else:
                 dataset, _ = da.align_tracker(
-                    dataset, cfg["tracker_yaml"], bootstrap_from, **cfg.get("align_tracker", {})
+                    dataset,
+                    cfg["tracker_yaml"],
+                    bootstrap_from,
+                    **cfg.get("align_tracker", {}),
                 )
             if bootstrap_from == "primary":
                 points = tf.coord_transform(
@@ -250,11 +258,11 @@ def main():
         if align_to not in ["primary", "secondary", "receiver", "bearing"]:
             raise ValueError(f"Invalid element specified for 'align_to': {align_to}")
         logger.info("Aligning all optical elements to the %s", align_to)
-        if isinstance(dataset, ds.DatasetPhotogrammetry): 
+        if isinstance(dataset, ds.DatasetPhotogrammetry):
             dataset, _ = da.align_photo(
                 dataset, reference, True, "all", **cfg.get("align_photo", {})
             )
-        else: 
+        else:
             dataset, _ = da.align_tracker(
                 dataset, cfg["tracker_yaml"], "all", **cfg.get("align_tracker", {})
             )
@@ -264,13 +272,16 @@ def main():
         elements = {}  # {element_name : full_alignment}
         identity = (np.eye(3, dtype=np.float64), np.zeros(3, dtype=np.float64))
         try:
-            if isinstance(dataset, ds.DatasetPhotogrammetry): 
+            if isinstance(dataset, ds.DatasetPhotogrammetry):
                 meas, alignment = da.align_photo(
                     dataset, reference, True, "primary", **cfg.get("align_photo", {})
                 )
-            else: 
+            else:
                 meas, alignment = da.align_tracker(
-                    dataset, cfg["tracker_yaml"], "primary", **cfg.get("align_tracker", {})
+                    dataset,
+                    cfg["tracker_yaml"],
+                    "primary",
+                    **cfg.get("align_tracker", {}),
                 )
             meas, common_mode = mir.remove_cm(
                 meas, "primary", cfg.get("compensate", 0), **cfg.get("common_mode", {})
@@ -311,13 +322,16 @@ def main():
         if len(meas) >= 4:
             elements["primary"] = full_alignment
         try:
-            if isinstance(dataset, ds.DatasetPhotogrammetry): 
+            if isinstance(dataset, ds.DatasetPhotogrammetry):
                 meas, alignment = da.align_photo(
                     dataset, reference, True, "secondary", **cfg.get("align_photo", {})
                 )
-            else: 
+            else:
                 meas, alignment = da.align_tracker(
-                    dataset, cfg["tracker_yaml"], "secondary", **cfg.get("align_tracker", {})
+                    dataset,
+                    cfg["tracker_yaml"],
+                    "secondary",
+                    **cfg.get("align_tracker", {}),
                 )
             meas, common_mode = mir.remove_cm(
                 meas,
@@ -361,13 +375,16 @@ def main():
         if len(meas) >= 4:
             elements["secondary"] = full_alignment
         try:
-            if isinstance(dataset, ds.DatasetPhotogrammetry): 
+            if isinstance(dataset, ds.DatasetPhotogrammetry):
                 meas, alignment = da.align_photo(
                     dataset, reference, True, "bearing", **cfg.get("align_photo", {})
                 )
-            else: 
+            else:
                 meas, alignment = da.align_tracker(
-                    dataset, cfg["tracker_yaml"], "bearing", **cfg.get("align_tracker", {})
+                    dataset,
+                    cfg["tracker_yaml"],
+                    "bearing",
+                    **cfg.get("align_tracker", {}),
                 )
             meas, cyl_fit = br.cylinder_fit(meas)
             full_alignment = mt.compose_transform(*alignment, *cyl_fit)
@@ -381,13 +398,16 @@ def main():
         if len(meas) >= 4:
             elements["bearing"] = full_alignment
         try:
-            if isinstance(dataset, ds.DatasetPhotogrammetry): 
+            if isinstance(dataset, ds.DatasetPhotogrammetry):
                 meas, alignment = da.align_photo(
                     dataset, reference, True, "receiver", **cfg.get("align_photo", {})
                 )
-            else: 
+            else:
                 meas, alignment = da.align_tracker(
-                    dataset, cfg["tracker_yaml"], "receiver", **cfg.get("align_tracker", {})
+                    dataset,
+                    cfg["tracker_yaml"],
+                    "receiver",
+                    **cfg.get("align_tracker", {}),
                 )
             log_alignment(full_alignment, logger)
         except Exception as e:

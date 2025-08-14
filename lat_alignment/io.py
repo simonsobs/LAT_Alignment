@@ -26,11 +26,11 @@ def _load_tracker_yaml(path: str):
     with open(ref_path) as file:
         reference = yaml.safe_load(file)
     ref_transform = partial(
-            coord_transform, cfrom=reference["coords"], cto="opt_global"
-        )
+        coord_transform, cfrom=reference["coords"], cto="opt_global"
+    )
     dat_transform = partial(
-            coord_transform, cfrom=dat.get("coords", "opt_global"), cto="opt_global"
-        )
+        coord_transform, cfrom=dat.get("coords", "opt_global"), cto="opt_global"
+    )
 
     # Add the data
     data = {}
@@ -43,7 +43,7 @@ def _load_tracker_yaml(path: str):
         e = dat.get(f"{elem}_err", null)
         if len(d) != len(r):
             raise ValueError(f"{elem} has {len(d)} points instead of {len(r)}!")
-        if len(e) != len(r): 
+        if len(e) != len(r):
             raise ValueError(f"{elem} error has {len(e)} elements instead of {len(r)}!")
         for i, point in enumerate(r.keys()):
             data[f"{point}_ref"] = ref_transform(r[point][0])
@@ -186,6 +186,7 @@ def load_data(path: str, source: str = "photo", **kwargs) -> Dataset:
     elif source == "tracker":
         return load_tracker(path)
     raise ValueError("Invalid data source")
+
 
 def load_corners(path: str) -> dict[tuple[int, int], NDArray[np.float64]]:
     """

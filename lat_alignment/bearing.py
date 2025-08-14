@@ -33,7 +33,12 @@ AXIS2_CODED = Vector.from_points(ORIGIN, ZERO_CODED).unit()
 
 def partition_points(
     dataset: DatasetPhotogrammetry,
-) -> tuple[DatasetPhotogrammetry, DatasetPhotogrammetry, NDArray[np.float64], NDArray[np.float64]]:
+) -> tuple[
+    DatasetPhotogrammetry,
+    DatasetPhotogrammetry,
+    NDArray[np.float64],
+    NDArray[np.float64],
+]:
     """
     Split up dataset into points on the bearing reference surface and inner surface.
     Also pulls out the bearing zero points.

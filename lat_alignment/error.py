@@ -24,9 +24,9 @@ from numpy.typing import NDArray
 from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
 
+from .dataset import DatasetReference
 from .io import load_tracker
 from .transforms import affine_basis_transform, coord_transform
-from .dataset import DatasetReference
 
 elements = ["primary", "secondary", "receiver"]
 hwfe_factors = {
@@ -136,7 +136,9 @@ def get_pointing_error(
             src += np.nan_to_num(data.errors[element])
         # Put things in the local coords
         src = coord_transform(src, "opt_global", f"opt_{element}")
-        dst = coord_transform(np.array(data.reference[element]), "opt_global", f"opt_{element}")
+        dst = coord_transform(
+            np.array(data.reference[element]), "opt_global", f"opt_{element}"
+        )
         # Get rotation
         aff, _ = get_transform(src, dst)
         *_, rot = decompose_affine(aff)
@@ -191,7 +193,7 @@ def main():
     ext = os.path.splitext(args.path)[1]
     if ext != ".yaml":
         raise ValueError("Data for HWFE script must be a yaml file")
-    data : DatasetReference = load_tracker(args.path)
+    data: DatasetReference = load_tracker(args.path)
 
     # Get the transform for each element assuming no error
     have_err = False
