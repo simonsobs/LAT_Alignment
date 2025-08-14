@@ -1,3 +1,12 @@
+## 7.0.0 (2025-08-14)
+
+### Feat
+
+- add support for tracker data in main alignment and make sure method=mean is set for trajectory analysis
+- add dataset for handling reference points
+- move label information to the reference struct
+- move dataset to a base class and reorganize some modules
+
 ## 6.3.1 (2025-08-13)
 
 ### Fix
