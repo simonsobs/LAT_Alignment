@@ -39,9 +39,9 @@ def _load_tracker_yaml(path: str):
     data["receiver_err"] = dat.get("receiver_err", null)
 
     # Add reference
-    data["primary_ref"] = np.array([p for p, _ in reference["primary"]])
-    data["secondary_ref"] = np.array([p for p, _ in reference["secondary"]])
-    data["receiver_ref"] = np.array([p for p, _ in reference["receiver"]])
+    data["primary_ref"] = np.array([p for p, _ in reference["primary"].values()])
+    data["secondary_ref"] = np.array([p for p, _ in reference["secondary"].values()])
+    data["receiver_ref"] = np.array([p for p, _ in reference["receiver"].values()])
 
     return data
 

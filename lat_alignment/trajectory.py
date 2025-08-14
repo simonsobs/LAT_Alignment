@@ -39,23 +39,6 @@ from .transforms import coord_transform
 
 mpl.rcParams["lines.markersize"] *= 1.5
 
-# This is dumb! Should get from the nominal file somehow!
-LABELS = {
-    "primary": [
-        "primary_lower_right",
-        "primary_lower_left",
-        "primary_upper_right",
-        "primary_upper_left",
-    ],
-    "secondary": [
-        "secondary_lower_right",
-        "secondary_lower_left",
-        "secondary_upper_right",
-        "secondary_upper_left",
-    ],
-    "receiver": ["receiver_1", "receiver_2", "receiver_3", "receiver_4"],
-}
-
 local_coords = {
     "primary": "opt_primary",
     "secondary": "opt_secondary",
@@ -63,7 +46,7 @@ local_coords = {
 }
 
 
-def _plot_point_and_hwfe(data, ref, get_transform, plt_root, logger, skip_missing):
+def _plot_point_and_hwfe(data, ref, get_transform, plt_root, logger, skip_missing, labels):
     logger.info("Calculating pointing error and HWFE")
     tods = {
         elem.name: elem.data
@@ -73,7 +56,7 @@ def _plot_point_and_hwfe(data, ref, get_transform, plt_root, logger, skip_missin
     if len(tods) == 0:
         logger.error("\tNo TODs found! Can't calculate!")
         return
-    for elem in LABELS.keys():
+    for elem in labels.keys():
         if elem in tods:
             if tods[elem].shape[1] < 4:
                 logger.error(
@@ -552,15 +535,12 @@ def main():
         ref_path = str(files("lat_alignment.data").joinpath("reference.yaml"))
     with open(ref_path) as file:
         reference = yaml.safe_load(file)
+
     ref = {}
-    ref["primary"] = np.array([p for p, _ in reference["primary"]])
-    ref["secondary"] = np.array([p for p, _ in reference["secondary"]])
-    ref["receiver"] = np.array([p for p, _ in reference["receiver"]])
-    # TODO: This is ugly and bad
-    for i, p in enumerate(["lower_right", "lower_left", "upper_right", "upper_left"]):
-        ref[f"primary_{p}"] = ref["primary"][i]
-        ref[f"secondary_{p}"] = ref["secondary"][i]
-        ref[f"receiver_{i+1}"] = ref["receiver"][i]
+    labels = {}
+    for name, elem in reference.items():
+        labels[name] = list(elem.keys())
+        ref = ref | elem
     data = {"primary": [], "secondary": [], "receiver": []}
     for elem in data.keys():
         if elem not in cfg:
@@ -590,7 +570,7 @@ def main():
 
     # Construct the dataclass
     data = RefCollection.construct(data, logger, pad=cfg.get("pad", False))
-    data.elems = [elem.reorder(LABELS[elem.name], False) for elem in data.elems]
+    data.elems = [elem.reorder(np.array(labels[elem.name]), False) for elem in data.elems]
 
     # Check motion of each element
     _plot_path(data, plt_root, logger)
@@ -605,7 +585,7 @@ def main():
         cfg.get("local", False),
     )
     _plot_point_and_hwfe(
-        data, ref, get_transform, plt_root, logger, cfg.get("skip_missing", False)
+        data, ref, get_transform, plt_root, logger, cfg.get("skip_missing", False), labels
     )
 
     # Save if we want

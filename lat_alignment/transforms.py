@@ -465,11 +465,11 @@ def align_photo(
             coord_transform, cfrom=reference["coords"], cto="opt_global"
         )
     if element == "all":
-        all_refs = []
+        all_refs = {}
         for el in elements:
             if el not in reference:
                 continue
-            all_refs += reference[el]
+            all_refs = all_refs | reference[el]
         reference["all"] = all_refs
 
     # Lets find the points we can use
@@ -478,10 +478,13 @@ def align_photo(
     invars = []
     ref_coded = []
     found_coded = []
-    for rpoint, codes in reference[element]:
+    logger.info("Looking for reference points")
+    for pname, (rpoint, codes) in reference[element].items():
+        logger.info("\tFinding point %s", pname)
         code_l = np.array([l for l, _ in codes])
         code_p = np.array([p for _, p in codes])
         have = np.isin(code_l, dataset.code_labels)
+        logger.info("\t\tFound %d associated codes", np.sum(have))
         if np.sum(have) == 0:
             continue
         # Save the coded we have just in case
@@ -493,11 +496,13 @@ def align_photo(
         # Find the closest point
         dist = np.linalg.norm(dataset.targets - coded, axis=-1)
         if np.min(dist) > max_dist:
+            logger.warning("\t\tFailed to find point %s", pname)
             continue
         label = dataset.target_labels[np.argmin(dist)]
         ref += [rpoint]
         pts += [dataset[label]]
         invars += [label]
+        logger.info("\t\tAssociated %s with %s", label, pname)
     if blind_search > 0:
         raise NotImplementedError("Blind search not implemented yet!")
     # Set 12
