@@ -27,6 +27,8 @@ class Dataset:
     def _clear_cache(self):
         self.__dict__.pop("points", None)
         self.__dict__.pop("labels", None)
+        self.__dict__.pop("target", None)
+        self.__dict__.pop("target_labels", None)
 
     def __setattr__(self, name, value):
         if name == "data_dict":
@@ -72,6 +74,23 @@ class Dataset:
         """
         return np.array(list(self.data_dict.keys()))
 
+    @cached_property
+    def targets(self) -> NDArray[np.float64]:
+        """
+        Get all target points in the dataset as an array.
+        This is cached.
+        """
+        msk = np.char.find(self.labels, "TARGET") >= 0
+        return self.points[msk]
+
+    @cached_property
+    def target_labels(self) -> NDArray[np.str_]:
+        """
+        Get all target labels in the dataset as an array.
+        This is cached.
+        """
+        msk = np.char.find(self.labels, "TARGET") >= 0
+        return self.labels[msk]
 
     def copy(self) -> Self:
         """
@@ -205,24 +224,6 @@ class DatasetPhotogrammetry(Dataset):
         This is cached.
         """
         msk = np.char.find(self.labels, "CODE") >= 0
-        return self.labels[msk]
-
-    @cached_property
-    def targets(self) -> NDArray[np.float64]:
-        """
-        Get all target points in the dataset as an array.
-        This is cached.
-        """
-        msk = np.char.find(self.labels, "TARGET") >= 0
-        return self.points[msk]
-
-    @cached_property
-    def target_labels(self) -> NDArray[np.str_]:
-        """
-        Get all target labels in the dataset as an array.
-        This is cached.
-        """
-        msk = np.char.find(self.labels, "TARGET") >= 0
         return self.labels[msk]
 
     def copy(self) -> Self:

@@ -534,8 +534,10 @@ def remove_cm(
     logger.info("\tMirror has %d good points", len(panel.measurements))
 
     data = {l: d for l, d in zip(labels, panel.measurements)}
+    kept_points = dataset.copy()
+    kept_points.data_dict = data
 
-    return Dataset(data), (aff, sft)
+    return kept_points, (aff, sft)
 
 
 def plot_panels(

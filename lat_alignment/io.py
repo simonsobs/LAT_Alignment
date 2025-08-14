@@ -56,7 +56,9 @@ def _load_tracker_txt(path: str):
     data = np.genfromtxt(path, usecols=(3, 4, 5), skip_header=1, dtype=str)
     data = np.char.replace(data, ",", "").astype(float)
 
-    return data
+    data = {f"TARGET_{i}": dat for i, dat in enumerate(data)}
+
+    return Dataset(data)
 
 
 def _load_tracker_csv(path: str):
@@ -66,7 +68,7 @@ def _load_tracker_csv(path: str):
     )
 
 
-def load_tracker(path: str):
+def load_tracker(path: str) -> Dataset:
     """
     Load laser tracker data.
     TODO: This interface needs to be unified with `load_photo` so all code can use either datatype interchangibly
@@ -79,10 +81,10 @@ def load_tracker(path: str):
 
     Returns
     -------
-    data
+    data : Dataset
         The tracker data.
-        The return type will depend on the extension.
-        TODO: Make Dataset better for this.
+        For txt or csv files this will be the base `Dataset` class.
+        For yaml files this will be a `DatasetReference`.
     """
     ext = os.path.splitext(path)[1]
     if ext == ".yaml":
@@ -161,6 +163,29 @@ def load_photo(
     data = {label: coord for label, coord in zip(labels, coords)}
     return DatasetPhotogrammetry(data)
 
+
+def load_data(path: str, source: str = "photo", **kwargs) -> Dataset:
+    """
+    Load a dataset from path.
+
+    Parameters
+    ----------
+    path : str
+        The path to the data to load.
+    source : str, default: 'photo'
+        The data source. Current valid options are:
+
+        * photo
+        * tracker
+    **kwargs
+        Arguments to pass the relevent loader function.
+        See `load_photo` and `load_tracker` for details.
+    """
+    if source == "photo":
+        return load_photo(path, **kwargs)
+    elif source == "tracker":
+        return load_tracker(path)
+    raise ValueError("Invalid data source")
 
 def load_corners(path: str) -> dict[tuple[int, int], NDArray[np.float64]]:
     """

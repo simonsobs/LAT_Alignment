@@ -528,9 +528,9 @@ def main():
     plt_root = os.path.splitext(args.config)[0]
 
     # Pick the fitter
-    get_transform = get_rigid
+    get_transform = partial(get_rigid, method='mean')
     if args.affine:
-        get_transform = partial(get_affine, force_svd=True)
+        get_transform = partial(get_affine, force_svd=True, method='mean')
 
     # Load data and do basic processing
     with open(args.config) as file:
@@ -563,19 +563,18 @@ def main():
             if f"{point}_ref" not in ref:
                 raise ValueError(f"No reference for {point} found!")
             dat = load_tracker(cfg[elem][point]["path"])
-            if not isinstance(dat, np.ndarray):
-                raise ValueError("Loaded data is not array!")
             mode = cfg[elem][point]["mode"]
             start = cfg[elem][point]["start"]
             sep = cfg[elem][point]["sep"]
-            angle, cent = get_angle(dat, mode, start, sep, logger)
+            angle, cent = get_angle(dat.points, mode, start, sep, logger)
             off = 0
             if elem in ["primary", "secondary"]:
                 off = 90
                 angle = angle % 360
             if cfg.get("correct_rot", False):
-                dat = correct_rot(dat, angle, cent, off)
-            data[elem] += [RefTOD(point, dat, angle)]
+                corrected = correct_rot(dat.points, angle, cent, off)
+                dat.data_dict = {l : c for l, c in zip(dat.labels, corrected)}
+            data[elem] += [RefTOD(point, dat.points, angle)]
 
     # Construct the dataclass
     data = RefCollection.construct(data, logger, pad=cfg.get("pad", False))
