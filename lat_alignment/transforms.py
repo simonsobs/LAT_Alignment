@@ -22,6 +22,8 @@ import numpy as np
 from megham.transform import apply_transform, get_affine
 from numpy.typing import NDArray
 
+from .dataset import Dataset
+
 logger = logging.getLogger("lat_alignment")
 
 opt_sm1 = np.array((0, 0, 3600), np.float64)  # mm

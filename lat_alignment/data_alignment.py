@@ -1,12 +1,10 @@
 """
-Code for handling and processing photogrammetry data
+Functions for aligning datasets to a well defined reference frame.
 """
 
 import logging
-from copy import deepcopy
-from dataclasses import dataclass
-from functools import cached_property, partial
-from typing import Self
+from functools import partial
+from typing import cast
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -14,127 +12,13 @@ from megham.transform import apply_transform, decompose_rotation, get_affine, ge
 from megham.utils import make_edm
 from numpy.typing import NDArray
 
+from . import io
+from .dataset import Dataset, DatasetPhotogrammetry, DatasetReference
 from .transforms import coord_transform
 
 logger = logging.getLogger("lat_alignment")
 
-
-@dataclass
-class Dataset:
-    """
-    Container class for photogrammetry dataset.
-    Provides a dict like interface for accessing points by their labels.
-
-    Attributes
-    ----------
-    data_dict : dict[str, NDArray[np.float64]]
-        Dict of photogrammetry points.
-        You should genrally not touch this directly.
-    """
-
-    data_dict: dict[str, NDArray[np.float64]]
-
-    def _clear_cache(self):
-        self.__dict__.pop("points", None)
-        self.__dict__.pop("labels", None)
-        self.__dict__.pop("codes", None)
-        self.__dict__.pop("code_labels", None)
-        self.__dict__.pop("target", None)
-        self.__dict__.pop("target_labels", None)
-
-    def __setattr__(self, name, value):
-        if name == "data_dict":
-            self._clear_cache()
-        return super().__setattr__(name, value)
-
-    def __setitem__(self, key, item):
-        self._clear_cache()
-        self.data_dict[key] = item
-
-    def __getitem__(self, key):
-        return self.data_dict[key]
-
-    def __repr__(self):
-        return repr(self.data_dict)
-
-    def __len__(self):
-        return len(self.data_dict)
-
-    def __delitem__(self, key):
-        self._clear_cache()
-        del self.data_dict[key]
-
-    def __contains__(self, item):
-        return item in self.data_dict
-
-    def __iter__(self):
-        return iter(self.data_dict)
-
-    @cached_property
-    def points(self) -> NDArray[np.float64]:
-        """
-        Get all points in the dataset as an array.
-        This is cached.
-        """
-        return np.array(list(self.data_dict.values()))
-
-    @cached_property
-    def labels(self) -> NDArray[np.str_]:
-        """
-        Get all labels in the dataset as an array.
-        This is cached.
-        """
-        return np.array(list(self.data_dict.keys()))
-
-    @cached_property
-    def codes(self) -> NDArray[np.float64]:
-        """
-        Get all coded points in the dataset as an array.
-        This is cached.
-        """
-        msk = np.char.find(self.labels, "CODE") >= 0
-        return self.points[msk]
-
-    @cached_property
-    def code_labels(self) -> NDArray[np.str_]:
-        """
-        Get all coded labels in the dataset as an array.
-        This is cached.
-        """
-        msk = np.char.find(self.labels, "CODE") >= 0
-        return self.labels[msk]
-
-    @cached_property
-    def targets(self) -> NDArray[np.float64]:
-        """
-        Get all target points in the dataset as an array.
-        This is cached.
-        """
-        msk = np.char.find(self.labels, "TARGET") >= 0
-        return self.points[msk]
-
-    @cached_property
-    def target_labels(self) -> NDArray[np.str_]:
-        """
-        Get all target labels in the dataset as an array.
-        This is cached.
-        """
-        msk = np.char.find(self.labels, "TARGET") >= 0
-        return self.labels[msk]
-
-    def copy(self) -> Self:
-        """
-        Make a deep copy of the dataset.
-
-        Returns
-        -------
-        copy : Dataset
-            A deep copy of this dataset.
-        """
-        return deepcopy(self)
-
-
-# def _blind_search(dataset: Dataset, refs: NDArray[np.float64], found: list[str], which: list[int], tol: float):
+# def _blind_search(dataset: DatasetPhotogrammetry, refs: NDArray[np.float64], found: list[str], which: list[int], tol: float):
 #     if len(found) == 0:
 #         raise ValueError("Cannot do blind search with zero located targets")
 #     edm_ref = make_edm(refs)
@@ -142,7 +26,7 @@ class Dataset:
 
 
 def align_photo(
-    dataset: Dataset,
+    dataset: DatasetPhotogrammetry,
     reference: dict,
     kill_refs: bool,
     element: str = "primary",
@@ -153,7 +37,7 @@ def align_photo(
     max_dist: float = 100.0,
     rms_thresh: float = 1.0,
 ) -> tuple[
-    Dataset,
+    DatasetPhotogrammetry,
     tuple[NDArray[np.float64], NDArray[np.float64]],
 ]:
     """
@@ -161,7 +45,7 @@ def align_photo(
 
     Parameters
     ----------
-    dataset : Dataset
+    dataset : DatasetPhotogrammetry
         The photogrammetry data to align.
     reference : dict
         Reference dictionary.
@@ -197,7 +81,7 @@ def align_photo(
 
     Returns
     -------
-    aligned : Dataset
+    aligned : DatasetPhotogrammetry
         The photogrammetry data aligned to the reference points.
     alignment : tuple[NDArray[np.float64], NDArray[np.float64]]
         The transformation that aligned the points.
@@ -228,11 +112,11 @@ def align_photo(
             coord_transform, cfrom=reference["coords"], cto="opt_global"
         )
     if element == "all":
-        all_refs = []
+        all_refs = {}
         for el in elements:
             if el not in reference:
                 continue
-            all_refs += reference[el]
+            all_refs = all_refs | reference[el]
         reference["all"] = all_refs
 
     # Lets find the points we can use
@@ -241,10 +125,13 @@ def align_photo(
     invars = []
     ref_coded = []
     found_coded = []
-    for rpoint, codes in reference[element]:
+    logger.info("Looking for reference points")
+    for pname, (rpoint, codes) in reference[element].items():
+        logger.info("\tFinding point %s", pname)
         code_l = np.array([l for l, _ in codes])
         code_p = np.array([p for _, p in codes])
         have = np.isin(code_l, dataset.code_labels)
+        logger.info("\t\tFound %d associated codes", np.sum(have))
         if np.sum(have) == 0:
             continue
         # Save the coded we have just in case
@@ -256,11 +143,13 @@ def align_photo(
         # Find the closest point
         dist = np.linalg.norm(dataset.targets - coded, axis=-1)
         if np.min(dist) > max_dist:
+            logger.warning("\t\tFailed to find point %s", pname)
             continue
         label = dataset.target_labels[np.argmin(dist)]
         ref += [rpoint]
         pts += [dataset[label]]
         invars += [label]
+        logger.info("\t\tAssociated %s with %s", label, pname)
     if blind_search > 0:
         raise NotImplementedError("Blind search not implemented yet!")
     # Set 12
@@ -345,6 +234,130 @@ def align_photo(
         msk = ~np.isin(dataset.labels, invars)
         labels = labels[msk]
         coords_transformed = coords_transformed[msk]
+
+    data = {label: coord for label, coord in zip(labels, coords_transformed)}
+    transformed = DatasetPhotogrammetry(data)
+
+    logger.debug("\t\tShift is %s mm", str(sft))
+    logger.debug("\t\tRotation is %s deg", str(np.rad2deg(decompose_rotation(rot))))
+    scale_fac = np.eye(3) * scale_fac
+    rot @= scale_fac
+
+    if plot:
+        fig = plt.figure()
+        ax = fig.add_subplot(projection="3d")
+        ax.scatter(
+            transformed.targets[:, 0],
+            transformed.targets[:, 1],
+            transformed.targets[:, 2],
+            marker="x",
+        )
+        plt.show()
+
+    return transformed, (rot, sft)
+
+
+def align_tracker(
+    dataset: Dataset,
+    tracker_yaml: str,
+    element: str = "primary",
+    scale: bool = True,
+    *,
+    plot: bool = True,
+) -> tuple[
+    Dataset,
+    tuple[NDArray[np.float64], NDArray[np.float64]],
+]:
+    """
+    Align photogrammetry data and then put it into mirror coordinates.
+
+    Parameters
+    ----------
+    dataset : Dataset
+        The photogrammetry data to align.
+    tracker_yaml : str
+        The path to the yaml file with measuerments of the reference points.
+    element : str, default: 'primary'
+        The element that these points belong to.
+        Should be either: 'primary', 'secondary', 'bearing', 'receiver', or 'all'.
+    scale : bool, default: True
+        If True also compute a scale factor from the reference points.
+    plot : bool, default: True
+        If True show a diagnostic plot of how well the reference points
+        are aligned.
+
+    Returns
+    -------
+    aligned : Dataset
+        The data aligned to the reference points.
+    alignment : tuple[NDArray[np.float64], NDArray[np.float64]]
+        The transformation that aligned the points.
+        The first element is a rotation matrix and
+        the second is the shift.
+    """
+    logger.info("\tAligning with reference points for %s", element)
+    elements = ["primary", "secondary", "bearing", "receiver"]
+    if element not in elements and element != "all":
+        raise ValueError(f"Invalid element: {element}")
+    reference = cast(DatasetReference, io.load_tracker(tracker_yaml))
+    if len(reference) == 0:
+        raise ValueError("Invalid or empty reference")
+    if element not in reference.elem_names and element != "all":
+        raise ValueError("Element not found in reference dict")
+    if element == "primary":
+        transform = partial(coord_transform, cfrom="opt_global", cto="opt_primary")
+    elif element == "secondary":
+        transform = partial(coord_transform, cfrom="opt_global", cto="opt_secondary")
+    else:
+        transform = partial(coord_transform, cfrom="opt_global", cto="opt_global")
+    if element == "all":
+        for el in elements:
+            if el not in reference.elem_names:
+                continue
+            for pt in reference.elem_labels[el]:
+                reference[f"all_{pt}"] = reference[pt]
+                reference[f"all_{pt}_err"] = reference[f"{pt}_err"]
+                reference[f"all_{pt}_ref"] = reference[f"{pt}_ref"]
+
+    # Lets find the points we can use
+    pts = reference.elements[element]
+    ref = reference.reference[element]
+    if len(ref) < 3:
+        raise ValueError(f"Only {len(ref)} reference points found! Can't align!")
+    ref = transform(ref)
+    logger.debug("\t\tReference points in element coords:\n%s", str(ref))
+
+    msk = np.ones(len(ref), bool)
+    scale_fac = 1
+    rot = None
+    sft = None
+    rot, sft = get_rigid(pts[msk], ref[msk], method="mean")
+    if scale:
+        triu_idx = np.triu_indices(len(pts[msk]), 1)
+        scale_fac = np.nanmedian(
+            make_edm(ref[msk])[triu_idx] / make_edm(pts[msk])[triu_idx]
+        )
+    pts_scaled = pts * scale_fac
+    logger.debug("\t\tScale factor of %f applied", scale_fac)
+
+    new_rot, new_sft = get_rigid(pts_scaled[msk], ref[msk], method="mean")
+    pts_t = apply_transform(pts_scaled[msk], new_rot, new_sft)
+    if plot:
+        fig = plt.figure()
+        ax = fig.add_subplot(projection="3d")
+        ax.scatter(pts[:, 0], pts[:, 1], pts[:, 2], color="g")
+        ax.scatter(pts_t[:, 0], pts_t[:, 1], pts_t[:, 2], color="b")
+        ax.scatter(ref[:, 0], ref[:, 1], ref[:, 2], color="r", marker="X")
+        plt.show()
+    diff = pts_t - ref[msk]
+    rms = np.sqrt(np.mean((diff) ** 2))
+    logger.info(
+        "\t\tRMS of reference points after alignment: %f",
+        rms,
+    )
+
+    coords_transformed = apply_transform(dataset.points * scale_fac, rot, sft)
+    labels = dataset.labels
 
     data = {label: coord for label, coord in zip(labels, coords_transformed)}
     transformed = Dataset(data)

@@ -24,6 +24,7 @@ from numpy.typing import NDArray
 from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
 
+from .dataset import DatasetReference
 from .io import load_tracker
 from .transforms import affine_basis_transform, coord_transform
 
@@ -37,7 +38,7 @@ rad_to_arcsec = 3600 * 180 / np.pi
 
 
 def get_hwfe(
-    data: dict[str, NDArray],
+    data: DatasetReference,
     get_transform: Callable[
         [NDArray[np.float64], NDArray[np.float64]],
         tuple[NDArray[np.float64], NDArray[np.float64]],
@@ -50,16 +51,8 @@ def get_hwfe(
 
     Parameters
     ----------
-    data : dict[str, NDArray]
-        Dict that contains the following for each included element:
-
-        * {element} : `(npoint, ndim)` array with the measured points
-        * {element}_ref : `(npoint, ndim)` array with the nominal points
-        * {element}_msk: `(npoint,)` boolean array that is False for points to exclude
-        * {element}_err: `(npoint, ndim)` array of error to add to the measured points.
-        `np.nan` is treated as 0.
-
-        This dict must at least contain the primary mirror.
+    data : DatasetReference
+        This dataset must at least contain the primary mirror.
     get_transform : Callable[[NDArray[np.float64], NDArray[np.float64]], tuple[NDArray[np.float64], NDArray[np.float64]]]
         Function that takes in two point clouds and returns an affine matrix and a shift to align them.
     add_err : bool, default: False
@@ -71,26 +64,26 @@ def get_hwfe(
         The HWFE in um-rms.
     """
     # Put everything in M1 coordinates
-    data_m1 = deepcopy(data)
+    data_m1 = data.copy()
     for element in elements:
-        dat = np.array(data_m1[element], np.float64)
+        dat = np.array(data_m1.elements[element], np.float64)
         if add_err:
-            dat += np.nan_to_num(data_m1[f"{element}_err"])
+            dat += np.nan_to_num(data_m1.errors[element])
         data_m1[element] = coord_transform(dat, "opt_global", "opt_primary")
         data_m1[f"{element}_ref"] = coord_transform(
-            data_m1[f"{element}_ref"], "opt_global", "opt_primary"
+            data_m1.reference[element], "opt_global", "opt_primary"
         )
 
     # Transform for M1 perfect
     aff_m1, sft_m1 = get_transform(
-        data_m1["primary"][data_m1["primary_msk"]],
-        data_m1["primary_ref"][data_m1["primary_msk"]],
+        data_m1.elements["primary"],
+        data_m1.reference["primary"],
     )
 
     hwfe = 0
     for element in hwfe_factors.keys():
-        src = data_m1[element][data_m1[f"{element}_msk"]]
-        dst = data_m1[f"{element}_ref"][data_m1[f"{element}_msk"]]
+        src = data_m1.elements[element]
+        dst = data_m1.reference[element]
 
         # Apply the transform to align M1
         src = apply_transform(src, aff_m1, sft_m1)
@@ -107,7 +100,7 @@ def get_hwfe(
 
 
 def get_pointing_error(
-    data: dict[str, NDArray],
+    data: DatasetReference,
     get_transform: Callable[
         [NDArray[np.float64], NDArray[np.float64]],
         tuple[NDArray[np.float64], NDArray[np.float64]],
@@ -120,16 +113,8 @@ def get_pointing_error(
 
     Parameters
     ----------
-    data : dict[str, NDArray]
-        Dict that contains the following for each included element:
-
-        * {element} : `(npoint, ndim)` array with the measured points
-        * {element}_ref : `(npoint, ndim)` array with the nominal points
-        * {element}_msk: `(npoint,)` boolean array that is False for points to exclude
-        * {element}_err: `(npoint, ndim)` array of error to add to the measured points.
-        `np.nan` is treated as 0.
-
-        This dict must at least contain the primary mirror.
+    data : DatasetReference
+        Dataset of measured reference points.
     get_transform : Callable[[NDArray[np.float64], NDArray[np.float64]], tuple[NDArray[np.float64], NDArray[np.float64]]]
         Function that takes in two point clouds and returns an affine matrix and a shift to align them.
     add_err : bool, default: False
@@ -146,16 +131,14 @@ def get_pointing_error(
     rots = np.zeros((2, 3))
     # Get rotations
     for i, (element, factor) in enumerate([("primary", 1), ("secondary", 2)]):
-        src = np.array(data[element])
+        src = np.array(data.elements[element])
         if add_err:
-            src += np.nan_to_num(data[f"{element}_err"])
+            src += np.nan_to_num(data.errors[element])
         # Put things in the local coords
-        src = coord_transform(src, "opt_global", f"opt_{element}")[
-            data[f"{element}_msk"]
-        ]
+        src = coord_transform(src, "opt_global", f"opt_{element}")
         dst = coord_transform(
-            np.array(data[f"{element}_ref"]), "opt_global", f"opt_{element}"
-        )[data[f"{element}_msk"]]
+            np.array(data.reference[element]), "opt_global", f"opt_{element}"
+        )
         # Get rotation
         aff, _ = get_transform(src, dst)
         *_, rot = decompose_affine(aff)
@@ -210,24 +193,23 @@ def main():
     ext = os.path.splitext(args.path)[1]
     if ext != ".yaml":
         raise ValueError("Data for HWFE script must be a yaml file")
-    data = load_tracker(args.path)
+    data: DatasetReference = load_tracker(args.path)
 
     # Get the transform for each element assuming no error
     have_err = False
     for element in elements:
         logger.info("Getting transform for %s", element)
-        src = np.array(data[element])
-        dst = np.array(data[f"{element}_ref"])
+        src = np.array(data.elements[element])
+        dst = np.array(data.reference[element])
         if np.all(np.isnan(src)):
             logger.info("\tElement is all nan!, assuming it is perfect")
             src = dst.copy()
             data[element] = src
         have = np.all(np.isfinite(src), axis=1)
-        have_err += np.any(np.isfinite(data[f"{element}_err"]))
+        have_err += np.any(np.isfinite(data.errors[element]))
         if np.sum(have) < 3:
             raise ValueError(f"Only {np.sum(have)} points found!")
-        data[f"{element}_msk"] = have
-        aff, sft = get_transform(src[have], dst[have], method="mean")
+        aff, sft = get_transform(src[have], dst[have])
         scale, shear, rot = decompose_affine(aff)
         rot = decompose_rotation(rot)
         logger.info("\tShift is %s mm", str(sft))
@@ -254,10 +236,10 @@ def main():
     rng = np.random.default_rng(12345)
 
     for i in tqdm(range(args.n_draws)):
-        _data = deepcopy(data)
-        _data["primary_err"] *= rng.normal(size=(4, 3))
-        _data["secondary_err"] *= rng.normal(size=(4, 3))
-        _data["receiver_err"] *= rng.normal(size=(4, 3))
+        _data = data.copy()
+        _data["primary_err"] = data.errors["primary"] * rng.normal(size=(4, 3))
+        _data["secondary_err"] = data.errors["secondary"] * rng.normal(size=(4, 3))
+        _data["receiver_err"] = data.errors["receiver"] * rng.normal(size=(4, 3))
         hwfe_werr[i] = get_hwfe(_data, get_transform, True)
         po_werr[i] = get_pointing_error(_data, get_transform, True)
     logger.info("\tStandard deviation of HWFE error dist is %f", np.std(hwfe_werr))

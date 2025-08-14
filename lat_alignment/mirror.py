@@ -25,7 +25,7 @@ from numpy.typing import NDArray
 from scipy.optimize import minimize
 from scipy.spatial.transform import Rotation
 
-from .photogrammetry import Dataset
+from .dataset import Dataset
 
 logger = logging.getLogger("lat_alignment")
 
@@ -285,7 +285,7 @@ class Panel:
         return resid
 
     @property
-    def adj_msk(self) -> NDArray[np.float64]:
+    def adj_msk(self) -> NDArray[np.bool_]:
         """
         Get a mask that only is True for measurements that are close to an adjustor.
         """
@@ -534,8 +534,10 @@ def remove_cm(
     logger.info("\tMirror has %d good points", len(panel.measurements))
 
     data = {l: d for l, d in zip(labels, panel.measurements)}
+    kept_points = dataset.copy()
+    kept_points.data_dict = data
 
-    return Dataset(data), (aff, sft)
+    return kept_points, (aff, sft)
 
 
 def plot_panels(

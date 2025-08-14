@@ -5,9 +5,9 @@ Script for analyzing trajectory of a point on optical elements.
 import argparse
 import logging
 import os
+import sys
 from functools import partial
 from importlib.resources import files
-import sys
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -25,6 +25,7 @@ from scipy.spatial.distance import pdist
 from scipy.spatial.transform import Rotation
 from skspatial.objects import Sphere
 
+from .dataset import DatasetReference
 from .error import get_hwfe, get_pointing_error
 from .io import load_tracker
 from .refpoint import RefCollection, RefTOD
@@ -39,23 +40,6 @@ from .transforms import coord_transform
 
 mpl.rcParams["lines.markersize"] *= 1.5
 
-# This is dumb! Should get from the nominal file somehow!
-LABELS = {
-    "primary": [
-        "primary_lower_right",
-        "primary_lower_left",
-        "primary_upper_right",
-        "primary_upper_left",
-    ],
-    "secondary": [
-        "secondary_lower_right",
-        "secondary_lower_left",
-        "secondary_upper_right",
-        "secondary_upper_left",
-    ],
-    "receiver": ["receiver_1", "receiver_2", "receiver_3", "receiver_4"],
-}
-
 local_coords = {
     "primary": "opt_primary",
     "secondary": "opt_secondary",
@@ -63,7 +47,9 @@ local_coords = {
 }
 
 
-def _plot_point_and_hwfe(data, ref, get_transform, plt_root, logger, skip_missing):
+def _plot_point_and_hwfe(
+    data, ref, get_transform, plt_root, logger, skip_missing, labels
+):
     logger.info("Calculating pointing error and HWFE")
     tods = {
         elem.name: elem.data
@@ -73,32 +59,41 @@ def _plot_point_and_hwfe(data, ref, get_transform, plt_root, logger, skip_missin
     if len(tods) == 0:
         logger.error("\tNo TODs found! Can't calculate!")
         return
-    for elem in LABELS.keys():
+    for elem in labels.keys():
         if elem in tods:
             if tods[elem].shape[1] < 4:
                 logger.error(
                     "Only %d points found! Filling with reference...",
                     tods[elem].shape[1],
                 )
-                tods[elem] = np.zeros((data.npoints,) + ref[elem].shape) + ref[elem]
+                tods[elem] = (
+                    np.zeros((data.npoints,) + ref.reference[elem].shape)
+                    + ref.reference[elem]
+                )
             continue
         logger.warning("No %s TOD found, filling with reference...", elem)
-        tods[elem] = np.zeros((data.npoints,) + ref[elem].shape) + ref[elem]
+        tods[elem] = (
+            np.zeros((data.npoints,) + ref.reference[elem].shape) + ref.reference[elem]
+        )
 
+    data_null = {}
+    for e, points in labels.items():
+        elem = {pt: np.zeros(3, np.float64) for pt in points}
+        err = {f"{pt}_err": np.zeros(3, np.float64) for pt in points}
+        eref = {f"{pt}_ref": ref.reference[e][i] for i, pt in enumerate(points)}
+        data_null = data_null | elem | err | eref
+    data_null = DatasetReference(data_null)
     hwfes = np.zeros(data.npoints) + np.nan
     pes = np.zeros(data.npoints) + np.nan
     missing = []
     for i in range(data.npoints):
-        _data = {}
+        _data = data_null.copy()
         tot = 0
         for elem in tods.keys():
             meas = tods[elem][i]
             msk = np.isfinite(meas).all(axis=1)
             tot += np.sum(msk) / len(meas)
             _data[elem] = meas
-            _data[f"{elem}_err"] = np.zeros_like(meas)
-            _data[f"{elem}_ref"] = ref[elem]
-            _data[f"{elem}_msk"] = msk
         if tot < len(tods):
             if skip_missing:
                 continue
@@ -182,7 +177,7 @@ def _plot_transform(
             logger.error("\t\tOnly %d points found! Skipping...", data[elem].ntods)
             continue
         src = data[elem].data
-        dst = ref[elem]
+        dst = ref.reference[elem]
         if local:
             dst = coord_transform(dst, "opt_global", local_coords[elem])
         sfts = np.zeros((len(src), 3)) + np.nan
@@ -539,9 +534,9 @@ def main():
     plt_root = os.path.splitext(args.config)[0]
 
     # Pick the fitter
-    get_transform = get_rigid
+    get_transform = partial(get_rigid, method="mean")
     if args.affine:
-        get_transform = partial(get_affine, force_svd=True)
+        get_transform = partial(get_affine, force_svd=True, method="mean")
 
     # Load data and do basic processing
     with open(args.config) as file:
@@ -552,15 +547,18 @@ def main():
         ref_path = str(files("lat_alignment.data").joinpath("reference.yaml"))
     with open(ref_path) as file:
         reference = yaml.safe_load(file)
+
     ref = {}
-    ref["primary"] = np.array([p for p, _ in reference["primary"]])
-    ref["secondary"] = np.array([p for p, _ in reference["secondary"]])
-    ref["receiver"] = np.array([p for p, _ in reference["receiver"]])
-    # TODO: This is ugly and bad
-    for i, p in enumerate(["lower_right", "lower_left", "upper_right", "upper_left"]):
-        ref[f"primary_{p}"] = ref["primary"][i]
-        ref[f"secondary_{p}"] = ref["secondary"][i]
-        ref[f"receiver_{i+1}"] = ref["receiver"][i]
+    labels = {}
+    for name, elem in reference.items():
+        if name == "coords":
+            continue
+        labels[name] = list(elem.keys())
+        ref = ref | {
+            f"{k}_ref": coord_transform(v[0], reference["coords"], "opt_global")
+            for k, v in elem.items()
+        }
+    ref = DatasetReference(ref)
     data = {"primary": [], "secondary": [], "receiver": []}
     for elem in data.keys():
         if elem not in cfg:
@@ -571,26 +569,27 @@ def main():
             logger.info("Loading %s", point)
             if point in data[elem]:
                 raise ValueError(f"{elem} already in data!")
-            if point not in ref:
+            if f"{point}_ref" not in ref:
                 raise ValueError(f"No reference for {point} found!")
             dat = load_tracker(cfg[elem][point]["path"])
-            if not isinstance(dat, np.ndarray):
-                raise ValueError("Loaded data is not array!")
             mode = cfg[elem][point]["mode"]
             start = cfg[elem][point]["start"]
             sep = cfg[elem][point]["sep"]
-            angle, cent = get_angle(dat, mode, start, sep, logger)
+            angle, cent = get_angle(dat.points, mode, start, sep, logger)
             off = 0
             if elem in ["primary", "secondary"]:
                 off = 90
                 angle = angle % 360
             if cfg.get("correct_rot", False):
-                dat = correct_rot(dat, angle, cent, off)
-            data[elem] += [RefTOD(point, dat, angle)]
+                corrected = correct_rot(dat.points, angle, cent, off)
+                dat.data_dict = {l: c for l, c in zip(dat.labels, corrected)}
+            data[elem] += [RefTOD(point, dat.points, angle)]
 
     # Construct the dataclass
     data = RefCollection.construct(data, logger, pad=cfg.get("pad", False))
-    data.elems = [elem.reorder(LABELS[elem.name], False) for elem in data.elems]
+    data.elems = [
+        elem.reorder(np.array(labels[elem.name]), False) for elem in data.elems
+    ]
 
     # Check motion of each element
     _plot_path(data, plt_root, logger)
@@ -605,7 +604,13 @@ def main():
         cfg.get("local", False),
     )
     _plot_point_and_hwfe(
-        data, ref, get_transform, plt_root, logger, cfg.get("skip_missing", False)
+        data,
+        ref,
+        get_transform,
+        plt_root,
+        logger,
+        cfg.get("skip_missing", False),
+        labels,
     )
 
     # Save if we want
