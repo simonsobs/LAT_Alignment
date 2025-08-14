@@ -1,6 +1,7 @@
 import logging
 import os
 from collections import defaultdict
+from functools import partial
 from importlib.resources import files
 
 import matplotlib.pyplot as plt
@@ -9,7 +10,7 @@ import yaml
 from megham.utils import make_edm
 from numpy.typing import NDArray
 
-from .dataset import Dataset, DatasetPhotogrammetry
+from .dataset import Dataset, DatasetPhotogrammetry, DatasetReference
 from .transforms import coord_transform
 
 logger = logging.getLogger("lat_alignment")
@@ -24,26 +25,31 @@ def _load_tracker_yaml(path: str):
         ref_path = str(files("lat_alignment.data").joinpath("reference.yaml"))
     with open(ref_path) as file:
         reference = yaml.safe_load(file)
+    ref_transform = partial(
+            coord_transform, cfrom=reference["coords"], cto="opt_global"
+        )
+    dat_transform = partial(
+            coord_transform, cfrom=dat.get("coords", "opt_global"), cto="opt_global"
+        )
 
-    null = np.zeros((4, 3)) + np.nan
+    # Add the data
     data = {}
-
-    # Add optical eliments
-    data["primary"] = dat.get("primary", null)
-    data["secondary"] = dat.get("secondary", null)
-    data["receiver"] = dat.get("receiver", null)
-
-    # Add errors
-    data["primary_err"] = dat.get("primary_err", null)
-    data["secondary_err"] = dat.get("secondary_err", null)
-    data["receiver_err"] = dat.get("receiver_err", null)
-
-    # Add reference
-    data["primary_ref"] = np.array([p for p, _ in reference["primary"].values()])
-    data["secondary_ref"] = np.array([p for p, _ in reference["secondary"].values()])
-    data["receiver_ref"] = np.array([p for p, _ in reference["receiver"].values()])
-
-    return data
+    for elem in reference.keys():
+        if elem == "coords":
+            continue
+        r = reference[elem]
+        null = np.zeros((len(r), 3)) + np.nan
+        d = dat.get(elem, null)
+        e = dat.get(f"{elem}_err", null)
+        if len(d) != len(r):
+            raise ValueError(f"{elem} has {len(d)} points instead of {len(r)}!")
+        if len(e) != len(r): 
+            raise ValueError(f"{elem} error has {len(e)} elements instead of {len(r)}!")
+        for i, point in enumerate(r.keys()):
+            data[f"{point}_ref"] = ref_transform(r[point][0])
+            data[point] = dat_transform(d[i])
+            data[f"{point}_err"] = dat_transform(e[i])
+    return DatasetReference(data)
 
 
 def _load_tracker_txt(path: str):

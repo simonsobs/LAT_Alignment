@@ -84,6 +84,85 @@ class Dataset:
         """
         return deepcopy(self)
 
+
+@dataclass
+class DatasetReference(Dataset):
+    """
+    Container class for dataset that only contains reference points and their errors.
+    Provides a dict like interface for accessing points by their labels.
+    Note that this class doesn't cover edge cases from misuse, use at your own risk.
+
+    Attributes
+    ----------
+    data_dict : dict[str, NDArray[np.float64]]
+        Dict of data points.
+        You should genrally not touch this directly.
+    """
+    def _clear_cache(self):
+        self.__dict__.pop("points", None)
+        self.__dict__.pop("labels", None)
+        self.__dict__.pop("elem_names", None)
+        self.__dict__.pop("elem_labels", None)
+        self.__dict__.pop("ref_labels", None)
+        self.__dict__.pop("err_labels", None)
+        self.__dict__.pop("elements", None)
+        self.__dict__.pop("reference", None)
+        self.__dict__.pop("errors", None)
+
+    def __setattr__(self, name, value):
+        if name == "data_dict":
+            self._clear_cache()
+        return super().__setattr__(name, value)
+
+    def __setitem__(self, key, item):
+        if key in self.elem_names:
+            if item.shape != self.elements[key].shape:
+                raise ValueError("Can't set {key} with shape {item.shape} when original shape is {self.elements[key]}")
+            for i, l in enumerate(self.elem_labels[key]):
+                self.data_dict[l] = item[i]
+        elif key[:-4] in self.elem_names and "_ref" in key:
+            if item.shape != self.reference[key[:-4]].shape:
+                raise ValueError("Can't set {key} with shape {item.shape} when original shape is {self.reference[key]}")
+            for i, l in enumerate(self.ref_labels[key[:-4]]):
+                self.data_dict[l] = item[i]
+        elif key[:-4] in self.elem_names and "_err" in key:
+            if item.shape != self.errors[key[:-4]].shape:
+                raise ValueError("Can't set {key} with shape {item.shape} when original shape is {self.error[key]}")
+            for i, l in enumerate(self.err_labels[key[:-4]]):
+                self.data_dict[l] = item[i]
+        else:
+            self.data_dict[key] = item
+        self._clear_cache()
+
+    @cached_property
+    def elem_names(self) -> list[str]:
+        return np.unique([k.split("_")[0] for k in self.labels]).tolist()
+
+    @cached_property
+    def elem_labels(self) -> dict[str, list[str]]:
+        return {e : [k for k in self.labels if (e in k and k[-4:] != "_ref" and k[-4:] != "_err")] for e in self.elem_names}
+
+    @cached_property
+    def elements(self) -> dict[str, NDArray[np.float64]]:
+        return {e : np.array([self.data_dict[k] for k in self.elem_labels[e]]) for e in self.elem_names}
+
+    @cached_property
+    def ref_labels(self) -> dict[str, list[str]]:
+        return {e : [k for k in self.labels if (e in k and k[-4:] == "_ref")] for e in self.elem_names}
+
+    @cached_property
+    def reference(self) -> dict[str, NDArray[np.float64]]:
+        return {e : np.array([self.data_dict[k] for k in self.ref_labels[e]]) for e in self.elem_names}
+
+    @cached_property
+    def err_labels(self) -> dict[str, list[str]]:
+        return {e : [k for k in self.labels if (e in k and k[-4:] == "_err")] for e in self.elem_names}
+
+    @cached_property
+    def errors(self) -> dict[str, NDArray[np.float64]]:
+        return {e : np.array([self.data_dict[k] for k in self.err_labels[e]]) for e in self.elem_names}
+
+
 @dataclass
 class DatasetPhotogrammetry(Dataset):
     """

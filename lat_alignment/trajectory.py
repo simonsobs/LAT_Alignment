@@ -36,6 +36,7 @@ from .traj_plots import (
     plot_hist,
 )
 from .transforms import coord_transform
+from .dataset import DatasetReference
 
 mpl.rcParams["lines.markersize"] *= 1.5
 
@@ -63,25 +64,30 @@ def _plot_point_and_hwfe(data, ref, get_transform, plt_root, logger, skip_missin
                     "Only %d points found! Filling with reference...",
                     tods[elem].shape[1],
                 )
-                tods[elem] = np.zeros((data.npoints,) + ref[elem].shape) + ref[elem]
+                tods[elem] = np.zeros((data.npoints,) + ref.reference[elem].shape) + ref.reference[elem]
             continue
         logger.warning("No %s TOD found, filling with reference...", elem)
-        tods[elem] = np.zeros((data.npoints,) + ref[elem].shape) + ref[elem]
+        tods[elem] = np.zeros((data.npoints,) + ref.reference[elem].shape) + ref.reference[elem]
 
+
+    data_null = {}
+    for e, points in labels.items():
+        elem = {pt : np.zeros(3, np.float64) for pt in points}
+        err = {f"{pt}_err" : np.zeros(3, np.float64) for pt in points}
+        eref = {f"{pt}_ref" : ref.reference[e][i] for i, pt in enumerate(points)}
+        data_null = data_null | elem | err | eref
+    data_null = DatasetReference(data_null)
     hwfes = np.zeros(data.npoints) + np.nan
     pes = np.zeros(data.npoints) + np.nan
     missing = []
     for i in range(data.npoints):
-        _data = {}
+        _data = data_null.copy()
         tot = 0
         for elem in tods.keys():
             meas = tods[elem][i]
             msk = np.isfinite(meas).all(axis=1)
             tot += np.sum(msk) / len(meas)
             _data[elem] = meas
-            _data[f"{elem}_err"] = np.zeros_like(meas)
-            _data[f"{elem}_ref"] = ref[elem]
-            _data[f"{elem}_msk"] = msk
         if tot < len(tods):
             if skip_missing:
                 continue
@@ -165,7 +171,7 @@ def _plot_transform(
             logger.error("\t\tOnly %d points found! Skipping...", data[elem].ntods)
             continue
         src = data[elem].data
-        dst = ref[elem]
+        dst = ref.reference[elem]
         if local:
             dst = coord_transform(dst, "opt_global", local_coords[elem])
         sfts = np.zeros((len(src), 3)) + np.nan
@@ -539,8 +545,11 @@ def main():
     ref = {}
     labels = {}
     for name, elem in reference.items():
+        if name == "coords":
+            continue
         labels[name] = list(elem.keys())
-        ref = ref | elem
+        ref = ref | {f"{k}_ref" : coord_transform(v[0], reference["coords"], "opt_global") for k, v in elem.items()}
+    ref = DatasetReference(ref)
     data = {"primary": [], "secondary": [], "receiver": []}
     for elem in data.keys():
         if elem not in cfg:
@@ -551,7 +560,7 @@ def main():
             logger.info("Loading %s", point)
             if point in data[elem]:
                 raise ValueError(f"{elem} already in data!")
-            if point not in ref:
+            if f"{point}_ref" not in ref:
                 raise ValueError(f"No reference for {point} found!")
             dat = load_tracker(cfg[elem][point]["path"])
             if not isinstance(dat, np.ndarray):
