@@ -407,6 +407,12 @@ def plot_anim(coords, angle, data, xlab, ylab, title, plt_root):
             vmin=vmin,
             vmax=vmax,
         )
+        ax.scatter(
+            coords[i, :, 0],
+            coords[i, :, 1],
+            color="black",
+            marker="x",
+        )
         fig.colorbar(im, cax=cax)
         ax.set_xlabel(xlab)
         ax.set_ylabel(ylab)
