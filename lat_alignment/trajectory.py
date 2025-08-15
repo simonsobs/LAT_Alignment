@@ -14,6 +14,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import yaml
+from cycler import cycler
 from megham.transform import (
     apply_transform,
     decompose_affine,
@@ -391,6 +392,61 @@ def _plot_traj_error(data, plt_root, logger):
         plt.close()
 
 
+def _plot_differences(data, plt_root, logger, local=False):
+    def get_diff(arr):
+        # Based on https://stackoverflow.com/questions/55353703/how-to-calculate-all-combinations-of-difference-between-array-elements-in-2d
+        s = arr.shape
+        s1 = np.insert(s, 0, 1)
+        s2 = np.insert(s, 0 + 1, 1)
+        if np.issubdtype(arr.dtype, np.str_):
+            diff = np.char.add(np.char.add(arr.reshape(s1), "-"), arr.reshape(s2))
+        else:
+            diff = arr.reshape(s1) - arr.reshape(s2)
+        return diff[np.triu_indices(len(diff), 1)]
+
+    for elem in data.keys():
+        os.makedirs(os.path.join(plt_root, elem), exist_ok=True)
+        logger.info("\t\tPlotting %s trajectory differences", elem)
+        if data[elem].data.size == 0:
+            logger.warning("\tNo TOD found! Skipping...")
+            continue
+        dat = data[elem].data
+        if local:
+            dat = coord_transform(dat, "opt_global", local_coords[elem])
+        names = get_diff(data[elem].tod_names)
+        dists = np.zeros((len(dat), len(names), 3)) + np.nan
+        for i in range(len(dat)):
+            dists[i] = get_diff(dat[i])
+
+        # Plot
+        prop_cycle = plt.rcParams["axes.prop_cycle"]
+        custom_cycle = cycler(marker=["o", "x", "+", "s", "d"]) * prop_cycle
+        for xax, xlab in [
+            ("angle", "Angle (deg)"),
+            ("meas_number", "Measurement (#)"),
+        ]:
+            x = getattr(data[elem], xax)
+            fig, axs = plt.subplots(
+                1, 3, sharey=True, figsize=(50, 20)
+            )  # , layout="constrained",)
+            for i, dim in enumerate(["x", "y", "z"]):
+                axs[i].set_prop_cycle(custom_cycle)
+                for j, name in enumerate(names):
+                    y = dists[:, j, i] - np.nanmean(dists[:, j, i])
+                    axs[i].scatter(x, y, alpha=0.5, label=(name if i == 0 else None))
+                axs[i].set_title(f"{dim} Differences")
+                axs[i].set_xlabel(xlab)
+            plt.suptitle(f"Differences by {xlab.split(' ')[0]}\n")
+            fig.legend(loc=7)
+            fig.tight_layout()
+            fig.subplots_adjust(right=0.93)
+            plt.savefig(
+                os.path.join(plt_root, elem, f"differences_{xax}.png"),
+                bbox_inches="tight",
+            )
+            plt.close()
+
+
 def _quantize_angle(theta, dtheta, start):
     if dtheta != 0:
         theta_corr = theta - theta[0]
@@ -592,6 +648,7 @@ def main():
     # Check motion of each element
     _plot_path(data, plt_root, logger)
     _plot_traj_error(data, plt_root, logger)
+    _plot_differences(data, plt_root, logger, local=cfg.get("local", False))
 
     # Here we only want ref points
     data_ref = deepcopy(data)
