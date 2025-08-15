@@ -6,9 +6,9 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from numpy.typing import NDArray
 from matplotlib import animation
 from mpl_toolkits.axes_grid1.axes_divider import make_axes_locatable
+from numpy.typing import NDArray
 
 
 def plot_by_ax_point(
@@ -389,20 +389,33 @@ def plot_anim(coords, angle, data, xlab, ylab, title, plt_root):
         The directory to save plots to.
     """
     if len(coords) != len(data) or len(coords) != len(angle):
-        raise ValueError("Coordinates, angle, and data do not agree on number of samples!")
+        raise ValueError(
+            "Coordinates, angle, and data do not agree on number of samples!"
+        )
     fig, ax = plt.subplots()
     divider = make_axes_locatable(ax)
-    cax = divider.append_axes('right', size='5%', pad=0.05)
+    cax = divider.append_axes("right", size="5%", pad=0.05)
     vmin, vmax = (np.min(data[:, :, 2]), np.max(data[:, :, 2]))
+
     def update(i):
         ax.clear()
         cax.clear()
-        im = ax.scatter(coords[i, :, 0] + data[i, :, 0], coords[i, :, 1] + data[i, :, 1], c=data[i, :, 2], vmin=vmin, vmax=vmax)
+        im = ax.scatter(
+            coords[i, :, 0] + data[i, :, 0],
+            coords[i, :, 1] + data[i, :, 1],
+            c=data[i, :, 2],
+            vmin=vmin,
+            vmax=vmax,
+        )
         fig.colorbar(im, cax=cax)
         ax.set_xlabel(xlab)
         ax.set_ylabel(ylab)
         ax.set_title(f"{title} {angle[i]} degrees")
         ax.set_aspect("equal")
         return ax
+
     ani = animation.FuncAnimation(fig, update, frames=len(coords), interval=500)
-    ani.save(os.path.join(plt_root, f"{title.lower().replace(' ' , '_')}.mkv"), writer="ffmpeg")
+    ani.save(
+        os.path.join(plt_root, f"{title.lower().replace(' ' , '_')}.mkv"),
+        writer="ffmpeg",
+    )
