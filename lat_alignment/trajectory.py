@@ -6,9 +6,9 @@ import argparse
 import logging
 import os
 import sys
+from copy import deepcopy
 from functools import partial
 from importlib.resources import files
-from copy import deepcopy
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
