@@ -6,6 +6,8 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib import animation
+from mpl_toolkits.axes_grid1.axes_divider import make_axes_locatable
 from numpy.typing import NDArray
 
 
@@ -355,4 +357,65 @@ def plot_hist(
         os.path.join(plt_root, f"{title.lower().replace(' ' , '_')}.png"),
         bbox_inches="tight",
     )
+
     plt.close()
+
+
+def plot_anim(coords, angle, data, xlab, ylab, title, plt_root):
+    """
+    Plot an animated scatter plot of data where each frame is a different sample.
+    The plot will be saved to `plt_root/{title.lower().replace(' ' , '_')}.png`.
+
+    Parameters
+    ----------
+    coords : NDArray[np.float64]
+        The xy coordinates to anchor the data to plot.
+        Should have shape `(npoint, 3)`.
+    angle : NDArray[np.float64]
+        The angle of the element at each data point.
+        Should have shape `(npoint,)`.
+    data : NDArray[np.float64]
+        The data to plot
+        The first two collumn will be added to `coords` in each frame.
+        The third collumn will be plotted as the color of the points.
+        Should have shape `(npoint, 3)`.
+    xlab : str
+        The x label to use in the plot.
+    ylab : str
+        The y label to use in the plot.
+    title : str
+        The title of the plot.
+    plt_root : str
+        The directory to save plots to.
+    """
+    if len(coords) != len(data) or len(coords) != len(angle):
+        raise ValueError(
+            "Coordinates, angle, and data do not agree on number of samples!"
+        )
+    fig, ax = plt.subplots()
+    divider = make_axes_locatable(ax)
+    cax = divider.append_axes("right", size="5%", pad=0.05)
+    vmin, vmax = (np.min(data[:, :, 2]), np.max(data[:, :, 2]))
+
+    def update(i):
+        ax.clear()
+        cax.clear()
+        im = ax.scatter(
+            coords[i, :, 0] + data[i, :, 0],
+            coords[i, :, 1] + data[i, :, 1],
+            c=data[i, :, 2],
+            vmin=vmin,
+            vmax=vmax,
+        )
+        fig.colorbar(im, cax=cax)
+        ax.set_xlabel(xlab)
+        ax.set_ylabel(ylab)
+        ax.set_title(f"{title} {angle[i]} degrees")
+        ax.set_aspect("equal")
+        return ax
+
+    ani = animation.FuncAnimation(fig, update, frames=len(coords), interval=500)
+    ani.save(
+        os.path.join(plt_root, f"{title.lower().replace(' ' , '_')}.mkv"),
+        writer="ffmpeg",
+    )

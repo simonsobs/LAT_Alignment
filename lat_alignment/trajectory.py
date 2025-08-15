@@ -34,6 +34,7 @@ from .refpoint import RefCollection, RefTOD
 from .traj_plots import (
     plot_all_ax,
     plot_all_dir,
+    plot_anim,
     plot_by_ax,
     plot_by_ax_point,
     plot_hist,
@@ -167,7 +168,7 @@ def _plot_point_and_hwfe(
 
 
 def _plot_transform(
-    data, ref, get_transform, plt_root, logger, skip_missing, local=False
+    data, ref, get_transform, plt_root, logger, skip_missing, local=False, expand=1000
 ):
     logger.info("Plotting transformation information")
     for elem in data.keys():
@@ -178,10 +179,16 @@ def _plot_transform(
         if data[elem].ntods < 4:
             logger.error("\t\tOnly %d points found! Skipping...", data[elem].ntods)
             continue
-        src = data[elem].data
+        src = data[elem].data.copy()
         dst = ref.reference[elem]
         if local:
             dst = coord_transform(dst, "opt_global", local_coords[elem])
+            src = np.array(
+                [
+                    coord_transform(_src, "opt_global", local_coords[elem])
+                    for _src in src
+                ]
+            )
         sfts = np.zeros((len(src), 3)) + np.nan
         rots = np.zeros((len(src), 3)) + np.nan
         scales = np.zeros((len(src), 3)) + np.nan
@@ -192,8 +199,6 @@ def _plot_transform(
                 if skip_missing:
                     continue
                 missing += [i]
-            if local:
-                _src = coord_transform(_src, "opt_global", local_coords[elem])
             try:
                 aff, sft = get_transform(_src, dst)
             except ValueError:
@@ -294,6 +299,17 @@ def _plot_transform(
                 f"{elem} Residuals",
                 os.path.join(plt_root, elem),
             )
+        resids[:, :, 0] *= expand
+        resids[:, :, 1] *= expand
+        plot_anim(
+            src,
+            data[elem].angle,
+            resids,
+            "x (mm)",
+            "y (mm)",
+            f"{elem} Residuals {expand}x",
+            os.path.join(plt_root, elem),
+        )
 
 
 def _plot_path(data, plt_root, logger):
