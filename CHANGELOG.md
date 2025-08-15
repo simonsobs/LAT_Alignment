@@ -1,3 +1,9 @@
+## 7.3.0 (2025-08-15)
+
+### Feat
+
+- add animations of residuals
+
 ## 7.2.0 (2025-08-15)
 
 ### Feat
