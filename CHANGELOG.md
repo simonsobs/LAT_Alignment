@@ -1,3 +1,9 @@
+## 7.4.0 (2025-08-15)
+
+### Feat
+
+- add marker for nominal position in animation
+
 ## 7.3.0 (2025-08-15)
 
 ### Feat
