@@ -8,6 +8,7 @@ import os
 import sys
 from functools import partial
 from importlib.resources import files
+from copy import deepcopy
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -570,7 +571,7 @@ def main():
             if point in data[elem]:
                 raise ValueError(f"{elem} already in data!")
             if f"{point}_ref" not in ref:
-                raise ValueError(f"No reference for {point} found!")
+                logger.info("\tNo reference for %s found!", point)
             dat = load_tracker(cfg[elem][point]["path"])
             mode = cfg[elem][point]["mode"]
             start = cfg[elem][point]["start"]
@@ -587,15 +588,18 @@ def main():
 
     # Construct the dataclass
     data = RefCollection.construct(data, logger, pad=cfg.get("pad", False))
-    data.elems = [
-        elem.reorder(np.array(labels[elem.name]), False) for elem in data.elems
-    ]
 
     # Check motion of each element
     _plot_path(data, plt_root, logger)
     _plot_traj_error(data, plt_root, logger)
+
+    # Here we only want ref points
+    data_ref = deepcopy(data)
+    data_ref.elems = [
+        elem.reorder(np.array(labels[elem.name]), False) for elem in data.elems
+    ]
     _plot_transform(
-        data,
+        data_ref,
         ref,
         get_transform,
         plt_root,
@@ -604,7 +608,7 @@ def main():
         cfg.get("local", False),
     )
     _plot_point_and_hwfe(
-        data,
+        data_ref,
         ref,
         get_transform,
         plt_root,
@@ -619,16 +623,16 @@ def main():
     logger.info("Saving reconstructed TODs")
     if cfg.get("local", False):
         logger.info("\tSaving in local coordinates")
-        outdir = os.path.join(plt_root, "tods")
-        os.makedirs(outdir, exist_ok=True)
-        for elem in data.elems:
-            for tod in elem.tods:
-                dat = tod.data
-                if cfg.get("local", False):
-                    dat = coord_transform(dat, "opt_global", local_coords[elem.name])
-                to_save = np.column_stack([tod.angle, np.sign(tod.direction), tod.data])
-                np.savetxt(
-                    os.path.join(outdir, f"{tod.name}.csv"),
-                    to_save,
-                    header="angle direction x y z",
-                )
+    outdir = os.path.join(plt_root, "tods")
+    os.makedirs(outdir, exist_ok=True)
+    for elem in data.elems:
+        for tod in elem.tods:
+            dat = tod.data
+            if cfg.get("local", False):
+                dat = coord_transform(dat, "opt_global", local_coords[elem.name])
+            to_save = np.column_stack([tod.angle, np.sign(tod.direction), tod.data])
+            np.savetxt(
+                os.path.join(outdir, f"{tod.name}.csv"),
+                to_save,
+                header="angle direction x y z",
+            )
