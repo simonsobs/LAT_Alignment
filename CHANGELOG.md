@@ -1,3 +1,13 @@
+## 7.1.0 (2025-08-15)
+
+### Feat
+
+- allow tracking trajectory of non ref points
+
+### Fix
+
+- move trajectory error legend to scatter plot
+
 ## 7.0.0 (2025-08-14)
 
 ### Feat
