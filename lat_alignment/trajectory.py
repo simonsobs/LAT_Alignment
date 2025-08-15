@@ -365,7 +365,6 @@ def _plot_traj_error(data, plt_root, logger):
                 if len(d[msk]) == 0:
                     continue
                 axs[0, i].hist(d[msk], bins="auto", color=color, alpha=0.5, label=label)
-            axs[0, i].legend()
             axs[0, i].set_xlabel("Distance Between Repeated Points (mm)")
             axs[0, i].set_ylabel("Count")
             axs[0, i].set_title(point)
@@ -383,6 +382,7 @@ def _plot_traj_error(data, plt_root, logger):
             )
             axs[1, i].set_xlabel("Angle (deg)")
             axs[1, i].set_ylabel("RMS (mm)")
+        axs[1, 0].legend()
         plt.suptitle(f"{elem} Trajectory Error")
         plt.savefig(
             os.path.join(plt_root, elem, f"{elem}_error.png"),
