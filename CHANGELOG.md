@@ -1,3 +1,9 @@
+## 7.2.0 (2025-08-15)
+
+### Feat
+
+- add plot of difference between points on the same element
+
 ## 7.1.0 (2025-08-15)
 
 ### Feat
