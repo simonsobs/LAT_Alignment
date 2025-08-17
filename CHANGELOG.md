@@ -1,3 +1,9 @@
+## 7.4.1 (2025-08-17)
+
+### Fix
+
+- take in expand factor for animation from config
+
 ## 7.4.0 (2025-08-15)
 
 ### Feat
