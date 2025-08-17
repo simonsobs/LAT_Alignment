@@ -679,6 +679,7 @@ def main():
         logger,
         cfg.get("skip_missing", False),
         cfg.get("local", False),
+        cfg.get("expand", 1000),
     )
     _plot_point_and_hwfe(
         data_ref,
