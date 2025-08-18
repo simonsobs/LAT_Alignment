@@ -47,11 +47,12 @@ local_coords = {
     "primary": "opt_primary",
     "secondary": "opt_secondary",
     "receiver": "opt_global",
+    "bearing": "opt_global",
 }
 
 
 def _plot_point_and_hwfe(
-    data, ref, get_transform, plt_root, logger, skip_missing, labels
+    data, ref, get_transform, plt_root, logger, skip_missing, labels, local=False
 ):
     logger.info("Calculating pointing error and HWFE")
     tods = {
@@ -81,9 +82,13 @@ def _plot_point_and_hwfe(
 
     data_null = {}
     for e, points in labels.items():
+        from_coords = local_coords[e] if local else "opt_global"
         elem = {pt: np.zeros(3, np.float64) for pt in points}
         err = {f"{pt}_err": np.zeros(3, np.float64) for pt in points}
-        eref = {f"{pt}_ref": ref.reference[e][i] for i, pt in enumerate(points)}
+        eref = {
+            f"{pt}_ref": coord_transform(ref.reference[e][i], from_coords, "opt_global")
+            for i, pt in enumerate(points)
+        }
         data_null = data_null | elem | err | eref
     data_null = DatasetReference(data_null)
     hwfes = np.zeros(data.npoints) + np.nan
@@ -93,7 +98,8 @@ def _plot_point_and_hwfe(
         _data = data_null.copy()
         tot = 0
         for elem in tods.keys():
-            meas = tods[elem][i]
+            from_coords = local_coords[elem] if local else "opt_global"
+            meas = coord_transform(tods[elem][i], from_coords, "opt_global")
             msk = np.isfinite(meas).all(axis=1)
             tot += np.sum(msk) / len(meas)
             _data[elem] = meas
@@ -168,7 +174,7 @@ def _plot_point_and_hwfe(
 
 
 def _plot_transform(
-    data, ref, get_transform, plt_root, logger, skip_missing, local=False, expand=1000
+    data, ref, get_transform, plt_root, logger, skip_missing, expand=1000
 ):
     logger.info("Plotting transformation information")
     for elem in data.keys():
@@ -181,14 +187,6 @@ def _plot_transform(
             continue
         src = data[elem].data.copy()
         dst = ref.reference[elem]
-        if local:
-            dst = coord_transform(dst, "opt_global", local_coords[elem])
-            src = np.array(
-                [
-                    coord_transform(_src, "opt_global", local_coords[elem])
-                    for _src in src
-                ]
-            )
         sfts = np.zeros((len(src), 3)) + np.nan
         rots = np.zeros((len(src), 3)) + np.nan
         scales = np.zeros((len(src), 3)) + np.nan
@@ -408,7 +406,7 @@ def _plot_traj_error(data, plt_root, logger):
         plt.close()
 
 
-def _plot_differences(data, plt_root, logger, local=False):
+def _plot_differences(data, plt_root, logger):
     def get_diff(arr):
         # Based on https://stackoverflow.com/questions/55353703/how-to-calculate-all-combinations-of-difference-between-array-elements-in-2d
         s = arr.shape
@@ -427,8 +425,6 @@ def _plot_differences(data, plt_root, logger, local=False):
             logger.warning("\tNo TOD found! Skipping...")
             continue
         dat = data[elem].data
-        if local:
-            dat = coord_transform(dat, "opt_global", local_coords[elem])
         names = get_diff(data[elem].tod_names)
         dists = np.zeros((len(dat), len(names), 3)) + np.nan
         for i in range(len(dat)):
@@ -627,8 +623,9 @@ def main():
         if name == "coords":
             continue
         labels[name] = list(elem.keys())
+        use_coords = local_coords[name] if cfg.get("local", False) else "opt_global"
         ref = ref | {
-            f"{k}_ref": coord_transform(v[0], reference["coords"], "opt_global")
+            f"{k}_ref": coord_transform(v[0], reference["coords"], use_coords)
             for k, v in elem.items()
         }
     ref = DatasetReference(ref)
@@ -656,6 +653,11 @@ def main():
             if cfg.get("correct_rot", False):
                 corrected = correct_rot(dat.points, angle, cent, off)
                 dat.data_dict = {l: c for l, c in zip(dat.labels, corrected)}
+            if cfg.get("local", False):
+                new_dat = coord_transform(
+                    dat.points, cfg.get("coords", "opt_global"), local_coords[elem]
+                )
+                dat.data_dict = {l: c for l, c in zip(dat.labels, new_dat)}
             data[elem] += [RefTOD(point, dat.points, angle)]
 
     # Construct the dataclass
@@ -664,7 +666,7 @@ def main():
     # Check motion of each element
     _plot_path(data, plt_root, logger)
     _plot_traj_error(data, plt_root, logger)
-    _plot_differences(data, plt_root, logger, local=cfg.get("local", False))
+    _plot_differences(data, plt_root, logger)
 
     # Here we only want ref points
     data_ref = deepcopy(data)
@@ -678,7 +680,6 @@ def main():
         plt_root,
         logger,
         cfg.get("skip_missing", False),
-        cfg.get("local", False),
         cfg.get("expand", 1000),
     )
     _plot_point_and_hwfe(
@@ -689,6 +690,7 @@ def main():
         logger,
         cfg.get("skip_missing", False),
         labels,
+        cfg.get("local", False),
     )
 
     # Save if we want
@@ -701,9 +703,6 @@ def main():
     os.makedirs(outdir, exist_ok=True)
     for elem in data.elems:
         for tod in elem.tods:
-            dat = tod.data
-            if cfg.get("local", False):
-                dat = coord_transform(dat, "opt_global", local_coords[elem.name])
             to_save = np.column_stack([tod.angle, np.sign(tod.direction), tod.data])
             np.savetxt(
                 os.path.join(outdir, f"{tod.name}.csv"),
