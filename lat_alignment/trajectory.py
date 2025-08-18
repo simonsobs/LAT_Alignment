@@ -82,10 +82,13 @@ def _plot_point_and_hwfe(
 
     data_null = {}
     for e, points in labels.items():
-        from_coords = (local_coords[e] if local else "opt_global")
+        from_coords = local_coords[e] if local else "opt_global"
         elem = {pt: np.zeros(3, np.float64) for pt in points}
         err = {f"{pt}_err": np.zeros(3, np.float64) for pt in points}
-        eref = {f"{pt}_ref": coord_transform(ref.reference[e][i], from_coords, "opt_global") for i, pt in enumerate(points)}
+        eref = {
+            f"{pt}_ref": coord_transform(ref.reference[e][i], from_coords, "opt_global")
+            for i, pt in enumerate(points)
+        }
         data_null = data_null | elem | err | eref
     data_null = DatasetReference(data_null)
     hwfes = np.zeros(data.npoints) + np.nan
@@ -95,7 +98,7 @@ def _plot_point_and_hwfe(
         _data = data_null.copy()
         tot = 0
         for elem in tods.keys():
-            from_coords = (local_coords[elem] if local else "opt_global")
+            from_coords = local_coords[elem] if local else "opt_global"
             meas = coord_transform(tods[elem][i], from_coords, "opt_global")
             msk = np.isfinite(meas).all(axis=1)
             tot += np.sum(msk) / len(meas)
@@ -620,7 +623,7 @@ def main():
         if name == "coords":
             continue
         labels[name] = list(elem.keys())
-        use_coords = (local_coords[name] if cfg.get("local", False) else "opt_global")
+        use_coords = local_coords[name] if cfg.get("local", False) else "opt_global"
         ref = ref | {
             f"{k}_ref": coord_transform(v[0], reference["coords"], use_coords)
             for k, v in elem.items()
@@ -651,7 +654,9 @@ def main():
                 corrected = correct_rot(dat.points, angle, cent, off)
                 dat.data_dict = {l: c for l, c in zip(dat.labels, corrected)}
             if cfg.get("local", False):
-                new_dat = coord_transform(dat.points, cfg.get("coords", "opt_global"), local_coords[elem])
+                new_dat = coord_transform(
+                    dat.points, cfg.get("coords", "opt_global"), local_coords[elem]
+                )
                 dat.data_dict = {l: c for l, c in zip(dat.labels, new_dat)}
             data[elem] += [RefTOD(point, dat.points, angle)]
 
