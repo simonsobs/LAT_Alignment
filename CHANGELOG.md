@@ -1,3 +1,9 @@
+## 7.5.0 (2025-08-18)
+
+### Feat
+
+- make local coordinates a more global setting in trajectory script
+
 ## 7.4.1 (2025-08-17)
 
 ### Fix
