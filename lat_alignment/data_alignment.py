@@ -158,12 +158,12 @@ def align_photo(
     # invars = ["TARGET35", "TARGET4", "TARGET484"] #, "TARGET421"]
     # pts = [dataset[label] for label in invars]
     # print(invars)
-    if len(ref) < 3:
+    if len(ref) < 4:
         logger.warning(f"Only {len(ref)} reference points found!")
         logger.warning(f"Adding reference codes")
         pts += found_coded
         ref += ref_coded
-    if len(ref) < 3:
+    if len(ref) < 4:
         raise ValueError(
             f"Only {len(ref)} reference points found including codes! Can't align!"
         )
