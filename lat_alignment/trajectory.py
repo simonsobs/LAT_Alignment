@@ -8,6 +8,7 @@ import os
 import sys
 from copy import deepcopy
 from functools import partial
+from itertools import cycle
 from importlib.resources import files
 
 import matplotlib as mpl
@@ -432,11 +433,13 @@ def _plot_differences(data, plt_root, logger):
 
         # Plot
         prop_cycle = plt.rcParams["axes.prop_cycle"]
-        custom_cycle = cycler(marker=["o", "x", "+", "s", "d"]) * prop_cycle
+        custom_cycle = cycler(marker=["o", "x", "+", "s", "d", "v", "^", "<", ">"]) * prop_cycle
+        markers = custom_cycle.simplify().by_key()['marker']
         for xax, xlab in [
             ("angle", "Angle (deg)"),
             ("meas_number", "Measurement (#)"),
         ]:
+            m = cycle(markers)
             x = getattr(data[elem], xax)
             fig, axs = plt.subplots(
                 1, 3, sharey=True, figsize=(50, 20)
@@ -445,7 +448,7 @@ def _plot_differences(data, plt_root, logger):
                 axs[i].set_prop_cycle(custom_cycle)
                 for j, name in enumerate(names):
                     y = dists[:, j, i] - np.nanmean(dists[:, j, i])
-                    axs[i].scatter(x, y, alpha=0.5, label=(name if i == 0 else None))
+                    axs[i].scatter(x, y, alpha=0.5, label=(name if i == 0 else None), marker=next(m))
                 axs[i].set_title(f"{dim} Differences")
                 axs[i].set_xlabel(xlab)
             plt.suptitle(f"Differences by {xlab.split(' ')[0]}\n")
@@ -457,12 +460,11 @@ def _plot_differences(data, plt_root, logger):
                 bbox_inches="tight",
             )
             plt.close()
-        prop_cycle = plt.rcParams["axes.prop_cycle"]
-        custom_cycle = cycler(marker=["o", "x", "+", "s", "d"]) * prop_cycle
         for xax, xlab in [
             ("angle", "Angle (deg)"),
             ("meas_number", "Measurement (#)"),
         ]:
+            m = cycle(markers)
             x = getattr(data[elem], xax)
             fig, ax = plt.subplots(
                 1, 1, sharey=True, figsize=(50, 20)
@@ -471,7 +473,7 @@ def _plot_differences(data, plt_root, logger):
             for j, name in enumerate(names):
                 y = np.linalg.norm(dists[:, j, :], axis=1)
                 y -= np.nanmean(y)
-                ax.scatter(x, y, alpha=0.5, label=name)
+                ax.scatter(x, y, alpha=0.5, label=name, marker=next(m))
                 ax.plot(x, y, alpha=0.25)
             ax.set_title(f"Distances")
             ax.set_xlabel(xlab)
