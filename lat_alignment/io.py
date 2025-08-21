@@ -152,12 +152,13 @@ def load_photo(
             to_kill += [labels[trg_msk][i]]
     msk = ~np.isin(labels, to_kill)
     logger.info("\tFound and removed %d doubles", len(to_kill))
-    labels, coords = labels[msk], coords[msk]
+    labels, coords, err = labels[msk], coords[msk], err[msk]
 
     if plot:
         fig = plt.figure()
         ax = fig.add_subplot(projection="3d")
-        ax.scatter(coords[:, 0], coords[:, 1], coords[:, 2], marker="x")
+        p = ax.scatter(coords[:, 0], coords[:, 1], coords[:, 2], marker="x", c=err, vmax=np.percentile(err, 90))
+        fig.colorbar(p)
         plt.show()
 
     data = {label: coord for label, coord in zip(labels, coords)}
