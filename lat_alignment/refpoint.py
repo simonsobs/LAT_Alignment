@@ -7,6 +7,7 @@ import operator
 from dataclasses import dataclass
 from functools import cached_property, reduce
 from typing import Self
+from copy import deepcopy
 
 import numpy as np
 from numpy.typing import NDArray
@@ -232,7 +233,7 @@ class RefElem:
         if len(np.unique(names)) != len(names):
             raise ValueError("Input names not unique")
         inself = np.isin(names, self.tod_names)
-        tods = self.tods
+        tods = deepcopy(self.tods)
         if np.sum(inself) != len(names):
             if not pad:
                 names = names[inself]
