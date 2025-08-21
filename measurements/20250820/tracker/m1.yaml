@@ -1,0 +1,78 @@
+use_first: True
+correct_rot: False 
+local: True 
+pad: True
+save: True
+primary:
+  primary_lower_right:
+    path: "./M1_Sag/primary_lower_right.txt"
+    mode: step
+    start: 90
+    sep: 50
+    angle: [90, 90, 90, 40, 40, 40, 90, 90]
+  primary_lower_left:
+    path: "./M1_Sag/primary_lower_left.txt"
+    mode: step
+    start: 90
+    sep: 50
+    angle: [90, 90, 90, 40, 40, 40, 90, 90]
+  primary_upper_right:
+    path: "./M1_Sag/primary_upper_right.txt"
+    mode: step
+    start: 90
+    sep: 50
+    angle: [90, 90, 90, 90, 90]
+  primary_upper_left:
+    path: "./M1_Sag/primary_upper_left.txt"
+    mode: step
+    start: 90
+    sep: 50
+    angle: [90, 90, 90, 40, 40, 40, 90, 90]
+  primary_1:
+    path: "./M1_Sag/primary_1.txt"
+    mode: step
+    start: 90
+    sep: 50
+    angle: [90, 90, 90, 40, 40, 40, 90, 90]
+  primary_2:
+    path: "./M1_Sag/primary_2.txt"
+    mode: step
+    start: 90
+    sep: 50
+    angle: [90, 90, 90, 40, 40, 40, 90, 90]
+  primary_3:
+    path: "./M1_Sag/primary_3.txt"
+    mode: step
+    start: 90
+    sep: 50
+    angle: [90, 90, 90, 40, 40, 40, 90, 90]
+  primary_4:
+    path: "./M1_Sag/primary_4.txt"
+    mode: step
+    start: 90
+    sep: 50
+    angle: [90, 90, 90, 40, 40, 40, 90, 90]
+  primary_5:
+    path: "./M1_Sag/primary_5.txt"
+    mode: step
+    start: 90
+    sep: 50
+    angle: [90, 90, 90, 40, 40, 40, 90, 90]
+  primary_6:
+    path: "./M1_Sag/primary_6.txt"
+    mode: step
+    start: 90
+    sep: 50
+    angle: [90, 90, 90, 40, 40, 40, 90, 90]
+  primary_7:
+    path: "./M1_Sag/primary_7.txt"
+    mode: step
+    start: 90
+    sep: 50
+    angle: [90, 90, 90, 40, 40, 40, 90, 90]
+  primary_8:
+    path: "./M1_Sag/primary_8.txt"
+    mode: step
+    start: 90
+    sep: 50
+    angle: [90, 90, 90, 90, 90]

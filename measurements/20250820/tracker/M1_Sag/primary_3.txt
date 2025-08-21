@@ -1,0 +1,9 @@
+Enabled	Feature       	ID	x          	y      	z         	i	j	k	Dev From Fit	Device Position  	Probe	Device Name
+Checked	primary_3     	1 	-2,982.0467	0.6441 	3,489.2767	 	 	 	0.0391      	Device Position 1	38.1 	V20003907682
+Checked	primary_3     	2 	-2,982.0623	0.6458 	3,489.2353	 	 	 	0.0083      	Device Position 1	38.1 	V20003907682
+Checked	primary_3     	3 	-2,982.0554	0.6414 	3,489.2032	 	 	 	0.0353      	Device Position 1	38.1 	V20003907682
+Checked	primary_3_40  	1 	-4,586.5658	-0.0009	-38.6903  	 	 	 	0.0276      	Device Position 1	38.1 	V20003907682
+Checked	primary_3_40  	2 	-4,586.5804	-0.0136	-38.6723  	 	 	 	0.0069      	Device Position 1	38.1 	V20003907682
+Checked	primary_3_40  	3 	-4,586.5783	-0.0343	-38.6451  	 	 	 	0.0303      	Device Position 1	38.1 	V20003907682
+Checked	primary_3_90_2	1 	-2,981.9866	0.4270 	3,489.3906	 	 	 	0.0092      	Device Position 1	38.1 	V20003907682
+Checked	primary_3_90_2	2 	-2,982.0045	0.4264 	3,489.3946	 	 	 	0.0092      	Device Position 1	38.1 	V20003907682
