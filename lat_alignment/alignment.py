@@ -9,6 +9,7 @@ import logging
 import os
 from functools import partial
 from importlib.resources import files
+import matplotlib.pyplot as plt
 
 from numpy.lib.arraysetops import isin
 
@@ -210,8 +211,25 @@ def main():
                         dataset.points, "opt_global", f"opt_{mirror}"
                     )
                 dataset.data_dict = {l: p for l, p in zip(dataset.labels, points)}
-            data_dict = data_dict | dataset.data_dict
+            ddict = {f"{l}_{i}": p for l, p in zip(dataset.labels, dataset.points)}
+            data_dict = data_dict | ddict
         dataset = datasets[0].__class__(data_dict)
+        append = ""
+        if "sample_every" in cfg:
+            i, j = cfg["sample_every"]
+            ddict = {l: p for l, p in zip(dataset.labels[i::j], dataset.points[i::j])}
+            dataset.data_dict = ddict
+            append = f"_{i}_{j}"
+
+        fig = plt.figure()
+        ax = fig.add_subplot(projection="3d")
+        ax.scatter(
+            dataset.targets[:, 0],
+            dataset.targets[:, 1],
+            dataset.targets[:, 2],
+            marker="x",
+        )
+        plt.show()
         dataset, _ = mir.remove_cm(
             dataset, mirror, cfg.get("compensate", 0), **cfg.get("common_mode", {})
         )
@@ -242,12 +260,12 @@ def main():
             )
         logger.info("Found measurements for %d panels", len(panels))
         fig = mir.plot_panels(panels, title_str, vmax=cfg.get("vmax", None))
-        fig.savefig(os.path.join(cfgdir, f"{title_str.replace(' ', '_')}.png"))
+        fig.savefig(os.path.join(cfgdir, f"{title_str.replace(' ', '_')}{append}.png"))
         res_all = np.vstack([panel.residuals for panel in panels])
         model_all = np.vstack([panel.model for panel in panels])
         mir_out = np.hstack([model_all, res_all])
         np.savetxt(
-            os.path.join(cfgdir, f"{title_str.replace(' ', '_')}_surface.txt"),
+            os.path.join(cfgdir, f"{title_str.replace(' ', '_')}_surface{append}.txt"),
             mir_out,
             header="x y z x_res y_res z_res",
         )
@@ -261,7 +279,7 @@ def main():
         order = np.lexsort((adjustments[:, 2], adjustments[:, 1], adjustments[:, 0]))
         adjustments = adjustments[order]
         np.savetxt(
-            os.path.join(cfgdir, f"{title_str.replace(' ', '_')}.csv"),
+            os.path.join(cfgdir, f"{title_str.replace(' ', '_')}{append}.csv"),
             adjustments,
             fmt=["%d", "%d", "%d"] + ["%.5f"] * 14,
         )
