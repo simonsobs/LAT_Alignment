@@ -53,7 +53,7 @@ def _load_tracker_yaml(path: str):
 
 
 def _load_tracker_txt(path: str):
-    data = np.genfromtxt(path, usecols=(3, 4, 5), skip_header=1, dtype=str)
+    data = np.genfromtxt(path, usecols=(3, 4, 5), skip_header=1, dtype=str, delimiter="\t")
     data = np.char.replace(data, ",", "").astype(float)
 
     data = {f"TARGET_{i}": dat for i, dat in enumerate(data)}
