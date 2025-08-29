@@ -24,7 +24,7 @@ from megham.transform import (
 from numpy.typing import NDArray
 from scipy.optimize import minimize
 from scipy.spatial.transform import Rotation
-from scipy.stats import binned_statistic
+from scipy.stats import binned_statistic, iqr
 
 from .dataset import Dataset
 
@@ -123,10 +123,10 @@ def mirror_norm(
             if j != 0:
                 y_n += a[i, j] * (x / Rn) ** i * (y ** (j - 1)) / (Rn**j)
 
-    z_n = 1 * np.ones_like(x_n)
+    z_n = -1*np.ones_like(x_n)
     normals = np.array((x_n, y_n, z_n)).T
     normals /= np.linalg.norm(normals, axis=-1)[:, np.newaxis]
-    return 1*normals
+    return -1*normals
 
 def fit_comp(x0, y0, comp, a):
     def _to_min(x):
@@ -209,20 +209,21 @@ class Panel:
         expensive = False
         model = self.measurements.copy()
         model[:, 2] = mirror_surface(model[:, 0], model[:, 1], a[self.mirror])
+        sign = (-1 if self.mirror == "primary" else 1) 
         if self.compensate != 0.0:
             if expensive:
                 for i, point in enumerate(model):
                     dx, dy = fit_comp(point[0], point[1], self.compensate, a[self.mirror])
                     x, y = np.array([model[i, 0] + dx]).ravel(), np.array([model[i, 1] + dy]).ravel()
                     comp = self.compensate * mirror_norm (x, y, a[self.mirror])
-                    model[i, 2] = (mirror_surface(x, y, a[self.mirror]) + comp[:, 2])[0]
+                    model[i, 2] = (mirror_surface(x, y, a[self.mirror]) + sign*comp[:, 2])[0]
             else:
                 compensation = self.compensate * mirror_norm(
                     model[:, 0], model[:, 1], a[self.mirror]
                 )
-                x = model[:, 0] - compensation[:, 0]
-                y = model[:, 1] - compensation[:, 1]
-                model[:, 2] = mirror_surface(x, y, a[self.mirror]) + compensation[:, 2]
+                x = model[:, 0] - sign*compensation[:, 0]
+                y = model[:, 1] - sign*compensation[:, 1]
+                model[:, 2] = mirror_surface(x, y, a[self.mirror]) + sign*compensation[:, 2]
         return model
 
     @cached_property
@@ -573,7 +574,7 @@ def _get_diff(arr):
     return diff[np.triu_indices(len(diff), 1)]
 
 def plot_panels(
-    panels: list[Panel], title_str: str, vmax: Optional[float] = None
+        panels: list[Panel], title_str: str, vmax: Optional[float] = None, iqr: bool = False
 ) -> Figure:
     """
     Make a plot containing panel residuals and histogram.
@@ -589,6 +590,9 @@ def plot_panels(
         The max of the colorbar. vmin will be -1 times this.
         Set to None to compute automatically.
         Should be in um.
+    iqr : bool, default: False
+        If True estimate the RMS using the IQR rather than
+        directly calculating it.
 
     Returns
     -------
@@ -664,9 +668,12 @@ def plot_panels(
             Polygon(panel.corners[[0, 1, 3, 2], :2], fill=False, color="black")
         )
 
-    points = np.array([len(panel.measurements) for panel in panels])
-    rms = np.array([panel.rms for panel in panels])
-    tot_rms = 1000 * np.sum(rms * points) / np.sum(points)
+    if iqr:
+        tot_rms = iqr(res_all[:, 2].ravel(), scale="normal")
+    else:
+        points = np.array([len(panel.measurements) for panel in panels])
+        rms = np.array([panel.rms for panel in panels])
+        tot_rms = 1000 * np.sum(rms * points) / np.sum(points)
 
     to_diff = model_all.copy()
     to_diff[:, 2] = res_all[:, 2]
