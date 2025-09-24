@@ -1,0 +1,2106 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://simonsobs.github.io/LAT_Alignment/7.6.0/reference/data_alignment/">
+      
+      
+        <link rel="prev" href="../bearing/">
+      
+      
+        <link rel="next" href="../dataset/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.20">
+    
+    
+      
+        <title>data_alignment - LAT_Alignment</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.e53b48f4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#lat_alignment.data_alignment" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="LAT_Alignment" class="md-header__button md-logo" aria-label="LAT_Alignment" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            LAT_Alignment
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              data_alignment
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="LAT_Alignment" class="md-nav__button md-logo" aria-label="LAT_Alignment" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    LAT_Alignment
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../coordinate_systems/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Coordinate Systems
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../panel_numbers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Panel Numbering Scheme
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config_file/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuration File
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../alignment_procedure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Alignment Procedure
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ixb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    IxB Tool
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    API Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            API Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adjustments/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    adjustments
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../alignment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    alignment
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bearing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    bearing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    data_alignment
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    data_alignment
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#lat_alignment.data_alignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      data_alignment
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lat_alignment.data_alignment.align_photo" class="md-nav__link">
+    <span class="md-ellipsis">
+      align_photo
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lat_alignment.data_alignment.align_tracker" class="md-nav__link">
+    <span class="md-ellipsis">
+      align_tracker
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dataset/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    dataset
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../error/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    error
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fitting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    fitting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../io/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    io
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ixb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    ixb
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mirror/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    mirror
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../refpoint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    refpoint
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scriptlets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    scriptlets
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../traj_plots/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    traj_plots
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../trajectory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    trajectory
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../transforms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    transforms
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#lat_alignment.data_alignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      data_alignment
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lat_alignment.data_alignment.align_photo" class="md-nav__link">
+    <span class="md-ellipsis">
+      align_photo
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lat_alignment.data_alignment.align_tracker" class="md-nav__link">
+    <span class="md-ellipsis">
+      align_tracker
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>data_alignment</h1>
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="lat_alignment.data_alignment"></a>
+    <div class="doc doc-contents first">
+
+        <p>Functions for aligning datasets to a well defined reference frame.</p>
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="lat_alignment.data_alignment.align_photo" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">align_photo</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">reference</span><span class="p">,</span> <span class="n">kill_refs</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="s1">&#39;primary&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blind_search</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_dist</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span> <span class="n">rms_thresh</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Align photogrammetry data and then put it into mirror coordinates.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>dataset</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="DatasetPhotogrammetry
+
+
+  
+      dataclass
+   (lat_alignment.dataset.DatasetPhotogrammetry)" href="../dataset/#lat_alignment.dataset.DatasetPhotogrammetry">DatasetPhotogrammetry</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The photogrammetry data to align.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>reference</code>
+            </td>
+            <td>
+                  <code><span title="dict">dict</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Reference dictionary.
+Should contain a key called <code>coords</code> that specifies the
+coordinate system that the reference points are in.
+The rest of the keys should be optical elements (ie: "primary")
+pointing to a list of reference points to use.
+Each point given should be a tuple with two elements.
+The first element is a tuple with the (x, y, z) coordinates
+of the point in the global coordinate system.
+The second is a list of nearby coded targets that can be used
+to identify the point.
+Each item in the list of coded targets should be a tuple containing
+the label of the code and the (x, y, z) coordinate of the coded target.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>kill_refs</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If True remove reference points from the dataset.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>element</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The element that these points belong to.
+Should be either: 'primary', 'secondary', 'bearing', 'receiver', or 'all'.</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;primary&#39;</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>scale</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If True also compute a scale factor from the reference points.</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>blind_search</code>
+            </td>
+            <td>
+                  <code><span title="float">float</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Perform a blind search for the reference points.
+This is not implemented yet...</p>
+              </div>
+            </td>
+            <td>
+                  <code>-1</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>plot</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If True show a diagnostic plot of how well the reference points
+are aligned.</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>max_dist</code>
+            </td>
+            <td>
+                  <code><span title="float">float</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Max distance in mm that the reference poing can be from the target
+point used to locate it.</p>
+              </div>
+            </td>
+            <td>
+                  <code>100</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>rms_thresh</code>
+            </td>
+            <td>
+                  <code><span title="float">float</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>RMS is mm above which we will attempt to cut points.</p>
+              </div>
+            </td>
+            <td>
+                  <code>1</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>aligned</code></td>            <td>
+                  <code><a class="autorefs autorefs-internal" title="DatasetPhotogrammetry
+
+
+  
+      dataclass
+   (lat_alignment.dataset.DatasetPhotogrammetry)" href="../dataset/#lat_alignment.dataset.DatasetPhotogrammetry">DatasetPhotogrammetry</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The photogrammetry data aligned to the reference points.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+<td><code>alignment</code></td>            <td>
+                  <code><span title="tuple">tuple</span>[<span title="numpy.typing.NDArray">NDArray</span>[<span title="numpy.float64">float64</span>], <span title="numpy.typing.NDArray">NDArray</span>[<span title="numpy.float64">float64</span>]]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The transformation that aligned the points.
+The first element is a rotation matrix and
+the second is the shift.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>lat_alignment/data_alignment.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 28</span>
+<span class="normal"> 29</span>
+<span class="normal"> 30</span>
+<span class="normal"> 31</span>
+<span class="normal"> 32</span>
+<span class="normal"> 33</span>
+<span class="normal"> 34</span>
+<span class="normal"> 35</span>
+<span class="normal"> 36</span>
+<span class="normal"> 37</span>
+<span class="normal"> 38</span>
+<span class="normal"> 39</span>
+<span class="normal"> 40</span>
+<span class="normal"> 41</span>
+<span class="normal"> 42</span>
+<span class="normal"> 43</span>
+<span class="normal"> 44</span>
+<span class="normal"> 45</span>
+<span class="normal"> 46</span>
+<span class="normal"> 47</span>
+<span class="normal"> 48</span>
+<span class="normal"> 49</span>
+<span class="normal"> 50</span>
+<span class="normal"> 51</span>
+<span class="normal"> 52</span>
+<span class="normal"> 53</span>
+<span class="normal"> 54</span>
+<span class="normal"> 55</span>
+<span class="normal"> 56</span>
+<span class="normal"> 57</span>
+<span class="normal"> 58</span>
+<span class="normal"> 59</span>
+<span class="normal"> 60</span>
+<span class="normal"> 61</span>
+<span class="normal"> 62</span>
+<span class="normal"> 63</span>
+<span class="normal"> 64</span>
+<span class="normal"> 65</span>
+<span class="normal"> 66</span>
+<span class="normal"> 67</span>
+<span class="normal"> 68</span>
+<span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">align_photo</span><span class="p">(</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="n">DatasetPhotogrammetry</span><span class="p">,</span>
+    <span class="n">reference</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">kill_refs</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">element</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;primary&quot;</span><span class="p">,</span>
+    <span class="n">scale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">blind_search</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">plot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">max_dist</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span>
+    <span class="n">rms_thresh</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span>
+    <span class="n">DatasetPhotogrammetry</span><span class="p">,</span>
+    <span class="nb">tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]],</span>
+<span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Align photogrammetry data and then put it into mirror coordinates.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dataset : DatasetPhotogrammetry</span>
+<span class="sd">        The photogrammetry data to align.</span>
+<span class="sd">    reference : dict</span>
+<span class="sd">        Reference dictionary.</span>
+<span class="sd">        Should contain a key called `coords` that specifies the</span>
+<span class="sd">        coordinate system that the reference points are in.</span>
+<span class="sd">        The rest of the keys should be optical elements (ie: &quot;primary&quot;)</span>
+<span class="sd">        pointing to a list of reference points to use.</span>
+<span class="sd">        Each point given should be a tuple with two elements.</span>
+<span class="sd">        The first element is a tuple with the (x, y, z) coordinates</span>
+<span class="sd">        of the point in the global coordinate system.</span>
+<span class="sd">        The second is a list of nearby coded targets that can be used</span>
+<span class="sd">        to identify the point.</span>
+<span class="sd">        Each item in the list of coded targets should be a tuple containing</span>
+<span class="sd">        the label of the code and the (x, y, z) coordinate of the coded target.</span>
+<span class="sd">    kill_refs : bool</span>
+<span class="sd">        If True remove reference points from the dataset.</span>
+<span class="sd">    element : str, default: &#39;primary&#39;</span>
+<span class="sd">        The element that these points belong to.</span>
+<span class="sd">        Should be either: &#39;primary&#39;, &#39;secondary&#39;, &#39;bearing&#39;, &#39;receiver&#39;, or &#39;all&#39;.</span>
+<span class="sd">    scale : bool, default: True</span>
+<span class="sd">        If True also compute a scale factor from the reference points.</span>
+<span class="sd">    blind_search : float, default: -1</span>
+<span class="sd">        Perform a blind search for the reference points.</span>
+<span class="sd">        This is not implemented yet...</span>
+<span class="sd">    plot : bool, default: True</span>
+<span class="sd">        If True show a diagnostic plot of how well the reference points</span>
+<span class="sd">        are aligned.</span>
+<span class="sd">    max_dist : float, default: 100</span>
+<span class="sd">        Max distance in mm that the reference poing can be from the target</span>
+<span class="sd">        point used to locate it.</span>
+<span class="sd">    rms_thresh : float, default: 1</span>
+<span class="sd">        RMS is mm above which we will attempt to cut points.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    aligned : DatasetPhotogrammetry</span>
+<span class="sd">        The photogrammetry data aligned to the reference points.</span>
+<span class="sd">    alignment : tuple[NDArray[np.float64], NDArray[np.float64]]</span>
+<span class="sd">        The transformation that aligned the points.</span>
+<span class="sd">        The first element is a rotation matrix and</span>
+<span class="sd">        the second is the shift.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Aligning with reference points for </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
+    <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">,</span> <span class="s2">&quot;secondary&quot;</span><span class="p">,</span> <span class="s2">&quot;bearing&quot;</span><span class="p">,</span> <span class="s2">&quot;receiver&quot;</span><span class="p">]</span>
+    <span class="c1"># import ipdb; ipdb.set_trace()</span>
+    <span class="k">if</span> <span class="n">element</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">elements</span> <span class="ow">and</span> <span class="n">element</span> <span class="o">!=</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid element: </span><span class="si">{</span><span class="n">element</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">reference</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid or empty reference&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">element</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">reference</span> <span class="ow">and</span> <span class="n">element</span> <span class="o">!=</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Element not found in reference dict&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s2">&quot;coords&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">reference</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Reference coordinate system not specified&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">element</span> <span class="o">==</span> <span class="s2">&quot;primary&quot;</span><span class="p">:</span>
+        <span class="n">transform</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
+            <span class="n">coord_transform</span><span class="p">,</span> <span class="n">cfrom</span><span class="o">=</span><span class="n">reference</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">],</span> <span class="n">cto</span><span class="o">=</span><span class="s2">&quot;opt_primary&quot;</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">element</span> <span class="o">==</span> <span class="s2">&quot;secondary&quot;</span><span class="p">:</span>
+        <span class="n">transform</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
+            <span class="n">coord_transform</span><span class="p">,</span> <span class="n">cfrom</span><span class="o">=</span><span class="n">reference</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">],</span> <span class="n">cto</span><span class="o">=</span><span class="s2">&quot;opt_secondary&quot;</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">transform</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
+            <span class="n">coord_transform</span><span class="p">,</span> <span class="n">cfrom</span><span class="o">=</span><span class="n">reference</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">],</span> <span class="n">cto</span><span class="o">=</span><span class="s2">&quot;opt_global&quot;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">element</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+        <span class="n">all_refs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">el</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">reference</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">all_refs</span> <span class="o">=</span> <span class="n">all_refs</span> <span class="o">|</span> <span class="n">reference</span><span class="p">[</span><span class="n">el</span><span class="p">]</span>
+        <span class="n">reference</span><span class="p">[</span><span class="s2">&quot;all&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_refs</span>
+
+    <span class="c1"># Lets find the points we can use</span>
+    <span class="n">ref</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">pts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">invars</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">ref_coded</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">found_coded</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Looking for reference points&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">pname</span><span class="p">,</span> <span class="p">(</span><span class="n">rpoint</span><span class="p">,</span> <span class="n">codes</span><span class="p">)</span> <span class="ow">in</span> <span class="n">reference</span><span class="p">[</span><span class="n">element</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Finding point </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">pname</span><span class="p">)</span>
+        <span class="n">code_l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">l</span> <span class="k">for</span> <span class="n">l</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">codes</span><span class="p">])</span>
+        <span class="n">code_p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">codes</span><span class="p">])</span>
+        <span class="n">have</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">code_l</span><span class="p">,</span> <span class="n">dataset</span><span class="o">.</span><span class="n">code_labels</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">Found </span><span class="si">%d</span><span class="s2"> associated codes&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">have</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">have</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="c1"># Save the coded we have just in case</span>
+        <span class="n">ref_coded</span> <span class="o">+=</span> <span class="p">[</span><span class="n">code_p</span><span class="p">[</span><span class="n">have</span><span class="p">]]</span>
+        <span class="n">found_coded</span> <span class="o">+=</span> <span class="p">[</span><span class="n">dataset</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">code_l</span><span class="p">[</span><span class="n">have</span><span class="p">]]</span>
+
+        <span class="c1"># Use the first found coded as reference</span>
+        <span class="n">coded</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="n">code_l</span><span class="p">[</span><span class="n">have</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="c1"># Find the closest point</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">targets</span> <span class="o">-</span> <span class="n">coded</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_dist</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">Failed to find point </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">pname</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">target_labels</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">dist</span><span class="p">)]</span>
+        <span class="n">ref</span> <span class="o">+=</span> <span class="p">[</span><span class="n">rpoint</span><span class="p">]</span>
+        <span class="n">pts</span> <span class="o">+=</span> <span class="p">[</span><span class="n">dataset</span><span class="p">[</span><span class="n">label</span><span class="p">]]</span>
+        <span class="n">invars</span> <span class="o">+=</span> <span class="p">[</span><span class="n">label</span><span class="p">]</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">Associated </span><span class="si">%s</span><span class="s2"> with </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">pname</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">blind_search</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Blind search not implemented yet!&quot;</span><span class="p">)</span>
+    <span class="c1"># Set 12</span>
+    <span class="c1"># ref = [rpoint for rpoint, _ in reference[element]]</span>
+    <span class="c1"># ref = np.array(ref)[[True, True, False, True]]</span>
+    <span class="c1"># invars = [&quot;TARGET35&quot;, &quot;TARGET4&quot;, &quot;TARGET484&quot;] #, &quot;TARGET421&quot;]</span>
+    <span class="c1"># pts = [dataset[label] for label in invars]</span>
+    <span class="c1"># print(invars)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Only </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span><span class="si">}</span><span class="s2"> reference points found!&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Adding reference codes&quot;</span><span class="p">)</span>
+        <span class="n">pts</span> <span class="o">+=</span> <span class="n">found_coded</span>
+        <span class="n">ref</span> <span class="o">+=</span> <span class="n">ref_coded</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Only </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span><span class="si">}</span><span class="s2"> reference points found including codes! Can&#39;t align!&quot;</span>
+        <span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+        <span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">Found </span><span class="si">%d</span><span class="s2"> reference points in measurements with labels:</span><span class="se">\n\t\t\t</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="nb">len</span><span class="p">(</span><span class="n">pts</span><span class="p">),</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">invars</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">pts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">pts</span><span class="p">)</span>
+    <span class="n">ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
+    <span class="n">pts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">pts</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">pts</span><span class="p">,</span> <span class="mi">0</span><span class="p">)))</span>
+    <span class="n">ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">ref</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="mi">0</span><span class="p">)))</span>
+    <span class="n">ref</span> <span class="o">=</span> <span class="n">transform</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">Reference points in element coords:</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">ref</span><span class="p">))</span>
+
+    <span class="n">msk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ref</span><span class="p">),</span> <span class="nb">bool</span><span class="p">)</span>
+    <span class="n">scale_fac</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">rot</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">sft</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">rms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span> <span class="o">-</span> <span class="mi">4</span><span class="p">):</span>
+        <span class="n">rot</span><span class="p">,</span> <span class="n">sft</span> <span class="o">=</span> <span class="n">get_rigid</span><span class="p">(</span><span class="n">pts</span><span class="p">[</span><span class="n">msk</span><span class="p">],</span> <span class="n">ref</span><span class="p">[</span><span class="n">msk</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">scale</span><span class="p">:</span>
+            <span class="n">triu_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">triu_indices</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pts</span><span class="p">[</span><span class="n">msk</span><span class="p">]),</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">scale_fac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span>
+                <span class="n">make_edm</span><span class="p">(</span><span class="n">ref</span><span class="p">[</span><span class="n">msk</span><span class="p">])[</span><span class="n">triu_idx</span><span class="p">]</span> <span class="o">/</span> <span class="n">make_edm</span><span class="p">(</span><span class="n">pts</span><span class="p">[</span><span class="n">msk</span><span class="p">])[</span><span class="n">triu_idx</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="n">pts_scaled</span> <span class="o">=</span> <span class="n">pts</span> <span class="o">*</span> <span class="n">scale_fac</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">Scale factor of </span><span class="si">%f</span><span class="s2"> applied&quot;</span><span class="p">,</span> <span class="n">scale_fac</span><span class="p">)</span>
+
+        <span class="n">new_rot</span><span class="p">,</span> <span class="n">new_sft</span> <span class="o">=</span> <span class="n">get_rigid</span><span class="p">(</span><span class="n">pts_scaled</span><span class="p">[</span><span class="n">msk</span><span class="p">],</span> <span class="n">ref</span><span class="p">[</span><span class="n">msk</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">)</span>
+        <span class="n">pts_t</span> <span class="o">=</span> <span class="n">apply_transform</span><span class="p">(</span><span class="n">pts_scaled</span><span class="p">[</span><span class="n">msk</span><span class="p">],</span> <span class="n">new_rot</span><span class="p">,</span> <span class="n">new_sft</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">pts</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">pts</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">pts</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">pts_t</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">pts_t</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">pts_t</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">ref</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">ref</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">ref</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">pts_t</span> <span class="o">-</span> <span class="n">ref</span><span class="p">[</span><span class="n">msk</span><span class="p">]</span>
+        <span class="n">new_rms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">diff</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">new_rms</span> <span class="o">&gt;</span> <span class="n">rms</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">New RMS is worse, accepting last try&quot;</span><span class="p">)</span>
+            <span class="k">break</span>
+        <span class="n">rms</span> <span class="o">=</span> <span class="n">new_rms</span>
+        <span class="n">rot</span> <span class="o">=</span> <span class="n">new_rot</span>
+        <span class="n">sft</span> <span class="o">=</span> <span class="n">new_sft</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">RMS of reference points after alignment: </span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">rms</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">rms</span> <span class="o">&lt;=</span> <span class="n">rms_thresh</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">RMS over thresh, trying cutting worst point&quot;</span><span class="p">)</span>
+        <span class="n">to_cut</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">diff</span><span class="p">))</span>
+        <span class="n">_msk</span> <span class="o">=</span> <span class="n">msk</span><span class="p">[</span><span class="n">msk</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">_msk</span><span class="p">[</span><span class="n">to_cut</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">msk</span><span class="p">[</span><span class="n">msk</span><span class="p">]</span> <span class="o">=</span> <span class="n">_msk</span>
+
+    <span class="k">if</span> <span class="n">rot</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">sft</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Transformation is None&quot;</span><span class="p">)</span>
+
+    <span class="n">coords_transformed</span> <span class="o">=</span> <span class="n">apply_transform</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">points</span> <span class="o">*</span> <span class="n">scale_fac</span><span class="p">,</span> <span class="n">rot</span><span class="p">,</span> <span class="n">sft</span><span class="p">)</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">labels</span>
+
+    <span class="k">if</span> <span class="n">kill_refs</span><span class="p">:</span>
+        <span class="n">msk</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span> <span class="n">invars</span><span class="p">)</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">msk</span><span class="p">]</span>
+        <span class="n">coords_transformed</span> <span class="o">=</span> <span class="n">coords_transformed</span><span class="p">[</span><span class="n">msk</span><span class="p">]</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="n">label</span><span class="p">:</span> <span class="n">coord</span> <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">coord</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">coords_transformed</span><span class="p">)}</span>
+    <span class="n">transformed</span> <span class="o">=</span> <span class="n">DatasetPhotogrammetry</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">Shift is </span><span class="si">%s</span><span class="s2"> mm&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">sft</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">Rotation is </span><span class="si">%s</span><span class="s2"> deg&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">decompose_rotation</span><span class="p">(</span><span class="n">rot</span><span class="p">))))</span>
+    <span class="n">scale_fac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">scale_fac</span>
+    <span class="n">rot</span> <span class="o">@=</span> <span class="n">scale_fac</span>
+
+    <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+            <span class="n">transformed</span><span class="o">.</span><span class="n">targets</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="n">transformed</span><span class="o">.</span><span class="n">targets</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
+            <span class="n">transformed</span><span class="o">.</span><span class="n">targets</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span>
+            <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">transformed</span><span class="p">,</span> <span class="p">(</span><span class="n">rot</span><span class="p">,</span> <span class="n">sft</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="lat_alignment.data_alignment.align_tracker" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">align_tracker</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">tracker_yaml</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="s1">&#39;primary&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Align photogrammetry data and then put it into mirror coordinates.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>dataset</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="Dataset
+
+
+  
+      dataclass
+   (lat_alignment.dataset.Dataset)" href="../dataset/#lat_alignment.dataset.Dataset">Dataset</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The photogrammetry data to align.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>tracker_yaml</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The path to the yaml file with measuerments of the reference points.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>element</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The element that these points belong to.
+Should be either: 'primary', 'secondary', 'bearing', 'receiver', or 'all'.</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;primary&#39;</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>scale</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If True also compute a scale factor from the reference points.</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>plot</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If True show a diagnostic plot of how well the reference points
+are aligned.</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>aligned</code></td>            <td>
+                  <code><a class="autorefs autorefs-internal" title="Dataset
+
+
+  
+      dataclass
+   (lat_alignment.dataset.Dataset)" href="../dataset/#lat_alignment.dataset.Dataset">Dataset</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The data aligned to the reference points.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+<td><code>alignment</code></td>            <td>
+                  <code><span title="tuple">tuple</span>[<span title="numpy.typing.NDArray">NDArray</span>[<span title="numpy.float64">float64</span>], <span title="numpy.typing.NDArray">NDArray</span>[<span title="numpy.float64">float64</span>]]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The transformation that aligned the points.
+The first element is a rotation matrix and
+the second is the shift.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>lat_alignment/data_alignment.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span>
+<span class="normal">363</span>
+<span class="normal">364</span>
+<span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span>
+<span class="normal">373</span>
+<span class="normal">374</span>
+<span class="normal">375</span>
+<span class="normal">376</span>
+<span class="normal">377</span>
+<span class="normal">378</span>
+<span class="normal">379</span>
+<span class="normal">380</span>
+<span class="normal">381</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">align_tracker</span><span class="p">(</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span>
+    <span class="n">tracker_yaml</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">element</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;primary&quot;</span><span class="p">,</span>
+    <span class="n">scale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">plot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span>
+    <span class="n">Dataset</span><span class="p">,</span>
+    <span class="nb">tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]],</span>
+<span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Align photogrammetry data and then put it into mirror coordinates.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dataset : Dataset</span>
+<span class="sd">        The photogrammetry data to align.</span>
+<span class="sd">    tracker_yaml : str</span>
+<span class="sd">        The path to the yaml file with measuerments of the reference points.</span>
+<span class="sd">    element : str, default: &#39;primary&#39;</span>
+<span class="sd">        The element that these points belong to.</span>
+<span class="sd">        Should be either: &#39;primary&#39;, &#39;secondary&#39;, &#39;bearing&#39;, &#39;receiver&#39;, or &#39;all&#39;.</span>
+<span class="sd">    scale : bool, default: True</span>
+<span class="sd">        If True also compute a scale factor from the reference points.</span>
+<span class="sd">    plot : bool, default: True</span>
+<span class="sd">        If True show a diagnostic plot of how well the reference points</span>
+<span class="sd">        are aligned.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    aligned : Dataset</span>
+<span class="sd">        The data aligned to the reference points.</span>
+<span class="sd">    alignment : tuple[NDArray[np.float64], NDArray[np.float64]]</span>
+<span class="sd">        The transformation that aligned the points.</span>
+<span class="sd">        The first element is a rotation matrix and</span>
+<span class="sd">        the second is the shift.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Aligning with reference points for </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
+    <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">,</span> <span class="s2">&quot;secondary&quot;</span><span class="p">,</span> <span class="s2">&quot;bearing&quot;</span><span class="p">,</span> <span class="s2">&quot;receiver&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">element</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">elements</span> <span class="ow">and</span> <span class="n">element</span> <span class="o">!=</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid element: </span><span class="si">{</span><span class="n">element</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">reference</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">DatasetReference</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">load_tracker</span><span class="p">(</span><span class="n">tracker_yaml</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">reference</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid or empty reference&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">element</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">reference</span><span class="o">.</span><span class="n">elem_names</span> <span class="ow">and</span> <span class="n">element</span> <span class="o">!=</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Element not found in reference dict&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">element</span> <span class="o">==</span> <span class="s2">&quot;primary&quot;</span><span class="p">:</span>
+        <span class="n">transform</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">coord_transform</span><span class="p">,</span> <span class="n">cfrom</span><span class="o">=</span><span class="s2">&quot;opt_global&quot;</span><span class="p">,</span> <span class="n">cto</span><span class="o">=</span><span class="s2">&quot;opt_primary&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">element</span> <span class="o">==</span> <span class="s2">&quot;secondary&quot;</span><span class="p">:</span>
+        <span class="n">transform</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">coord_transform</span><span class="p">,</span> <span class="n">cfrom</span><span class="o">=</span><span class="s2">&quot;opt_global&quot;</span><span class="p">,</span> <span class="n">cto</span><span class="o">=</span><span class="s2">&quot;opt_secondary&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">transform</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">coord_transform</span><span class="p">,</span> <span class="n">cfrom</span><span class="o">=</span><span class="s2">&quot;opt_global&quot;</span><span class="p">,</span> <span class="n">cto</span><span class="o">=</span><span class="s2">&quot;opt_global&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">element</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">el</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">reference</span><span class="o">.</span><span class="n">elem_names</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">pt</span> <span class="ow">in</span> <span class="n">reference</span><span class="o">.</span><span class="n">elem_labels</span><span class="p">[</span><span class="n">el</span><span class="p">]:</span>
+                <span class="n">reference</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;all_</span><span class="si">{</span><span class="n">pt</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reference</span><span class="p">[</span><span class="n">pt</span><span class="p">]</span>
+                <span class="n">reference</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;all_</span><span class="si">{</span><span class="n">pt</span><span class="si">}</span><span class="s2">_err&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reference</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pt</span><span class="si">}</span><span class="s2">_err&quot;</span><span class="p">]</span>
+                <span class="n">reference</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;all_</span><span class="si">{</span><span class="n">pt</span><span class="si">}</span><span class="s2">_ref&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reference</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pt</span><span class="si">}</span><span class="s2">_ref&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Lets find the points we can use</span>
+    <span class="n">pts</span> <span class="o">=</span> <span class="n">reference</span><span class="o">.</span><span class="n">elements</span><span class="p">[</span><span class="n">element</span><span class="p">]</span>
+    <span class="n">ref</span> <span class="o">=</span> <span class="n">reference</span><span class="o">.</span><span class="n">reference</span><span class="p">[</span><span class="n">element</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Only </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span><span class="si">}</span><span class="s2"> reference points found! Can&#39;t align!&quot;</span><span class="p">)</span>
+    <span class="n">ref</span> <span class="o">=</span> <span class="n">transform</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">Reference points in element coords:</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">ref</span><span class="p">))</span>
+
+    <span class="n">msk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ref</span><span class="p">),</span> <span class="nb">bool</span><span class="p">)</span>
+    <span class="n">scale_fac</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">rot</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">sft</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">rot</span><span class="p">,</span> <span class="n">sft</span> <span class="o">=</span> <span class="n">get_rigid</span><span class="p">(</span><span class="n">pts</span><span class="p">[</span><span class="n">msk</span><span class="p">],</span> <span class="n">ref</span><span class="p">[</span><span class="n">msk</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">scale</span><span class="p">:</span>
+        <span class="n">triu_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">triu_indices</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pts</span><span class="p">[</span><span class="n">msk</span><span class="p">]),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">scale_fac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span>
+            <span class="n">make_edm</span><span class="p">(</span><span class="n">ref</span><span class="p">[</span><span class="n">msk</span><span class="p">])[</span><span class="n">triu_idx</span><span class="p">]</span> <span class="o">/</span> <span class="n">make_edm</span><span class="p">(</span><span class="n">pts</span><span class="p">[</span><span class="n">msk</span><span class="p">])[</span><span class="n">triu_idx</span><span class="p">]</span>
+        <span class="p">)</span>
+    <span class="n">pts_scaled</span> <span class="o">=</span> <span class="n">pts</span> <span class="o">*</span> <span class="n">scale_fac</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">Scale factor of </span><span class="si">%f</span><span class="s2"> applied&quot;</span><span class="p">,</span> <span class="n">scale_fac</span><span class="p">)</span>
+
+    <span class="n">new_rot</span><span class="p">,</span> <span class="n">new_sft</span> <span class="o">=</span> <span class="n">get_rigid</span><span class="p">(</span><span class="n">pts_scaled</span><span class="p">[</span><span class="n">msk</span><span class="p">],</span> <span class="n">ref</span><span class="p">[</span><span class="n">msk</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">)</span>
+    <span class="n">pts_t</span> <span class="o">=</span> <span class="n">apply_transform</span><span class="p">(</span><span class="n">pts_scaled</span><span class="p">[</span><span class="n">msk</span><span class="p">],</span> <span class="n">new_rot</span><span class="p">,</span> <span class="n">new_sft</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">pts</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">pts</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">pts</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">pts_t</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">pts_t</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">pts_t</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">ref</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">ref</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">ref</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">pts_t</span> <span class="o">-</span> <span class="n">ref</span><span class="p">[</span><span class="n">msk</span><span class="p">]</span>
+    <span class="n">rms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">diff</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">RMS of reference points after alignment: </span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">rms</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">coords_transformed</span> <span class="o">=</span> <span class="n">apply_transform</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">points</span> <span class="o">*</span> <span class="n">scale_fac</span><span class="p">,</span> <span class="n">rot</span><span class="p">,</span> <span class="n">sft</span><span class="p">)</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">labels</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="n">label</span><span class="p">:</span> <span class="n">coord</span> <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">coord</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">coords_transformed</span><span class="p">)}</span>
+    <span class="n">transformed</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">Shift is </span><span class="si">%s</span><span class="s2"> mm&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">sft</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">Rotation is </span><span class="si">%s</span><span class="s2"> deg&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">decompose_rotation</span><span class="p">(</span><span class="n">rot</span><span class="p">))))</span>
+    <span class="n">scale_fac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">scale_fac</span>
+    <span class="n">rot</span> <span class="o">@=</span> <span class="n">scale_fac</span>
+
+    <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+            <span class="n">transformed</span><span class="o">.</span><span class="n">targets</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="n">transformed</span><span class="o">.</span><span class="n">targets</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
+            <span class="n">transformed</span><span class="o">.</span><span class="n">targets</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span>
+            <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">transformed</span><span class="p">,</span> <span class="p">(</span><span class="n">rot</span><span class="p">,</span> <span class="n">sft</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
