@@ -52,11 +52,14 @@ def _load_tracker_yaml(path: str):
     return DatasetReference(data)
 
 
-def _load_tracker_txt(path: str, group_dist=0.02, group_thresh=0.02):
+def _load_tracker_txt(
+    path: str, group_dist: float = 0.02, group_thresh: float = 0.02, err: float = 0.005
+):
     data = np.genfromtxt(
         path, usecols=(3, 4, 5), skip_header=1, dtype=str, delimiter="\t"
     )
     data = np.char.replace(data, ",", "").astype(float)
+    data = np.hstack([data, err * np.ones_like(data)])
 
     to_kill = []
     if group_dist > 0 and group_thresh > 0:
@@ -86,10 +89,9 @@ def _load_tracker_csv(path: str):
     )
 
 
-def load_tracker(path: str, group_dist=0.02, group_thresh=0.02) -> Dataset:
+def load_tracker(path: str, group_dist=0.02, group_thresh=0.02, err=0.005) -> Dataset:
     """
     Load laser tracker data.
-    TODO: This interface needs to be unified with `load_photo` so all code can use either datatype interchangibly
 
     Parameters
     ----------
@@ -104,6 +106,9 @@ def load_tracker(path: str, group_dist=0.02, group_thresh=0.02) -> Dataset:
         Difference in z between point and the median z for a group to cut at.
         Only used for `.txt` files.
         Set to 0 to disable.
+    err : float, default: .005
+        The error to assume for the tracker data.
+        Only used for `.txt` files.
 
     Returns
     -------
@@ -116,7 +121,7 @@ def load_tracker(path: str, group_dist=0.02, group_thresh=0.02) -> Dataset:
     if ext == ".yaml":
         return _load_tracker_yaml(path)
     elif ext == ".txt":
-        return _load_tracker_txt(path, group_dist, group_thresh)
+        return _load_tracker_txt(path, group_dist, group_thresh, err)
     elif ext == ".csv":
         return _load_tracker_csv(path)
     raise ValueError(f"Invalid tracker data with extension {ext}")
@@ -156,7 +161,12 @@ def load_photo(
     code_msk = np.char.find(labels, "CODE") >= 0
 
     err_msk = (err < err_thresh * np.median(err[trg_msk])) + code_msk
-    labels, coords, err = labels[err_msk], coords[err_msk], err[err_msk]
+    labels, coords, err, errs = (
+        labels[err_msk],
+        coords[err_msk],
+        err[err_msk],
+        errs[err_msk],
+    )
     logger.info("\t%d good points loaded", len(coords))
     logger.info("\t%d high error points not loaded", np.sum(~err_msk))
 
@@ -178,7 +188,7 @@ def load_photo(
             to_kill += [labels[trg_msk][i]]
     msk = ~np.isin(labels, to_kill)
     logger.info("\tFound and removed %d doubles", len(to_kill))
-    labels, coords, err = labels[msk], coords[msk], err[msk]
+    labels, coords, err, errs = labels[msk], coords[msk], err[msk], errs[msk]
 
     if plot:
         fig = plt.figure()
@@ -194,6 +204,7 @@ def load_photo(
         fig.colorbar(p)
         plt.show()
 
+    coords = np.hstack([coords, errs])
     data = {label: coord for label, coord in zip(labels, coords)}
     return DatasetPhotogrammetry(data)
 
