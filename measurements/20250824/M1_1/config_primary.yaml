@@ -1,0 +1,36 @@
+mirror: "primary"
+title: "M1 Tracker 20250824 1"
+measurement:
+  - M1_1.txt
+  - M1_2.txt
+  - M1_3.txt
+  - M1_4.txt
+  - M1_5.txt
+  - M1_6.txt
+  - M1_7.txt
+tracker_yaml:
+  - ref_1.yaml
+  - ref_2.yaml
+  - ref_3.yaml
+  - ref_4.yaml
+  - ref_5.yaml
+  - ref_6.yaml
+  - ref_7.yaml
+vmax: 50
+load:
+  doubles_dist: 3
+  err_thresh: 10
+common_mode:
+  thresh: 5
+  cut_thresh: 10
+  niters: 3
+fit_adjustments: False
+only_adj: False 
+adj_radius: 1500
+# sample_every: [2, 3]
+compensate: 19.05
+load:
+  source: "tracker"
+align_tracker:
+  plot: False
+  scale: False

@@ -1,0 +1,13 @@
+mirror: "primary"
+measurement: Set37_Bundle3.csv 
+title: "M1 LAT Set 37"
+vmax: 50
+load:
+  doubles_dist: 1
+  err_thresh: 4
+common_mode:
+  thresh: 5
+  cut_thresh: 10
+  niters: 10
+fit_adjustments: False
+bootstrap_from: "secondary"

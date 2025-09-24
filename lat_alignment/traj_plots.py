@@ -395,7 +395,11 @@ def plot_anim(coords, angle, data, xlab, ylab, title, plt_root):
     fig, ax = plt.subplots()
     divider = make_axes_locatable(ax)
     cax = divider.append_axes("right", size="5%", pad=0.05)
-    vmin, vmax = (np.min(data[:, :, 2]), np.max(data[:, :, 2]))
+    vmin, vmax = (np.nanmin(data[:, :, 2]), np.nanmax(data[:, :, 2]))
+    x = coords[:, :, 0] + data[:, :, 0]
+    y = coords[:, :, 1] + data[:, :, 1]
+    xmin, xmax = (np.nanmin(x), np.nanmax(x))
+    ymin, ymax = (np.nanmin(y), np.nanmax(y))
 
     def update(i):
         ax.clear()
@@ -413,6 +417,8 @@ def plot_anim(coords, angle, data, xlab, ylab, title, plt_root):
             color="black",
             marker="x",
         )
+        ax.set_xlim((xmin, xmax))
+        ax.set_ylim((ymin, ymax))
         fig.colorbar(im, cax=cax)
         ax.set_xlabel(xlab)
         ax.set_ylabel(ylab)

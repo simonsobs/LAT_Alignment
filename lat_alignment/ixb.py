@@ -385,6 +385,10 @@ def get_adjs_names() -> tuple[list[str], list[str], list[str]]:
     return adjs, part1, part2
 
 
+def _null(*args, **kwargs):
+    pass
+
+
 def main():
     # load information
     parser = argparse.ArgumentParser()
@@ -409,6 +413,12 @@ def main():
         default=5,
         type=float,
         help="The threshold in microns at which we want to just set the adjustnent to 0",
+    )
+    parser.add_argument(
+        "--no_connect",
+        "-n",
+        action="store_true",
+        help="Pass to produce list but not send to tool",
     )
     args = parser.parse_args()
 
@@ -442,22 +452,30 @@ def main():
     print(f"{np.sum(np.abs(degs) > thresh)} above threshold")
 
     # Connect to tool and send info
-    sock, send, recv = init(args.host, args.port)
+    sock, send, recv = None, None, None
+    if not args.no_connect:
+        sock, send, recv = init(args.host, args.port)
     template = {1: tighten_template, -1: loosen_template}
     direction = {1: "Tighten", -1: "Loosen"}
     failed = []
     to_hit = []
     for i, adj in enumerate(tqdm.tqdm(adjs)):
-        send(construct_2501(i + 1))
-        mid, _, dat, d, t = recv()
-        if mid == "0004" or d or t:
-            failed += [adjs]
-            sock, send, recv = init(args.host, args.port)
-            continue
-        _, prog = decode2501(mid, dat)
-        rev = prog["revision"] + 1
-        prog_id = prog["id"]
-        ver_id = prog["versionId"]
+        if not args.no_connect and send is not None and recv is not None:
+            send(construct_2501(i + 1))
+            mid, _, dat, d, t = recv()
+            if mid == "0004" or d or t:
+                failed += [adjs]
+                sock, send, recv = init(args.host, args.port)
+                continue
+            _, prog = decode2501(mid, dat)
+            rev = prog["revision"] + 1
+            prog_id = prog["id"]
+            ver_id = prog["versionId"]
+        else:
+            prog = {}
+            rev = 0
+            prog_id = ""
+            ver_id = ""
         ang = adjustments.get(adj, 0.1)
         sign = np.sign(ang)
         if sign == 0:
@@ -468,21 +486,25 @@ def main():
             ang_use = ang
         else:
             to_hit += [(adj, sign * ang_use)]
-        prog["steps"] = deepcopy(template[sign])["steps"]
-        prog["programRestrictions"] = deepcopy(template[sign])["programRestrictions"]
-        prog["name"] = adjs_full[i]
-        prog["revision"] = rev
-        prog["id"] = prog_id
-        prog["versionId"] = ver_id
-        prog["timestamp"]["value"] = int(time.time())
-        prog["indexId"]["value"] = i + 1
-        prog["steps"][1][f"step{direction[sign]}ToAngle"]["angleTarget"] = ang_use
-        send(construct_2500(i + 1, prog))
-        mid, _, dat, d, t = recv()
-        if mid == "0004" or d or t:
-            failed += [adjs]
-            sock, send, recv = init(args.host, args.port)
-    close(sock, send)
+        if not args.no_connect and send is not None and recv is not None:
+            prog["steps"] = deepcopy(template[sign])["steps"]
+            prog["programRestrictions"] = deepcopy(template[sign])[
+                "programRestrictions"
+            ]
+            prog["name"] = adjs_full[i]
+            prog["revision"] = rev
+            prog["id"] = prog_id
+            prog["versionId"] = ver_id
+            prog["timestamp"]["value"] = int(time.time())
+            prog["indexId"]["value"] = i + 1
+            prog["steps"][1][f"step{direction[sign]}ToAngle"]["angleTarget"] = ang_use
+            send(construct_2500(i + 1, prog))
+            mid, _, dat, d, t = recv()
+            if mid == "0004" or d or t:
+                failed += [adjs]
+                sock, send, recv = init(args.host, args.port)
+    if not args.no_connect:
+        close(sock, send)
     panels_to_hit = np.unique([adj[0][:3] for adj in to_hit])
     print(f"failed: {failed}")
     print(f"to_hit: {to_hit} ({len(to_hit)} adjusters)")

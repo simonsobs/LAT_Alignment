@@ -9,6 +9,7 @@ import sys
 from copy import deepcopy
 from functools import partial
 from importlib.resources import files
+from itertools import cycle
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -300,7 +301,7 @@ def _plot_transform(
         resids[:, :, 0] *= expand
         resids[:, :, 1] *= expand
         plot_anim(
-            src,
+            np.array([dst] * len(resids)),
             data[elem].angle,
             resids,
             "x (mm)",
@@ -432,11 +433,15 @@ def _plot_differences(data, plt_root, logger):
 
         # Plot
         prop_cycle = plt.rcParams["axes.prop_cycle"]
-        custom_cycle = cycler(marker=["o", "x", "+", "s", "d"]) * prop_cycle
+        custom_cycle = (
+            cycler(marker=["o", "x", "+", "s", "d", "v", "^", "<", ">"]) * prop_cycle
+        )
+        markers = custom_cycle.simplify().by_key()["marker"]
         for xax, xlab in [
             ("angle", "Angle (deg)"),
             ("meas_number", "Measurement (#)"),
         ]:
+            m = cycle(markers)
             x = getattr(data[elem], xax)
             fig, axs = plt.subplots(
                 1, 3, sharey=True, figsize=(50, 20)
@@ -445,7 +450,13 @@ def _plot_differences(data, plt_root, logger):
                 axs[i].set_prop_cycle(custom_cycle)
                 for j, name in enumerate(names):
                     y = dists[:, j, i] - np.nanmean(dists[:, j, i])
-                    axs[i].scatter(x, y, alpha=0.5, label=(name if i == 0 else None))
+                    axs[i].scatter(
+                        x,
+                        y,
+                        alpha=0.5,
+                        label=(name if i == 0 else None),
+                        marker=next(m),
+                    )
                 axs[i].set_title(f"{dim} Differences")
                 axs[i].set_xlabel(xlab)
             plt.suptitle(f"Differences by {xlab.split(' ')[0]}\n")
@@ -454,6 +465,33 @@ def _plot_differences(data, plt_root, logger):
             fig.subplots_adjust(right=0.93)
             plt.savefig(
                 os.path.join(plt_root, elem, f"differences_{xax}.png"),
+                bbox_inches="tight",
+            )
+            plt.close()
+        for xax, xlab in [
+            ("angle", "Angle (deg)"),
+            ("meas_number", "Measurement (#)"),
+        ]:
+            m = cycle(markers)
+            x = getattr(data[elem], xax)
+            fig, ax = plt.subplots(
+                1, 1, sharey=True, figsize=(50, 20)
+            )  # , layout="constrained",)
+            ax.set_prop_cycle(custom_cycle)
+            for j, name in enumerate(names):
+                y = np.linalg.norm(dists[:, j, :], axis=1)
+                y -= np.nanmean(y)
+                ax.scatter(x, y, alpha=0.5, label=name, marker=next(m))
+                ax.plot(x, y, alpha=0.25)
+            ax.set_title(f"Distances")
+            ax.set_xlabel(xlab)
+            ax.set_ylabel("Distance (mm)")
+            plt.suptitle(f"Distancles by {xlab.split(' ')[0]}\n")
+            fig.legend(loc=7)
+            fig.tight_layout()
+            fig.subplots_adjust(right=0.93)
+            plt.savefig(
+                os.path.join(plt_root, elem, f"distances_{xax}.png"),
                 bbox_inches="tight",
             )
             plt.close()
@@ -605,7 +643,7 @@ def main():
     # Pick the fitter
     get_transform = partial(get_rigid, method="mean")
     if args.affine:
-        get_transform = partial(get_affine, force_svd=True, method="mean")
+        get_transform = partial(get_affine, force_svd=False, method="mean")
 
     # Load data and do basic processing
     with open(args.config) as file:
@@ -650,6 +688,11 @@ def main():
             if elem in ["primary", "secondary"]:
                 off = 90
                 angle = angle % 360
+            if "angle" in cfg[elem][point]:
+                logger.info("\tLoading angle from config file!")
+                angle = np.array(cfg[elem][point]["angle"])
+            if len(angle) != len(dat.points):
+                raise ValueError("Angle and data don't have same lenght!")
             if cfg.get("correct_rot", False):
                 corrected = correct_rot(dat.points, angle, cent, off)
                 dat.data_dict = {l: c for l, c in zip(dat.labels, corrected)}
@@ -663,6 +706,19 @@ def main():
     # Construct the dataclass
     data = RefCollection.construct(data, logger, pad=cfg.get("pad", False))
 
+    if cfg.get("use_first", False):
+        new_ref = {}
+        new_labels = {}
+        for elem in data.elems:
+            new_labels[elem.name] = elem.tod_names
+            for tod in elem.tods:
+                new_ref[f"{tod.name}_ref"] = tod.data[0]
+        ref = DatasetReference(ref.data_dict | new_ref)
+        for key, val in labels.items():
+            if key not in new_labels:
+                continue
+            labels[key] = np.unique(np.hstack((val, new_labels[key])))
+
     # Check motion of each element
     _plot_path(data, plt_root, logger)
     _plot_traj_error(data, plt_root, logger)
@@ -671,7 +727,7 @@ def main():
     # Here we only want ref points
     data_ref = deepcopy(data)
     data_ref.elems = [
-        elem.reorder(np.array(labels[elem.name]), False) for elem in data.elems
+        elem.reorder(np.array(labels[elem.name]), True) for elem in data.elems
     ]
     _plot_transform(
         data_ref,

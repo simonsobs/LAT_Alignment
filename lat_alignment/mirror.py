@@ -24,6 +24,7 @@ from megham.transform import (
 from numpy.typing import NDArray
 from scipy.optimize import minimize
 from scipy.spatial.transform import Rotation
+from scipy.stats import binned_statistic, iqr
 
 from .dataset import Dataset
 
@@ -125,7 +126,23 @@ def mirror_norm(
     z_n = -1 * np.ones_like(x_n)
     normals = np.array((x_n, y_n, z_n)).T
     normals /= np.linalg.norm(normals, axis=-1)[:, np.newaxis]
-    return normals
+    return -1 * normals
+
+
+def fit_comp(x0, y0, comp, a):
+    def _to_min(x):
+        c = (
+            comp
+            * mirror_norm(
+                np.array([x0 + x[0]]).ravel(), np.array([y0 + x[1]]).ravel(), a
+            ).ravel()
+        )
+        dx = x0 - (x0 + x[0]) + c[0]
+        dy = y0 - (y0 + x[1]) + c[1]
+        return np.sqrt(dx**2 + dy**2)
+
+    res = minimize(_to_min, (0, 0))
+    return res.x
 
 
 @dataclass
@@ -197,13 +214,33 @@ class Panel:
         """
         The modeled mirror surface at the locations of the measurementss.
         """
+        expensive = False
         model = self.measurements.copy()
         model[:, 2] = mirror_surface(model[:, 0], model[:, 1], a[self.mirror])
+        sign = -1 if self.mirror == "primary" else 1
         if self.compensate != 0.0:
-            compensation = self.compensate * mirror_norm(
-                model[:, 0], model[:0], a[self.mirror]
-            )
-            model += compensation
+            if expensive:
+                for i, point in enumerate(model):
+                    dx, dy = fit_comp(
+                        point[0], point[1], self.compensate, a[self.mirror]
+                    )
+                    x, y = (
+                        np.array([model[i, 0] + dx]).ravel(),
+                        np.array([model[i, 1] + dy]).ravel(),
+                    )
+                    comp = self.compensate * mirror_norm(x, y, a[self.mirror])
+                    model[i, 2] = (
+                        mirror_surface(x, y, a[self.mirror]) + sign * comp[:, 2]
+                    )[0]
+            else:
+                compensation = self.compensate * mirror_norm(
+                    model[:, 0], model[:, 1], a[self.mirror]
+                )
+                x = model[:, 0] - sign * compensation[:, 0]
+                y = model[:, 1] - sign * compensation[:, 1]
+                model[:, 2] = (
+                    mirror_surface(x, y, a[self.mirror]) + sign * compensation[:, 2]
+                )
         return model
 
     @cached_property
@@ -295,6 +332,8 @@ class Panel:
         for adj in self.meas_adj:
             dists = np.linalg.norm(self.measurements[:, :2] - adj[:2], axis=-1)
             msk += dists <= self.adjuster_radius
+            # if np.sum(_msk) > 1:
+            #     msk[np.where(_msk)[0][0]] = True
         return msk
 
     @cached_property
@@ -540,12 +579,26 @@ def remove_cm(
     return kept_points, (aff, sft)
 
 
+def _get_diff(arr):
+    # Based on https://stackoverflow.com/questions/55353703/how-to-calculate-all-combinations-of-difference-between-array-elements-in-2d
+    s = arr.shape
+    s1 = np.insert(s, 0, 1)
+    s2 = np.insert(s, 0 + 1, 1)
+    if np.issubdtype(arr.dtype, np.str_):
+        diff = np.char.add(np.char.add(arr.reshape(s1), "-"), arr.reshape(s2))
+    else:
+        diff = arr.reshape(s1) - arr.reshape(s2)
+    return diff[np.triu_indices(len(diff), 1)]
+
+
 def plot_panels(
-    panels: list[Panel], title_str: str, vmax: Optional[float] = None
+    panels: list[Panel],
+    title_str: str,
+    vmax: Optional[float] = None,
+    use_iqr: bool = False,
 ) -> Figure:
     """
     Make a plot containing panel residuals and histogram.
-    TODO: Correlation?
 
     Parameters
     ----------
@@ -557,6 +610,9 @@ def plot_panels(
         The max of the colorbar. vmin will be -1 times this.
         Set to None to compute automatically.
         Should be in um.
+    use_iqr : bool, default: False
+        If True estimate the RMS using the IQR rather than
+        directly calculating it.
 
     Returns
     -------
@@ -569,11 +625,12 @@ def plot_panels(
         vmax = np.max(np.abs(res_all[:, 2]))
     if vmax is None:
         raise ValueError("vmax still None?")
-    gs = gridspec.GridSpec(2, 2, width_ratios=[20, 1], height_ratios=[2, 1])
+    gs = gridspec.GridSpec(3, 2, width_ratios=[20, 1], height_ratios=[2, 1, 1])
     fig = plt.figure()
     ax0 = plt.subplot(gs[0])
     cax = plt.subplot(gs[1])
-    ax1 = plt.subplot(gs[2:])
+    ax1 = plt.subplot(gs[2:4])
+    ax2 = plt.subplot(gs[4:])
     cb = None
     for panel in panels:
         if len(panel.model) < 3:
@@ -588,7 +645,7 @@ def plot_panels(
             vmin=-1 * vmax,
             vmax=vmax,
             cmap="coolwarm",
-            alpha=0.6,
+            alpha=0.45,
         )
         cb = ax0.scatter(
             panel.model[:, 0],
@@ -617,7 +674,7 @@ def plot_panels(
         vmin=-1 * vmax,
         vmax=vmax,
         cmap="coolwarm",
-        alpha=0.2,
+        alpha=0.15,
     )
     ax0.set_xlabel("x (mm)")
     ax0.set_ylabel("y (mm)")
@@ -631,12 +688,27 @@ def plot_panels(
             Polygon(panel.corners[[0, 1, 3, 2], :2], fill=False, color="black")
         )
 
-    ax1.hist(res_all[:, 2], bins=len(panels))
-    ax1.set_xlabel("z residual (um)")
+    if use_iqr:
+        tot_rms = iqr(res_all[:, 2].ravel(), scale="normal")
+    else:
+        points = np.array([len(panel.measurements) for panel in panels])
+        rms = np.array([panel.rms for panel in panels])
+        tot_rms = 1000 * np.sum(rms * points) / np.sum(points)
 
-    points = np.array([len(panel.measurements) for panel in panels])
-    rms = np.array([panel.rms for panel in panels])
-    tot_rms = 1000 * np.sum(rms * points) / np.sum(points)
+    to_diff = model_all.copy()
+    to_diff[:, 2] = res_all[:, 2]
+    diff = _get_diff(to_diff)
+    dist = np.linalg.norm(diff[:, :2], axis=1)
+    zdiff = np.abs(diff[:, 2])
+    ac, bins, _ = binned_statistic(dist, zdiff, bins=len(panels))
+    bins = (bins[:-1] + bins[1:]) / 2
+    ax1.scatter(bins, ac / np.sqrt(bins))
+    ax1.set_xlabel("scale (mm)")
+    ax1.set_ylabel("z residual correlation (um/rtmm)")
+
+    ax2.hist(res_all[:, 2], bins=len(panels))
+    ax2.set_xlabel("z residual (um)")
+
     fig.suptitle(f"{title_str}, RMS={tot_rms:.2f} um")
 
     plt.show()

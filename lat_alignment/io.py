@@ -52,11 +52,29 @@ def _load_tracker_yaml(path: str):
     return DatasetReference(data)
 
 
-def _load_tracker_txt(path: str):
-    data = np.genfromtxt(path, usecols=(3, 4, 5), skip_header=1, dtype=str)
+def _load_tracker_txt(path: str, group_dist=0.02, group_thresh=0.02):
+    data = np.genfromtxt(
+        path, usecols=(3, 4, 5), skip_header=1, dtype=str, delimiter="\t"
+    )
     data = np.char.replace(data, ",", "").astype(float)
 
-    data = {f"TARGET_{i}": dat for i, dat in enumerate(data)}
+    to_kill = []
+    if group_dist > 0 and group_thresh > 0:
+        done = []
+        edm = make_edm(data[:, :2])
+        np.fill_diagonal(edm, np.nan)
+        for i in range(len(edm)):
+            if i in to_kill or i in done:
+                continue
+            group_idx = np.hstack(([i], np.where(edm[i] <= group_dist)[0]))
+            done += group_idx.tolist()
+            if len(group_idx) == 1:
+                continue
+            zs = data[group_idx, 2]
+            bad_zs = np.abs(zs - np.median(zs)) > group_thresh
+            to_kill += group_idx[bad_zs].tolist()
+        logger.info("\tFound and removed %d bad group points", len(to_kill))
+    data = {f"TARGET_{i}": dat for i, dat in enumerate(data) if i not in to_kill}
 
     return Dataset(data)
 
@@ -68,7 +86,7 @@ def _load_tracker_csv(path: str):
     )
 
 
-def load_tracker(path: str) -> Dataset:
+def load_tracker(path: str, group_dist=0.02, group_thresh=0.02) -> Dataset:
     """
     Load laser tracker data.
     TODO: This interface needs to be unified with `load_photo` so all code can use either datatype interchangibly
@@ -78,6 +96,14 @@ def load_tracker(path: str) -> Dataset:
     path : str
         The path to the laser tracker data.
         The type of data will be infered from the extension.
+    group_dist : float, default: 0.02
+        Distance between points in xy needed to group them for cuts.
+        Only used for `.txt` files.
+        Set to 0 to disable.
+    group_thresh : float, default: 0.02
+        Difference in z between point and the median z for a group to cut at.
+        Only used for `.txt` files.
+        Set to 0 to disable.
 
     Returns
     -------
@@ -90,7 +116,7 @@ def load_tracker(path: str) -> Dataset:
     if ext == ".yaml":
         return _load_tracker_yaml(path)
     elif ext == ".txt":
-        return _load_tracker_txt(path)
+        return _load_tracker_txt(path, group_dist, group_thresh)
     elif ext == ".csv":
         return _load_tracker_csv(path)
     raise ValueError(f"Invalid tracker data with extension {ext}")
@@ -152,12 +178,20 @@ def load_photo(
             to_kill += [labels[trg_msk][i]]
     msk = ~np.isin(labels, to_kill)
     logger.info("\tFound and removed %d doubles", len(to_kill))
-    labels, coords = labels[msk], coords[msk]
+    labels, coords, err = labels[msk], coords[msk], err[msk]
 
     if plot:
         fig = plt.figure()
         ax = fig.add_subplot(projection="3d")
-        ax.scatter(coords[:, 0], coords[:, 1], coords[:, 2], marker="x")
+        p = ax.scatter(
+            coords[:, 0],
+            coords[:, 1],
+            coords[:, 2],
+            marker="x",
+            c=err,
+            vmax=np.percentile(err, 90),
+        )
+        fig.colorbar(p)
         plt.show()
 
     data = {label: coord for label, coord in zip(labels, coords)}

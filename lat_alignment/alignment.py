@@ -10,9 +10,11 @@ import os
 from functools import partial
 from importlib.resources import files
 
+import matplotlib.pyplot as plt
 import megham.transform as mt
 import numpy as np
 import yaml
+from numpy.lib.arraysetops import isin
 from numpy.typing import NDArray
 from pqdm.processes import pqdm
 
@@ -108,10 +110,16 @@ def main():
 
     mode = cfg.get("mode", "panel")
     cfgdir = os.path.dirname(os.path.abspath(args.config))
-    meas_file = os.path.abspath(os.path.join(cfgdir, cfg["measurement"]))
+    meas_files = cfg["measurement"]
+    if isinstance(meas_files, str):
+        meas_files = [meas_files]
+    meas_files = [os.path.abspath(os.path.join(cfgdir, meas)) for meas in meas_files]
+    tracker_yamls = cfg.get("tracker_yaml", "")
+    if isinstance(tracker_yamls, str):
+        tracker_yamls = [tracker_yamls]
     title_str = cfg["title"]
     logger.info("Begining alignment %s in %s mode", title_str, mode)
-    logger.debug("Using measurement file: %s", meas_file)
+    logger.debug("Using measurement files: %s", meas_files)
 
     dat_dir = os.path.abspath(os.path.join(cfgdir, cfg.get("data_dir", "/")))
     if "data_dir" in cfg:
@@ -122,7 +130,10 @@ def main():
         ref_path = str(files("lat_alignment.data").joinpath("reference.yaml"))
     with open(ref_path) as file:
         reference = yaml.safe_load(file)
-    dataset = io.load_data(meas_file, **cfg.get("load", {"source": "photo"}))
+    datasets = [
+        io.load_data(meas_file, **cfg.get("load", {"source": "photo"}))
+        for meas_file in meas_files
+    ]
     if "data_dir" in cfg:
         corner_path_m1 = os.path.join(dat_dir, f"primary_corners.yaml")
         adj_path_m1 = os.path.join(dat_dir, f"primary_adj.csv")
@@ -159,47 +170,73 @@ def main():
         logger.info("Aligning panels for the %s mirror", mirror)
 
         # init, fit, and plot panels
-        try:
-            if isinstance(dataset, ds.DatasetPhotogrammetry):
-                dataset, _ = da.align_photo(
-                    dataset, reference, True, mirror, **cfg.get("align_photo", {})
+        data_dict = {}
+        for i, dataset in enumerate(datasets):
+            try:
+                if isinstance(dataset, ds.DatasetPhotogrammetry):
+                    dataset, _ = da.align_photo(
+                        dataset, reference, True, mirror, **cfg.get("align_photo", {})
+                    )
+                else:
+                    dataset, _ = da.align_tracker(
+                        dataset,
+                        tracker_yamls[i],
+                        mirror,
+                        **cfg.get("align_tracker", {}),
+                    )
+            except Exception as e:
+                logger.error(
+                    "Failed to align to reference points, with error %s", str(e)
                 )
-            else:
-                dataset, _ = da.align_tracker(
-                    dataset, cfg["tracker_yaml"], mirror, **cfg.get("align_tracker", {})
-                )
-        except Exception as e:
-            logger.error("Failed to align to reference points, with error %s", str(e))
-            bootstrap_from = cfg.get("bootstrap_from", "all")
-            logger.info("Bootstrapping from %s", bootstrap_from)
-            if isinstance(dataset, ds.DatasetPhotogrammetry):
-                dataset, _ = da.align_photo(
-                    dataset,
-                    reference,
-                    True,
-                    bootstrap_from,
-                    **cfg.get("align_photo", {}),
-                )
-            else:
-                dataset, _ = da.align_tracker(
-                    dataset,
-                    cfg["tracker_yaml"],
-                    bootstrap_from,
-                    **cfg.get("align_tracker", {}),
-                )
-            if bootstrap_from == "primary":
-                points = tf.coord_transform(
-                    dataset.points, "opt_primary", f"opt_{mirror}"
-                )
-            elif bootstrap_from == "secondary":
-                points = tf.coord_transform(
-                    dataset.points, "opt_secondary", f"opt_{mirror}"
-                )
-            else:
-                points = tf.coord_transform(
-                    dataset.points, "opt_global", f"opt_{mirror}"
-                )
-            dataset.data_dict = {l: p for l, p in zip(dataset.labels, points)}
+                bootstrap_from = cfg.get("bootstrap_from", "all")
+                logger.info("Bootstrapping from %s", bootstrap_from)
+                if isinstance(dataset, ds.DatasetPhotogrammetry):
+                    dataset, _ = da.align_photo(
+                        dataset,
+                        reference,
+                        True,
+                        bootstrap_from,
+                        **cfg.get("align_photo", {}),
+                    )
+                else:
+                    dataset, _ = da.align_tracker(
+                        dataset,
+                        tracker_yamls[i],
+                        bootstrap_from,
+                        **cfg.get("align_tracker", {}),
+                    )
+                if bootstrap_from == "primary":
+                    points = tf.coord_transform(
+                        dataset.points, "opt_primary", f"opt_{mirror}"
+                    )
+                elif bootstrap_from == "secondary":
+                    points = tf.coord_transform(
+                        dataset.points, "opt_secondary", f"opt_{mirror}"
+                    )
+                else:
+                    points = tf.coord_transform(
+                        dataset.points, "opt_global", f"opt_{mirror}"
+                    )
+                dataset.data_dict = {l: p for l, p in zip(dataset.labels, points)}
+            ddict = {f"{l}_{i}": p for l, p in zip(dataset.labels, dataset.points)}
+            data_dict = data_dict | ddict
+        dataset = datasets[0].__class__(data_dict)
+        append = ""
+        if "sample_every" in cfg:
+            i, j = cfg["sample_every"]
+            ddict = {l: p for l, p in zip(dataset.labels[i::j], dataset.points[i::j])}
+            dataset.data_dict = ddict
+            append = f"_{i}_{j}"
+
+        fig = plt.figure()
+        ax = fig.add_subplot(projection="3d")
+        ax.scatter(
+            dataset.targets[:, 0],
+            dataset.targets[:, 1],
+            dataset.targets[:, 2],
+            marker="x",
+        )
+        plt.show()
         dataset, _ = mir.remove_cm(
             dataset, mirror, cfg.get("compensate", 0), **cfg.get("common_mode", {})
         )
@@ -229,13 +266,15 @@ def main():
                 cfg.get("adjuster_radius", 100),
             )
         logger.info("Found measurements for %d panels", len(panels))
-        fig = mir.plot_panels(panels, title_str, vmax=cfg.get("vmax", None))
-        fig.savefig(os.path.join(cfgdir, f"{title_str.replace(' ', '_')}.png"))
+        fig = mir.plot_panels(
+            panels, title_str, vmax=cfg.get("vmax", None), use_iqr=cfg.get("iqr", False)
+        )
+        fig.savefig(os.path.join(cfgdir, f"{title_str.replace(' ', '_')}{append}.png"))
         res_all = np.vstack([panel.residuals for panel in panels])
         model_all = np.vstack([panel.model for panel in panels])
         mir_out = np.hstack([model_all, res_all])
         np.savetxt(
-            os.path.join(cfgdir, f"{title_str.replace(' ', '_')}_surface.txt"),
+            os.path.join(cfgdir, f"{title_str.replace(' ', '_')}_surface{append}.txt"),
             mir_out,
             header="x y z x_res y_res z_res",
         )
@@ -249,11 +288,15 @@ def main():
         order = np.lexsort((adjustments[:, 2], adjustments[:, 1], adjustments[:, 0]))
         adjustments = adjustments[order]
         np.savetxt(
-            os.path.join(cfgdir, f"{title_str.replace(' ', '_')}.csv"),
+            os.path.join(cfgdir, f"{title_str.replace(' ', '_')}{append}.csv"),
             adjustments,
             fmt=["%d", "%d", "%d"] + ["%.5f"] * 14,
         )
     elif mode == "optical":
+        if len(datasets) > 1 or len(tracker_yamls) > 1:
+            raise ValueError("Cannot have multiple files in optical mode")
+        dataset = datasets[0]
+        tracker_yaml = tracker_yamls[0]
         align_to = cfg["align_to"]
         if align_to not in ["primary", "secondary", "receiver", "bearing"]:
             raise ValueError(f"Invalid element specified for 'align_to': {align_to}")
@@ -264,7 +307,7 @@ def main():
             )
         else:
             dataset, _ = da.align_tracker(
-                dataset, cfg["tracker_yaml"], "all", **cfg.get("align_tracker", {})
+                dataset, tracker_yaml, "all", **cfg.get("align_tracker", {})
             )
 
         # Load data and compute the transformation to align with the model

@@ -29,6 +29,7 @@ lat_alignment = "lat_alignment.alignment:main"
 ixb_send = "lat_alignment.ixb:main"
 lat_error = "lat_alignment.error:main"
 lat_trajectory = "lat_alignment.trajectory:main"
+tracker_txt_to_yaml = "lat_alignment.scriptlets:tracker_txt_to_yaml"
 
 [tool.setuptools]
 packages=["lat_alignment"]
