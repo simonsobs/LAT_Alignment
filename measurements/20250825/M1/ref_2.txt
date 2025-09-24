@@ -1,0 +1,5 @@
+Enabled	Feature	ID	x          	y          	z         	i	j	k	Dev From Fit	Device Position  	Probe	Device Name
+Checked	Point 5	1 	2,401.0230 	-2,698.4860	4,819.5328	 	 	 	0.0000      	Device Position 1	38.1 	V20003907682
+Checked	Point 6	1 	-2,397.4058	-2,698.6766	4,821.2280	 	 	 	0.0000      	Device Position 1	38.1 	V20003907682
+Checked	Point 7	1 	2,397.4878 	2,656.6953 	2,142.2743	 	 	 	0.0000      	Device Position 1	38.1 	V20003907682
+Checked	Point 8	1 	-2,399.2164	2,658.3981 	2,141.5012	 	 	 	0.0000      	Device Position 1	38.1 	V20003907682
