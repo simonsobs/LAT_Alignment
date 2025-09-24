@@ -574,11 +574,10 @@ def _get_diff(arr):
     return diff[np.triu_indices(len(diff), 1)]
 
 def plot_panels(
-        panels: list[Panel], title_str: str, vmax: Optional[float] = None, iqr: bool = False
+        panels: list[Panel], title_str: str, vmax: Optional[float] = None, use_iqr: bool = False
 ) -> Figure:
     """
     Make a plot containing panel residuals and histogram.
-    TODO: Correlation?
 
     Parameters
     ----------
@@ -590,7 +589,7 @@ def plot_panels(
         The max of the colorbar. vmin will be -1 times this.
         Set to None to compute automatically.
         Should be in um.
-    iqr : bool, default: False
+    use_iqr : bool, default: False
         If True estimate the RMS using the IQR rather than
         directly calculating it.
 
@@ -668,7 +667,7 @@ def plot_panels(
             Polygon(panel.corners[[0, 1, 3, 2], :2], fill=False, color="black")
         )
 
-    if iqr:
+    if use_iqr:
         tot_rms = iqr(res_all[:, 2].ravel(), scale="normal")
     else:
         points = np.array([len(panel.measurements) for panel in panels])

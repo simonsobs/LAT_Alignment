@@ -259,7 +259,7 @@ def main():
                 cfg.get("adjuster_radius", 100),
             )
         logger.info("Found measurements for %d panels", len(panels))
-        fig = mir.plot_panels(panels, title_str, vmax=cfg.get("vmax", None))
+        fig = mir.plot_panels(panels, title_str, vmax=cfg.get("vmax", None), use_iqr=cfg.get("iqr", False))
         fig.savefig(os.path.join(cfgdir, f"{title_str.replace(' ', '_')}{append}.png"))
         res_all = np.vstack([panel.residuals for panel in panels])
         model_all = np.vstack([panel.model for panel in panels])
