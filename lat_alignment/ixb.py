@@ -384,8 +384,10 @@ def get_adjs_names() -> tuple[list[str], list[str], list[str]]:
 
     return adjs, part1, part2
 
+
 def _null(*args, **kwargs):
     pass
+
 
 def main():
     # load information
@@ -486,7 +488,9 @@ def main():
             to_hit += [(adj, sign * ang_use)]
         if not args.no_connect and send is not None and recv is not None:
             prog["steps"] = deepcopy(template[sign])["steps"]
-            prog["programRestrictions"] = deepcopy(template[sign])["programRestrictions"]
+            prog["programRestrictions"] = deepcopy(template[sign])[
+                "programRestrictions"
+            ]
             prog["name"] = adjs_full[i]
             prog["revision"] = rev
             prog["id"] = prog_id

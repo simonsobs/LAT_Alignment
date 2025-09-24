@@ -123,19 +123,27 @@ def mirror_norm(
             if j != 0:
                 y_n += a[i, j] * (x / Rn) ** i * (y ** (j - 1)) / (Rn**j)
 
-    z_n = -1*np.ones_like(x_n)
+    z_n = -1 * np.ones_like(x_n)
     normals = np.array((x_n, y_n, z_n)).T
     normals /= np.linalg.norm(normals, axis=-1)[:, np.newaxis]
-    return -1*normals
+    return -1 * normals
+
 
 def fit_comp(x0, y0, comp, a):
     def _to_min(x):
-        c = comp * mirror_norm(np.array([x0 + x[0]]).ravel(), np.array([y0 + x[1]]).ravel(), a).ravel()
+        c = (
+            comp
+            * mirror_norm(
+                np.array([x0 + x[0]]).ravel(), np.array([y0 + x[1]]).ravel(), a
+            ).ravel()
+        )
         dx = x0 - (x0 + x[0]) + c[0]
         dy = y0 - (y0 + x[1]) + c[1]
         return np.sqrt(dx**2 + dy**2)
+
     res = minimize(_to_min, (0, 0))
     return res.x
+
 
 @dataclass
 class Panel:
@@ -209,21 +217,30 @@ class Panel:
         expensive = False
         model = self.measurements.copy()
         model[:, 2] = mirror_surface(model[:, 0], model[:, 1], a[self.mirror])
-        sign = (-1 if self.mirror == "primary" else 1) 
+        sign = -1 if self.mirror == "primary" else 1
         if self.compensate != 0.0:
             if expensive:
                 for i, point in enumerate(model):
-                    dx, dy = fit_comp(point[0], point[1], self.compensate, a[self.mirror])
-                    x, y = np.array([model[i, 0] + dx]).ravel(), np.array([model[i, 1] + dy]).ravel()
-                    comp = self.compensate * mirror_norm (x, y, a[self.mirror])
-                    model[i, 2] = (mirror_surface(x, y, a[self.mirror]) + sign*comp[:, 2])[0]
+                    dx, dy = fit_comp(
+                        point[0], point[1], self.compensate, a[self.mirror]
+                    )
+                    x, y = (
+                        np.array([model[i, 0] + dx]).ravel(),
+                        np.array([model[i, 1] + dy]).ravel(),
+                    )
+                    comp = self.compensate * mirror_norm(x, y, a[self.mirror])
+                    model[i, 2] = (
+                        mirror_surface(x, y, a[self.mirror]) + sign * comp[:, 2]
+                    )[0]
             else:
                 compensation = self.compensate * mirror_norm(
                     model[:, 0], model[:, 1], a[self.mirror]
                 )
-                x = model[:, 0] - sign*compensation[:, 0]
-                y = model[:, 1] - sign*compensation[:, 1]
-                model[:, 2] = mirror_surface(x, y, a[self.mirror]) + sign*compensation[:, 2]
+                x = model[:, 0] - sign * compensation[:, 0]
+                y = model[:, 1] - sign * compensation[:, 1]
+                model[:, 2] = (
+                    mirror_surface(x, y, a[self.mirror]) + sign * compensation[:, 2]
+                )
         return model
 
     @cached_property
@@ -573,8 +590,12 @@ def _get_diff(arr):
         diff = arr.reshape(s1) - arr.reshape(s2)
     return diff[np.triu_indices(len(diff), 1)]
 
+
 def plot_panels(
-        panels: list[Panel], title_str: str, vmax: Optional[float] = None, use_iqr: bool = False
+    panels: list[Panel],
+    title_str: str,
+    vmax: Optional[float] = None,
+    use_iqr: bool = False,
 ) -> Figure:
     """
     Make a plot containing panel residuals and histogram.
@@ -680,14 +701,13 @@ def plot_panels(
     dist = np.linalg.norm(diff[:, :2], axis=1)
     zdiff = np.abs(diff[:, 2])
     ac, bins, _ = binned_statistic(dist, zdiff, bins=len(panels))
-    bins = (bins[:-1] + bins[1:])/2
-    ax1.scatter(bins, ac/np.sqrt(bins))
+    bins = (bins[:-1] + bins[1:]) / 2
+    ax1.scatter(bins, ac / np.sqrt(bins))
     ax1.set_xlabel("scale (mm)")
     ax1.set_ylabel("z residual correlation (um/rtmm)")
 
     ax2.hist(res_all[:, 2], bins=len(panels))
     ax2.set_xlabel("z residual (um)")
-
 
     fig.suptitle(f"{title_str}, RMS={tot_rms:.2f} um")
 

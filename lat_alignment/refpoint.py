@@ -4,10 +4,10 @@ Functions and dataclasses to handle reference points.
 
 import logging
 import operator
+from copy import deepcopy
 from dataclasses import dataclass
 from functools import cached_property, reduce
 from typing import Self
-from copy import deepcopy
 
 import numpy as np
 from numpy.typing import NDArray

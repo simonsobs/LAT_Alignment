@@ -1,7 +1,10 @@
 import argparse
 import os
+
 import yaml
+
 from .io import load_tracker
+
 
 def tracker_txt_to_yaml():
     """
@@ -17,8 +20,8 @@ def tracker_txt_to_yaml():
 
     data = load_tracker(args.file)
     pt_list = [pt.tolist() for pt in data.points]
-    out_dict = {args.element : pt_list}
+    out_dict = {args.element: pt_list}
 
     out_path = f"{os.path.splitext(args.file)[0]}.yaml"
-    with open(out_path, 'w+') as f:
+    with open(out_path, "w+") as f:
         yaml.dump(out_dict, f)

@@ -52,8 +52,10 @@ def _load_tracker_yaml(path: str):
     return DatasetReference(data)
 
 
-def _load_tracker_txt(path: str, group_dist=.02, group_thresh=.02):
-    data = np.genfromtxt(path, usecols=(3, 4, 5), skip_header=1, dtype=str, delimiter="\t")
+def _load_tracker_txt(path: str, group_dist=0.02, group_thresh=0.02):
+    data = np.genfromtxt(
+        path, usecols=(3, 4, 5), skip_header=1, dtype=str, delimiter="\t"
+    )
     data = np.char.replace(data, ",", "").astype(float)
 
     to_kill = []
@@ -84,7 +86,7 @@ def _load_tracker_csv(path: str):
     )
 
 
-def load_tracker(path: str, group_dist=.02, group_thresh=.02) -> Dataset:
+def load_tracker(path: str, group_dist=0.02, group_thresh=0.02) -> Dataset:
     """
     Load laser tracker data.
     TODO: This interface needs to be unified with `load_photo` so all code can use either datatype interchangibly
@@ -181,7 +183,14 @@ def load_photo(
     if plot:
         fig = plt.figure()
         ax = fig.add_subplot(projection="3d")
-        p = ax.scatter(coords[:, 0], coords[:, 1], coords[:, 2], marker="x", c=err, vmax=np.percentile(err, 90))
+        p = ax.scatter(
+            coords[:, 0],
+            coords[:, 1],
+            coords[:, 2],
+            marker="x",
+            c=err,
+            vmax=np.percentile(err, 90),
+        )
         fig.colorbar(p)
         plt.show()
 

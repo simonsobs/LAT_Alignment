@@ -8,8 +8,8 @@ import os
 import sys
 from copy import deepcopy
 from functools import partial
-from itertools import cycle
 from importlib.resources import files
+from itertools import cycle
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -301,7 +301,7 @@ def _plot_transform(
         resids[:, :, 0] *= expand
         resids[:, :, 1] *= expand
         plot_anim(
-            np.array([dst]*len(resids)),
+            np.array([dst] * len(resids)),
             data[elem].angle,
             resids,
             "x (mm)",
@@ -433,8 +433,10 @@ def _plot_differences(data, plt_root, logger):
 
         # Plot
         prop_cycle = plt.rcParams["axes.prop_cycle"]
-        custom_cycle = cycler(marker=["o", "x", "+", "s", "d", "v", "^", "<", ">"]) * prop_cycle
-        markers = custom_cycle.simplify().by_key()['marker']
+        custom_cycle = (
+            cycler(marker=["o", "x", "+", "s", "d", "v", "^", "<", ">"]) * prop_cycle
+        )
+        markers = custom_cycle.simplify().by_key()["marker"]
         for xax, xlab in [
             ("angle", "Angle (deg)"),
             ("meas_number", "Measurement (#)"),
@@ -448,7 +450,13 @@ def _plot_differences(data, plt_root, logger):
                 axs[i].set_prop_cycle(custom_cycle)
                 for j, name in enumerate(names):
                     y = dists[:, j, i] - np.nanmean(dists[:, j, i])
-                    axs[i].scatter(x, y, alpha=0.5, label=(name if i == 0 else None), marker=next(m))
+                    axs[i].scatter(
+                        x,
+                        y,
+                        alpha=0.5,
+                        label=(name if i == 0 else None),
+                        marker=next(m),
+                    )
                 axs[i].set_title(f"{dim} Differences")
                 axs[i].set_xlabel(xlab)
             plt.suptitle(f"Differences by {xlab.split(' ')[0]}\n")

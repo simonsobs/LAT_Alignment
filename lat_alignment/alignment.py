@@ -9,13 +9,12 @@ import logging
 import os
 from functools import partial
 from importlib.resources import files
+
 import matplotlib.pyplot as plt
-
-from numpy.lib.arraysetops import isin
-
 import megham.transform as mt
 import numpy as np
 import yaml
+from numpy.lib.arraysetops import isin
 from numpy.typing import NDArray
 from pqdm.processes import pqdm
 
@@ -131,7 +130,10 @@ def main():
         ref_path = str(files("lat_alignment.data").joinpath("reference.yaml"))
     with open(ref_path) as file:
         reference = yaml.safe_load(file)
-    datasets = [io.load_data(meas_file, **cfg.get("load", {"source": "photo"})) for meas_file in meas_files]
+    datasets = [
+        io.load_data(meas_file, **cfg.get("load", {"source": "photo"}))
+        for meas_file in meas_files
+    ]
     if "data_dir" in cfg:
         corner_path_m1 = os.path.join(dat_dir, f"primary_corners.yaml")
         adj_path_m1 = os.path.join(dat_dir, f"primary_adj.csv")
@@ -177,10 +179,15 @@ def main():
                     )
                 else:
                     dataset, _ = da.align_tracker(
-                        dataset, tracker_yamls[i], mirror, **cfg.get("align_tracker", {})
+                        dataset,
+                        tracker_yamls[i],
+                        mirror,
+                        **cfg.get("align_tracker", {}),
                     )
             except Exception as e:
-                logger.error("Failed to align to reference points, with error %s", str(e))
+                logger.error(
+                    "Failed to align to reference points, with error %s", str(e)
+                )
                 bootstrap_from = cfg.get("bootstrap_from", "all")
                 logger.info("Bootstrapping from %s", bootstrap_from)
                 if isinstance(dataset, ds.DatasetPhotogrammetry):
@@ -259,7 +266,9 @@ def main():
                 cfg.get("adjuster_radius", 100),
             )
         logger.info("Found measurements for %d panels", len(panels))
-        fig = mir.plot_panels(panels, title_str, vmax=cfg.get("vmax", None), use_iqr=cfg.get("iqr", False))
+        fig = mir.plot_panels(
+            panels, title_str, vmax=cfg.get("vmax", None), use_iqr=cfg.get("iqr", False)
+        )
         fig.savefig(os.path.join(cfgdir, f"{title_str.replace(' ', '_')}{append}.png"))
         res_all = np.vstack([panel.residuals for panel in panels])
         model_all = np.vstack([panel.model for panel in panels])
