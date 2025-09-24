@@ -1,3 +1,26 @@
+## 7.6.0 (2025-09-24)
+
+### Feat
+
+- reject bad points in tracker data
+- add option to use iqr for rms
+- add helper script for converting to tracker yamls
+- add option to use IQR for RMS and more compensation fixes
+- add autocorr plot, adjust alphas, fix compensation
+- add mode to run data splits
+- add mode to output adjustement list without connection to the tool
+- add ability to have multiple files in one dataset
+- add ability to feed in angles from config, add plot of pairwise distance, some minor fixes
+- include error in 3d plot of photogrammetry data
+
+### Fix
+
+- use correct delim
+- cycle markers in pairwise distance plots
+- keep size of animations constant
+- make a copy of TODs when reordering
+- fall back on codes when we have less than 4 targets found
+
 ## 7.5.0 (2025-08-18)
 
 ### Feat
