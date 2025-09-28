@@ -8,13 +8,13 @@ from typing import cast
 
 import matplotlib.pyplot as plt
 import numpy as np
-from megham.transform import apply_transform, decompose_rotation, get_affine, get_rigid
+from megham.transform import apply_transform, decompose_rotation, get_rigid
 from megham.utils import make_edm
 from numpy.typing import NDArray
 
 from . import io
 from .dataset import Dataset, DatasetPhotogrammetry, DatasetReference
-from .transforms import coord_transform
+from .transforms import coord_transform, err_transform, err_transform
 
 logger = logging.getLogger("lat_alignment")
 
@@ -152,12 +152,6 @@ def align_photo(
         logger.info("\t\tAssociated %s with %s", label, pname)
     if blind_search > 0:
         raise NotImplementedError("Blind search not implemented yet!")
-    # Set 12
-    # ref = [rpoint for rpoint, _ in reference[element]]
-    # ref = np.array(ref)[[True, True, False, True]]
-    # invars = ["TARGET35", "TARGET4", "TARGET484"] #, "TARGET421"]
-    # pts = [dataset[label] for label in invars]
-    # print(invars)
     if len(ref) < 4:
         logger.warning(f"Only {len(ref)} reference points found!")
         logger.warning(f"Adding reference codes")
@@ -194,8 +188,8 @@ def align_photo(
         pts_scaled = pts * scale_fac
         logger.debug("\t\tScale factor of %f applied", scale_fac)
 
-        new_rot, new_sft = get_rigid(pts_scaled[msk], ref[msk], method="mean")
-        pts_t = apply_transform(pts_scaled[msk], new_rot, new_sft)
+        new_rot, new_sft = get_rigid(pts_scaled[msk].astype(np.float64), ref[msk], method="mean")
+        pts_t = apply_transform(pts_scaled[msk].astype(np.float64), new_rot, new_sft)
         if plot:
             fig = plt.figure()
             ax = fig.add_subplot(projection="3d")
@@ -227,21 +221,23 @@ def align_photo(
     if rot is None or sft is None:
         raise ValueError("Transformation is None")
 
-    coords_transformed = apply_transform(dataset.points * scale_fac, rot, sft)
+    logger.debug("\t\tShift is %s mm", str(sft))
+    logger.debug("\t\tRotation is %s deg", str(np.rad2deg(decompose_rotation(rot))))
+    scale_fac = np.eye(3) * scale_fac
+    rot @= scale_fac
+
+    coords_transformed = apply_transform(dataset.points, rot, sft)
+    errs_transformed = err_transform(dataset.errs, rot)
     labels = dataset.labels
 
     if kill_refs:
         msk = ~np.isin(dataset.labels, invars)
         labels = labels[msk]
         coords_transformed = coords_transformed[msk]
+        errs_transformed = errs_transformed[msk]
 
-    data = {label: coord for label, coord in zip(labels, coords_transformed)}
+    data = {label: np.array([coord, err]) for label, coord, err in zip(labels, coords_transformed, errs_transformed)}
     transformed = DatasetPhotogrammetry(data)
-
-    logger.debug("\t\tShift is %s mm", str(sft))
-    logger.debug("\t\tRotation is %s deg", str(np.rad2deg(decompose_rotation(rot))))
-    scale_fac = np.eye(3) * scale_fac
-    rot @= scale_fac
 
     if plot:
         fig = plt.figure()
@@ -356,16 +352,17 @@ def align_tracker(
         rms,
     )
 
-    coords_transformed = apply_transform(dataset.points * scale_fac, rot, sft)
-    labels = dataset.labels
-
-    data = {label: coord for label, coord in zip(labels, coords_transformed)}
-    transformed = Dataset(data)
-
     logger.debug("\t\tShift is %s mm", str(sft))
     logger.debug("\t\tRotation is %s deg", str(np.rad2deg(decompose_rotation(rot))))
     scale_fac = np.eye(3) * scale_fac
     rot @= scale_fac
+
+    coords_transformed = apply_transform(dataset.points, rot, sft)
+    errs_transformed = err_transform(dataset.errs, rot)
+    labels = dataset.labels
+
+    data = {label: np.array([coord, err]) for label, coord, err in zip(labels, coords_transformed, errs_transformed)}
+    transformed = Dataset(data)
 
     if plot:
         fig = plt.figure()

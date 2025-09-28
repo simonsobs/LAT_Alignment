@@ -20,8 +20,10 @@ class Dataset:
     Attributes
     ----------
     data_dict : dict[str, NDArray[np.float64]]
-        Dict of data points.
+        Dict of data points and errors.
         You should genrally not touch this directly.
+        Each entry should have shape `(2, ndim)` where
+        the first row is the data and the second the errors.
     """
 
     data_dict: dict[str, NDArray[np.float64]]
@@ -42,14 +44,14 @@ class Dataset:
     def __setitem__(self, key, item):
         self._clear_cache()
         if key[-4:] == "_err":
-            self.data_dict[key[:-4]][3:] = item
-        self.data_dict[key][:3] = item
+            self.data_dict[key[:-4]][1] = item
+        self.data_dict[key][0] = item
         self._clear_cache()
 
     def __getitem__(self, key):
         if key[-4:] == "_err":
-            return self.data_dict[key[:-4]][3:]
-        return self.data_dict[key][:3]
+            return self.data_dict[key[:-4]][1]
+        return self.data_dict[key][0]
 
     def __repr__(self):
         return repr(self.data_dict)
@@ -73,7 +75,7 @@ class Dataset:
         Get all points in the dataset as an array.
         This is cached.
         """
-        return np.array(list(self.data_dict.values()))[:, :3]
+        return np.array(list(self.data_dict.values()))[:, 0, :]
 
     @cached_property
     def errs(self) -> NDArray[np.float64]:
@@ -81,7 +83,7 @@ class Dataset:
         Get all points in the dataset as an array.
         This is cached.
         """
-        return np.array(list(self.data_dict.values()))[:, 3:]
+        return np.array(list(self.data_dict.values()))[:, 1, :]
 
     @cached_property
     def labels(self) -> NDArray[np.str_]:

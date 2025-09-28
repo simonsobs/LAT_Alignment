@@ -77,7 +77,7 @@ def _load_tracker_txt(
             bad_zs = np.abs(zs - np.median(zs)) > group_thresh
             to_kill += group_idx[bad_zs].tolist()
         logger.info("\tFound and removed %d bad group points", len(to_kill))
-    data = {f"TARGET_{i}": dat for i, dat in enumerate(data) if i not in to_kill}
+    data = {f"TARGET_{i}": np.array([dat[:3], dat[3:]]) for i, dat in enumerate(data) if i not in to_kill}
 
     return Dataset(data)
 
@@ -204,8 +204,7 @@ def load_photo(
         fig.colorbar(p)
         plt.show()
 
-    coords = np.hstack([coords, errs])
-    data = {label: coord for label, coord in zip(labels, coords)}
+    data = {label: np.array([coord, err]) for label, coord, err in zip(labels, coords, errs)}
     return DatasetPhotogrammetry(data)
 
 

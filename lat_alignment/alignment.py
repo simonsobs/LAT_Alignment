@@ -14,12 +14,11 @@ import matplotlib.pyplot as plt
 import megham.transform as mt
 import numpy as np
 import yaml
-from numpy.lib.arraysetops import isin
 from numpy.typing import NDArray
 from pqdm.processes import pqdm
 
 from . import adjustments as adj
-from . import bearing as br
+# from . import bearing as br
 from . import data_alignment as da
 from . import dataset as ds
 from . import io
@@ -191,7 +190,7 @@ def main():
                 bootstrap_from = cfg.get("bootstrap_from", "all")
                 logger.info("Bootstrapping from %s", bootstrap_from)
                 if isinstance(dataset, ds.DatasetPhotogrammetry):
-                    dataset, _ = da.align_photo(
+                    dataset, (aff, sft) = da.align_photo(
                         dataset,
                         reference,
                         True,
@@ -199,32 +198,30 @@ def main():
                         **cfg.get("align_photo", {}),
                     )
                 else:
-                    dataset, _ = da.align_tracker(
+                    dataset, (aff, sft) = da.align_tracker(
                         dataset,
                         tracker_yamls[i],
                         bootstrap_from,
                         **cfg.get("align_tracker", {}),
                     )
+                cfrom = "opt_global"
                 if bootstrap_from == "primary":
-                    points = tf.coord_transform(
-                        dataset.points, "opt_primary", f"opt_{mirror}"
-                    )
+                    cfrom = "opt_primary"
                 elif bootstrap_from == "secondary":
-                    points = tf.coord_transform(
-                        dataset.points, "opt_secondary", f"opt_{mirror}"
+                    cfrom = "opt_secondary"
+                points = tf.coord_transform(
+                        dataset.points, cfrom, f"opt_{mirror}"
                     )
-                else:
-                    points = tf.coord_transform(
-                        dataset.points, "opt_global", f"opt_{mirror}"
-                    )
-                dataset.data_dict = {l: p for l, p in zip(dataset.labels, points)}
-            ddict = {f"{l}_{i}": p for l, p in zip(dataset.labels, dataset.points)}
+                aff, sft = tf.affine_basis_transform(aff, sft, cfrom, f"opt_{mirror}")
+                errs = tf.err_transform(dataset.errs, aff)
+                dataset.data_dict = {l: np.array([p, e]) for l, p, e in zip(dataset.labels, points, errs)}
+            ddict = {f"{l}_{i}": np.array([p, e]) for l, p, e in zip(dataset.labels, dataset.points, dataset.errs)}
             data_dict = data_dict | ddict
         dataset = datasets[0].__class__(data_dict)
         append = ""
         if "sample_every" in cfg:
             i, j = cfg["sample_every"]
-            ddict = {l: p for l, p in zip(dataset.labels[i::j], dataset.points[i::j])}
+            ddict = {l: np.array([p, e]) for l, p, e in zip(dataset.labels[i::j], dataset.points[i::j], dataset.errs[i::j])}
             dataset.data_dict = ddict
             append = f"_{i}_{j}"
 
@@ -251,9 +248,11 @@ def main():
         if cfg.get("only_adj", True):
             for panel in panels:
                 panel.measurements = panel.measurements[panel.adj_msk]
+                panel.meas_err = panel.meas_err[panel.adj_msk]
             measurements = np.vstack([panel.measurements for panel in panels])
-            data = {"TARGET" + str(i): meas for i, meas in enumerate(measurements)}
-            dataset = io.DatasetPhotogrammetry(data)
+            errs = np.vstack([panel.meas_err for panel in panels])
+            data = {"TARGET" + str(i): np.array([meas, err]) for i, (meas, err) in enumerate(zip(measurements, errs))}
+            dataset = datasets[0].__class__(data)
             dataset, _ = mir.remove_cm(
                 dataset, mirror, cfg.get("compensate", 0), **cfg.get("common_mode", {})
             )
@@ -267,16 +266,21 @@ def main():
             )
         logger.info("Found measurements for %d panels", len(panels))
         fig = mir.plot_panels(
-            panels, title_str, vmax=cfg.get("vmax", None), use_iqr=cfg.get("iqr", False)
+            panels, False, title_str, vmax=cfg.get("vmax", None), use_iqr=cfg.get("iqr", False)
         )
         fig.savefig(os.path.join(cfgdir, f"{title_str.replace(' ', '_')}{append}.png"))
+        fig = mir.plot_panels(
+            panels, True, title_str, vmax=cfg.get("vmax", None), use_iqr=cfg.get("iqr", False)
+        )
+        fig.savefig(os.path.join(cfgdir, f"{title_str.replace(' ', '_')}_err{append}.png"))
         res_all = np.vstack([panel.residuals for panel in panels])
         model_all = np.vstack([panel.model for panel in panels])
-        mir_out = np.hstack([model_all, res_all])
+        res_err_all = np.vstack([panel.residuals_err for panel in panels])
+        mir_out = np.hstack([model_all, res_all, res_err_all])
         np.savetxt(
             os.path.join(cfgdir, f"{title_str.replace(' ', '_')}_surface{append}.txt"),
             mir_out,
-            header="x y z x_res y_res z_res",
+            header="x y z x_res y_res z_res x_res_err y_res_err z_res_err",
         )
 
         # calc and save adjustments
@@ -341,9 +345,11 @@ def main():
                 )
                 for panel in panels:
                     panel.measurements = panel.measurements[panel.adj_msk]
+                    panel.meas_err = panel.meas_err[panel.adj_msk]
                 measurements = np.vstack([panel.measurements for panel in panels])
-                data = {"TARGET" + str(i): meas for i, meas in enumerate(measurements)}
-                meas = io.Dataset(data)
+                errs = np.vstack([panel.meas_err for panel in panels])
+                data = {"TARGET" + str(i): np.array([meas, err]) for i, (meas, err) in enumerate(zip(measurements, errs))}
+                meas = meas.__class__(data)
                 meas, common_mode_2 = mir.remove_cm(
                     meas,
                     "primary",
@@ -394,9 +400,11 @@ def main():
                 )
                 for panel in panels:
                     panel.measurements = panel.measurements[panel.adj_msk]
+                    panel.meas_err = panel.meas_err[panel.adj_msk]
                 measurements = np.vstack([panel.measurements for panel in panels])
-                data = {"TARGET" + str(i): meas for i, meas in enumerate(measurements)}
-                meas = io.Dataset(data)
+                errs = np.vstack([panel.meas_err for panel in panels])
+                data = {"TARGET" + str(i): np.array([meas, err]) for i, (meas, err) in enumerate(zip(measurements, errs))}
+                meas = meas.__class__(data)
                 meas, common_mode_2 = mir.remove_cm(
                     meas,
                     "secondary",
@@ -422,15 +430,16 @@ def main():
                 meas, alignment = da.align_photo(
                     dataset, reference, True, "bearing", **cfg.get("align_photo", {})
                 )
+                meas, cyl_fit = br.cylinder_fit(meas)
+                full_alignment = mt.compose_transform(*alignment, *cyl_fit)
             else:
-                meas, alignment = da.align_tracker(
+                full_alignment, alignment = da.align_tracker(
                     dataset,
                     cfg["tracker_yaml"],
                     "bearing",
                     **cfg.get("align_tracker", {}),
                 )
-            meas, cyl_fit = br.cylinder_fit(meas)
-            full_alignment = mt.compose_transform(*alignment, *cyl_fit)
+                logger.warning("Can't do cylinder fit on bearing with tracker data!")
             log_alignment(full_alignment, logger)
         except Exception as e:
             print(

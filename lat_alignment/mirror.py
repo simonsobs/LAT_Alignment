@@ -26,6 +26,8 @@ from scipy.optimize import minimize
 from scipy.spatial.transform import Rotation
 from scipy.stats import binned_statistic, iqr
 
+from lat_alignment.transforms import err_transform
+
 from .dataset import Dataset
 
 logger = logging.getLogger("lat_alignment")
@@ -88,6 +90,44 @@ def mirror_surface(
     return z
 
 
+def mirror_deriv(
+    x: NDArray[np.float64], y: NDArray[np.float64], a: NDArray[np.float64]
+) -> NDArray[np.float64]:
+    """
+    Analytic form of the derivative of the mirror surface.
+
+    Parameters
+    ----------
+    x : NDArray[np.float64]
+        X positions to calculate at in mm.
+    y : NDArray[np.float64]
+        Y positions to calculate at in mm.
+        Should have the same shape as `x`.
+    a : NDArray[np.float64]
+        Coeffecients of the mirror function.
+        Use `a_primary` for the primary mirror.
+        Use `a_secondary` for the secondary mirror.
+
+    Returns
+    -------
+    derivs : NDArray[np.float64]
+        Derivatives of the mirror surface at each input coordinate.
+        Has shape `shape(x) + (2,)`.
+    """
+    Rn = 3000.0
+
+    dx = np.zeros_like(x)
+    dy = np.zeros_like(y)
+    for i in range(a.shape[0]):
+        for j in range(a.shape[1]):
+            if i != 0:
+                dx += a[i, j] * (x ** (i - 1)) / (Rn**i) * (y / Rn) ** j
+            if j != 0:
+                dy += a[i, j] * (x / Rn) ** i * (y ** (j - 1)) / (Rn**j)
+
+    return np.column_stack([dx, dy])
+
+
 def mirror_norm(
     x: NDArray[np.float64], y: NDArray[np.float64], a: NDArray[np.float64]
 ) -> NDArray[np.float64]:
@@ -112,43 +152,23 @@ def mirror_norm(
         Unit vector normal to the mirror surface at each input coordinate.
         Has shape `shape(x) + (3,)`.
     """
-    Rn = 3000.0
-
-    x_n = np.zeros_like(x)
-    y_n = np.zeros_like(y)
-    for i in range(a.shape[0]):
-        for j in range(a.shape[1]):
-            if i != 0:
-                x_n += a[i, j] * (x ** (i - 1)) / (Rn**i) * (y / Rn) ** j
-            if j != 0:
-                y_n += a[i, j] * (x / Rn) ** i * (y ** (j - 1)) / (Rn**j)
-
-    z_n = -1 * np.ones_like(x_n)
-    normals = np.array((x_n, y_n, z_n)).T
+    derivs = mirror_deriv(x, y, a)
+    z_n = -1 * np.ones(len(derivs))
+    normals = np.column_stack((derivs, z_n))
     normals /= np.linalg.norm(normals, axis=-1)[:, np.newaxis]
     return -1 * normals
-
-
-def fit_comp(x0, y0, comp, a):
-    def _to_min(x):
-        c = (
-            comp
-            * mirror_norm(
-                np.array([x0 + x[0]]).ravel(), np.array([y0 + x[1]]).ravel(), a
-            ).ravel()
-        )
-        dx = x0 - (x0 + x[0]) + c[0]
-        dy = y0 - (y0 + x[1]) + c[1]
-        return np.sqrt(dx**2 + dy**2)
-
-    res = minimize(_to_min, (0, 0))
-    return res.x
 
 
 @dataclass
 class Panel:
     """
     Dataclass for storing a mirror panel.
+
+    TODO: Add error propagation for:
+     * can_surface
+     * meas_surface
+     * meas_adj
+     and associated residuals.
 
     Attributes
     ----------
@@ -166,6 +186,10 @@ class Panel:
         The measurement data for this panel.
         Should be in the mirror's internal coords.
         Should have shape `(npoint, 3)`.
+    meas_err : NDArray[np.float64]
+        The error on the measurement data for this panel.
+        Should be in the mirror's internal coords.
+        Should have shape `(npoint, 3)`.
     nom_adj : NDArray[np.float64]
         The nominal position of the adjusters in the mirror internal coordinates.
         Should have shape `(5, 3)`.
@@ -179,6 +203,7 @@ class Panel:
     col: int
     corners: NDArray[np.float64]
     measurements: NDArray[np.float64]
+    meas_err: NDArray[np.float64]
     nom_adj: NDArray[np.float64]
     compensate: float = field(default=0.0)
     adjuster_radius: float = field(default=50.0)
@@ -195,8 +220,11 @@ class Panel:
         ):
             self.__dict__.pop("can_surface", None)
             self.__dict__.pop("model", None)
+            self.__dict__.pop("model_err", None)
             self.__dict__.pop("residuals", None)
+            self.__dict__.pop("residuals_err", None)
             self.__dict__.pop("transformed_residuals", None)
+            self.__dict__.pop("transformed_residuals_err", None)
             self.__dict__.pop("res_norm", None)
             self.__dict__.pop("rms", None)
             self.__dict__.pop("meas_surface", None)
@@ -204,44 +232,49 @@ class Panel:
             self.__dict__.pop("meas_adj_resid", None)
             self.__dict__.pop("adj_resid", None)
             self.__dict__.pop("model_transformed", None)
+            self.__dict__.pop("model_transformed_err", None)
             self.__dict__.pop("_transform", None)
+            self.__dict__.pop("_compensation", None)
         elif name == "adjuster_radius":
             self.__dict__.pop("meas_adj_resid", None)
         return super().__setattr__(name, value)
+
+    @cached_property
+    def _compensation(self) -> NDArray[np.float64]:
+        compensation = np.zeros_like(self.measurements)
+        sign = -1 if self.mirror == "primary" else 1
+        if self.compensate != 0.0:
+           compensation = sign * self.compensate * mirror_norm(
+               self.measurements[:, 0], self.measurements[:, 1], a[self.mirror]
+           )
+           compensation[:, :2] *= -1
+        return compensation
 
     @cached_property
     def model(self) -> NDArray[np.float64]:
         """
         The modeled mirror surface at the locations of the measurementss.
         """
-        expensive = False
         model = self.measurements.copy()
-        model[:, 2] = mirror_surface(model[:, 0], model[:, 1], a[self.mirror])
-        sign = -1 if self.mirror == "primary" else 1
-        if self.compensate != 0.0:
-            if expensive:
-                for i, point in enumerate(model):
-                    dx, dy = fit_comp(
-                        point[0], point[1], self.compensate, a[self.mirror]
-                    )
-                    x, y = (
-                        np.array([model[i, 0] + dx]).ravel(),
-                        np.array([model[i, 1] + dy]).ravel(),
-                    )
-                    comp = self.compensate * mirror_norm(x, y, a[self.mirror])
-                    model[i, 2] = (
-                        mirror_surface(x, y, a[self.mirror]) + sign * comp[:, 2]
-                    )[0]
-            else:
-                compensation = self.compensate * mirror_norm(
-                    model[:, 0], model[:, 1], a[self.mirror]
-                )
-                x = model[:, 0] - sign * compensation[:, 0]
-                y = model[:, 1] - sign * compensation[:, 1]
-                model[:, 2] = (
-                    mirror_surface(x, y, a[self.mirror]) + sign * compensation[:, 2]
-                )
+        x = model[:, 0] + self._compensation[:, 0]
+        y = model[:, 1] + self._compensation[:, 1]
+        model[:, 2] = mirror_surface(x, y, a[self.mirror]) + self._compensation[:, 2]
+        
         return model
+
+    @cached_property
+    def model_err(self) -> NDArray[np.float64]:
+        """
+        The error on the input data propagated through the model.
+        Here we assume that since the mirror is locally flat a linear approximation is fine.
+        For extreme compensations this may break down.
+        """
+        x = self.model[:, 0] + self._compensation[:, 0]
+        y = self.model[:, 1] + self._compensation[:, 1]
+        derivs = mirror_deriv(x, y, a[self.mirror])
+        errs = np.sqrt(np.sum((derivs*self.meas_err[:, :2])**2, 1)) # + np.prod(derivs, 1)*np.prod(self.meas_err[:, :2], 1))
+        errs = np.column_stack([self.meas_err[:, :2], errs])
+        return errs
 
     @cached_property
     def _transform(self) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
@@ -344,6 +377,13 @@ class Panel:
         return apply_transform(self.model, self.rot, self.shift)
 
     @cached_property
+    def model_transformed_err(self) -> NDArray[np.float64]:
+        """
+        The error on the transformed model.
+        """
+        return err_transform(self.model_err, self.rot)
+
+    @cached_property
     def residuals(self) -> NDArray[np.float64]:
         """
         Get residuals between model and measurements.
@@ -351,11 +391,25 @@ class Panel:
         return self.measurements - self.model
 
     @cached_property
+    def residuals_err(self) -> NDArray[np.float64]:
+        """
+        Get the error on the residuals between model and measurements.
+        """
+        return np.sqrt(self.meas_err**2 + self.model_err**2) 
+
+    @cached_property
     def transformed_residuals(self) -> NDArray[np.float64]:
         """
         Get residuals between transformed model and measurements.
         """
         return self.measurements - self.model_transformed
+
+    @cached_property
+    def transformed_residuals_err(self) -> NDArray[np.float64]:
+        """
+        Get the error on the residuals between transformed model and measurements.
+        """
+        return np.sqrt(self.meas_err**2 + self.model_transformed_err**2) 
 
     @cached_property
     def res_norm(self) -> NDArray[np.float64]:
@@ -370,6 +424,15 @@ class Panel:
         Get rms between model and measurements.
         """
         return np.sqrt(np.mean(self.residuals[:, 2].ravel() ** 2))
+
+    @cached_property
+    def rms_err(self) -> float:
+        """
+        Get the error oekn the rms between model and measurements.
+        """
+        serr = 2 * self.residuals_err[:, 2].ravel() * self.residuals[:, 2].ravel()
+        merr = np.sqrt(np.sum(serr/len(serr))**2)
+        return abs(.5 * merr/self.rms)
 
 
 def gen_panels(
@@ -411,27 +474,32 @@ def gen_panels(
         A list of panels with the transforme initialized to the identity.
     """
     points = defaultdict(list)
+    errs = defaultdict(list)
     # dumb brute force
     corr = np.arange(4, dtype=int)
-    for point in dataset.points:
+    for point, err in zip(dataset.points, dataset.errs):
         for rc, crns in corners.items():
             x = crns[:, 0] > point[0]
             y = crns[:, 1] > point[1]
             val = x.astype(int) + 2 * y.astype(int)
             if np.array_equal(np.sort(val), corr):
                 points[rc] += [point]
+                errs[rc] += [err]
                 break
 
     # Now init the objects
     panels = []
     for (row, col), meas in points.items():
         meas = np.vstack(meas, dtype=np.float64)
+        err = np.vstack(errs[(row, col)], dtype=np.float64)
+        assert len(meas) == len(err)
         panel = Panel(
             mirror,
             row,
             col,
             corners[(row, col)],
             meas,
+            err,
             adjusters[(row, col)],
             compensate,
             adjuster_radius,
@@ -496,6 +564,7 @@ def remove_cm(
     )  # ack hardcoded
     labels = dataset.target_labels
     data = dataset.targets
+    err = dataset.target_errs
     corr = np.arange(4, dtype=int)
     x = np.vstack([corners[:, 0] > dat[0] for dat in data])
     y = np.vstack([corners[:, 1] > dat[1] for dat in data])
@@ -504,6 +573,7 @@ def remove_cm(
     msk = (val == corr).all(-1)
     msk *= abs(data[:, 2]) < 500
     data = data[msk]
+    err = err[msk]
     labels = labels[msk]
     panel = Panel(
         mirror,
@@ -511,6 +581,7 @@ def remove_cm(
         -1,
         np.zeros((4, 3), "float64"),
         data,
+        err,
         np.zeros((5, 3), "float64"),
         compensate,
     )
@@ -565,14 +636,16 @@ def remove_cm(
     )
 
     panel.measurements = apply_transform(data_clean, aff, sft)
+    panel.meas_err = err_transform(panel.meas_err, aff)
     cut = panel.res_norm > cut_thresh * np.median(panel.res_norm)
     if np.sum(cut) > 0:
         logger.info("\tRemoving %d bad points from mirror", np.sum(cut))
         panel.measurements = panel.measurements[~cut]
+        panel.meas_err = panel.meas_err[~cut]
         labels = labels[~cut]
     logger.info("\tMirror has %d good points", len(panel.measurements))
 
-    data = {l: d for l, d in zip(labels, panel.measurements)}
+    data = {l: np.array([d, e]) for l, d, e in zip(labels, panel.measurements, panel.meas_err)}
     kept_points = dataset.copy()
     kept_points.data_dict = data
 
@@ -593,6 +666,7 @@ def _get_diff(arr):
 
 def plot_panels(
     panels: list[Panel],
+    err: bool,
     title_str: str,
     vmax: Optional[float] = None,
     use_iqr: bool = False,
@@ -604,12 +678,15 @@ def plot_panels(
     ----------
     panels : list[Panel]
         The panels to plot.
+    err : bool
+        If `True` then plot error instead of residuals.
     title_str : str
         The title string, rms will me appended.
     vmax : Optional[float], default: None
         The max of the colorbar. vmin will be -1 times this.
         Set to None to compute automatically.
         Should be in um.
+        If `err` is `True` this will be computed automatically.
     use_iqr : bool, default: False
         If True estimate the RMS using the IQR rather than
         directly calculating it.
@@ -620,11 +697,22 @@ def plot_panels(
         The figure with panels plotted on it.
     """
     res_all = np.vstack([panel.residuals for panel in panels]) * 1000
+    res_err_all = np.vstack([panel.residuals_err for panel in panels]) * 1000
     model_all = np.vstack([panel.model for panel in panels])
-    if vmax is None:
-        vmax = np.max(np.abs(res_all[:, 2]))
+    res_use = res_all
+    res_name = "residuals"
+    if err:
+        res_use = res_err_all
+        res_name = "residuals_err"
+    if vmax is None or err:
+        vmax = float(np.percentile(np.abs(res_use[:, 2]), 95))
     if vmax is None:
         raise ValueError("vmax still None?")
+    cmap = "coolwarm"
+    vmin = -1*vmax
+    if err:
+        cmap = "cividis"
+        vmin = float(np.percentile(np.abs(res_use[:, 2]), 5))
     gs = gridspec.GridSpec(3, 2, width_ratios=[20, 1], height_ratios=[2, 1, 1])
     fig = plt.figure()
     ax0 = plt.subplot(gs[0])
@@ -641,20 +729,20 @@ def plot_panels(
         ax0.tricontourf(
             panel.model[:, 0],
             panel.model[:, 1],
-            panel.residuals[:, 2] * 1000,
-            vmin=-1 * vmax,
+            getattr(panel, res_name)[:, 2] * 1000,
+            vmin=vmin,
             vmax=vmax,
-            cmap="coolwarm",
+            cmap=cmap,
             alpha=0.45,
         )
         cb = ax0.scatter(
             panel.model[:, 0],
             panel.model[:, 1],
             s=40,
-            c=panel.residuals[:, 2] * 1000,
-            vmin=-1 * vmax,
+            c=getattr(panel, res_name)[:, 2] * 1000,
+            vmin=vmin,
             vmax=vmax,
-            cmap="coolwarm",
+            cmap=cmap,
             marker="o",
             alpha=0.9,
             linewidth=2,
@@ -670,10 +758,10 @@ def plot_panels(
     ax0.tricontourf(
         model_all[:, 0],
         model_all[:, 1],
-        res_all[:, 2],
-        vmin=-1 * vmax,
+        res_use[:, 2],
+        vmin=vmin,
         vmax=vmax,
-        cmap="coolwarm",
+        cmap=cmap,
         alpha=0.15,
     )
     ax0.set_xlabel("x (mm)")
@@ -688,15 +776,18 @@ def plot_panels(
             Polygon(panel.corners[[0, 1, 3, 2], :2], fill=False, color="black")
         )
 
+    points = np.array([len(panel.measurements) for panel in panels])
+    weights = points/np.sum(points)
     if use_iqr:
-        tot_rms = iqr(res_all[:, 2].ravel(), scale="normal")
+        tot_rms = iqr(res_all[:, 2].ravel(), scale="normal") # type: ignore
     else:
-        points = np.array([len(panel.measurements) for panel in panels])
         rms = np.array([panel.rms for panel in panels])
-        tot_rms = 1000 * np.sum(rms * points) / np.sum(points)
+        tot_rms = 1000 * np.sum(rms * weights)
+    rms_err = np.array([panel.rms_err for panel in panels])
+    tot_rms_err = 1000 * np.sqrt(np.sum((rms_err*weights)**2))  
 
     to_diff = model_all.copy()
-    to_diff[:, 2] = res_all[:, 2]
+    to_diff[:, 2] = res_use[:, 2]
     diff = _get_diff(to_diff)
     dist = np.linalg.norm(diff[:, :2], axis=1)
     zdiff = np.abs(diff[:, 2])
@@ -704,12 +795,12 @@ def plot_panels(
     bins = (bins[:-1] + bins[1:]) / 2
     ax1.scatter(bins, ac / np.sqrt(bins))
     ax1.set_xlabel("scale (mm)")
-    ax1.set_ylabel("z residual correlation (um/rtmm)")
+    ax1.set_ylabel(f"z residual{' error'*err} correlation (um/rtmm)")
 
-    ax2.hist(res_all[:, 2], bins=len(panels))
-    ax2.set_xlabel("z residual (um)")
+    ax2.hist(res_use[:, 2], bins=len(panels))
+    ax2.set_xlabel(f"z residual{' error'*err} (um)")
 
-    fig.suptitle(f"{title_str}, RMS={tot_rms:.2f} um")
+    fig.suptitle(f"{title_str}{' error'*err}, RMS={tot_rms:.2f} ± {tot_rms_err:.2f} um")
 
     plt.show()
 
