@@ -18,7 +18,7 @@ from numpy.typing import NDArray
 from pqdm.processes import pqdm
 
 from . import adjustments as adj
-# from . import bearing as br
+from . import bearing as br
 from . import data_alignment as da
 from . import dataset as ds
 from . import io

@@ -13,9 +13,6 @@ tracker_yaml:
   - ref_4.yaml
   - ref_5.yaml
 vmax: 50
-load:
-  doubles_dist: 3
-  err_thresh: 10
 common_mode:
   thresh: 5
   cut_thresh: 50
@@ -29,6 +26,8 @@ iqr: True
 load:
   source: "tracker"
   group_dist: .01
+  calc_sys_err: True
+  cam_transform_path: LAT_M2_Surface_180_20250828.txt
 align_tracker:
   plot: False
   scale: False
