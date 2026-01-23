@@ -61,7 +61,7 @@ def _load_tracker_txt(
     )
     data = np.char.replace(data, ",", "").astype(float)
 
-    errs = err * np.ones_like(data)
+    errs = err/np.sqrt(3) * np.ones_like(data)
     if calc_sys_err:
         data_faro = data.copy()
         if cam_transform_path is not None:
@@ -70,14 +70,14 @@ def _load_tracker_txt(
         r = np.linalg.norm(data_faro, axis=1)
         theta = np.arccos(data_faro[:, 2]/r)
         phi = np.arctan2(data_faro[:, 1], data_faro[:, 0])
-        errs_sphere = np.column_stack([r*dist_err, np.arcsin(np.sin(theta)*ang_err), np.arcsin(np.sin(phi)*ang_err)]) 
+        errs_sphere = np.column_stack([r*dist_err/np.sqrt(8), np.ones_like(theta)*np.arcsin(ang_err/np.sqrt(8)), np.ones_like(phi)*np.arcsin(ang_err/np.sqrt(8))]) 
 
         # Taking the linear appriximation, we may expect a small bias 
         st, ct = np.sin(theta), np.cos(theta)
         sp, cp = np.sin(phi), np.cos(phi)
-        errs[:, 0] += np.sqrt((errs_sphere[:, 0]*st*cp)**2 + (errs_sphere[:, 1]*r*ct*cp)**2 + (errs_sphere[:, 2]*r*st*sp)**2)#/r
-        errs[:, 1] += np.sqrt((errs_sphere[:, 0]*st*sp)**2 + (errs_sphere[:, 1]*r*ct*sp)**2 + (errs_sphere[:, 2]*r*st*cp)**2)#/r
-        errs[:, 2] += np.sqrt((errs_sphere[:, 0]*ct)**2 + (errs_sphere[:, 1]*r*st)**2)/r
+        errs[:, 0] = np.sqrt(errs[:, 0]**2 + (errs_sphere[:, 0]*st*cp)**2 + (errs_sphere[:, 1]*r*ct*cp)**2 + (errs_sphere[:, 2]*r*st*sp)**2)#/r
+        errs[:, 1] = np.sqrt(errs[:, 1]**2 + (errs_sphere[:, 0]*st*sp)**2 + (errs_sphere[:, 1]*r*ct*sp)**2 + (errs_sphere[:, 2]*r*st*cp)**2)#/r
+        errs[:, 2] = np.sqrt(errs[:, 2]**2 + (errs_sphere[:, 0]*ct)**2 + (errs_sphere[:, 1]*r*st)**2)#/r
 
         # Brute force...
         # data_sphere = np.column_stack([r, theta, phi])

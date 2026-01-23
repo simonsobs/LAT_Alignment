@@ -695,12 +695,13 @@ def main():
                 raise ValueError("Angle and data don't have same lenght!")
             if cfg.get("correct_rot", False):
                 corrected = correct_rot(dat.points, angle, cent, off)
-                dat.data_dict = {l: c for l, c in zip(dat.labels, corrected)}
+                dat.data_dict = {l: np.array([c, e]) for l, c, e in zip(dat.labels, corrected, dat.errs)}
             if cfg.get("local", False):
                 new_dat = coord_transform(
                     dat.points, cfg.get("coords", "opt_global"), local_coords[elem]
                 )
-                dat.data_dict = {l: c for l, c in zip(dat.labels, new_dat)}
+                dat.data_dict = {l: np.array([c, e]) for l, c, e in zip(dat.labels, new_dat, dat.errs)}
+
             data[elem] += [RefTOD(point, dat.points, angle)]
 
     # Construct the dataclass
