@@ -209,19 +209,27 @@ def main():
                     cfrom = "opt_primary"
                 elif bootstrap_from == "secondary":
                     cfrom = "opt_secondary"
-                points = tf.coord_transform(
-                        dataset.points, cfrom, f"opt_{mirror}"
-                    )
+                points = tf.coord_transform(dataset.points, cfrom, f"opt_{mirror}")
                 aff, sft = tf.affine_basis_transform(aff, sft, cfrom, f"opt_{mirror}")
                 errs = tf.err_transform(dataset.errs, aff)
-                dataset.data_dict = {l: np.array([p, e]) for l, p, e in zip(dataset.labels, points, errs)}
-            ddict = {f"{l}_{i}": np.array([p, e]) for l, p, e in zip(dataset.labels, dataset.points, dataset.errs)}
+                dataset.data_dict = {
+                    l: np.array([p, e]) for l, p, e in zip(dataset.labels, points, errs)
+                }
+            ddict = {
+                f"{l}_{i}": np.array([p, e])
+                for l, p, e in zip(dataset.labels, dataset.points, dataset.errs)
+            }
             data_dict = data_dict | ddict
         dataset = datasets[0].__class__(data_dict)
         append = ""
         if "sample_every" in cfg:
             i, j = cfg["sample_every"]
-            ddict = {l: np.array([p, e]) for l, p, e in zip(dataset.labels[i::j], dataset.points[i::j], dataset.errs[i::j])}
+            ddict = {
+                l: np.array([p, e])
+                for l, p, e in zip(
+                    dataset.labels[i::j], dataset.points[i::j], dataset.errs[i::j]
+                )
+            }
             dataset.data_dict = ddict
             append = f"_{i}_{j}"
 
@@ -251,7 +259,10 @@ def main():
                 panel.meas_err = panel.meas_err[panel.adj_msk]
             measurements = np.vstack([panel.measurements for panel in panels])
             errs = np.vstack([panel.meas_err for panel in panels])
-            data = {"TARGET" + str(i): np.array([meas, err]) for i, (meas, err) in enumerate(zip(measurements, errs))}
+            data = {
+                "TARGET" + str(i): np.array([meas, err])
+                for i, (meas, err) in enumerate(zip(measurements, errs))
+            }
             dataset = datasets[0].__class__(data)
             dataset, _ = mir.remove_cm(
                 dataset, mirror, cfg.get("compensate", 0), **cfg.get("common_mode", {})
@@ -266,13 +277,23 @@ def main():
             )
         logger.info("Found measurements for %d panels", len(panels))
         fig = mir.plot_panels(
-            panels, False, title_str, vmax=cfg.get("vmax", None), use_iqr=cfg.get("iqr", False)
+            panels,
+            False,
+            title_str,
+            vmax=cfg.get("vmax", None),
+            use_iqr=cfg.get("iqr", False),
         )
         fig.savefig(os.path.join(cfgdir, f"{title_str.replace(' ', '_')}{append}.png"))
         fig = mir.plot_panels(
-            panels, True, title_str, vmax=cfg.get("vmax", None), use_iqr=cfg.get("iqr", False)
+            panels,
+            True,
+            title_str,
+            vmax=cfg.get("vmax", None),
+            use_iqr=cfg.get("iqr", False),
         )
-        fig.savefig(os.path.join(cfgdir, f"{title_str.replace(' ', '_')}_err{append}.png"))
+        fig.savefig(
+            os.path.join(cfgdir, f"{title_str.replace(' ', '_')}_err{append}.png")
+        )
         res_all = np.vstack([panel.residuals for panel in panels])
         model_all = np.vstack([panel.model for panel in panels])
         res_err_all = np.vstack([panel.residuals_err for panel in panels])
@@ -348,7 +369,10 @@ def main():
                     panel.meas_err = panel.meas_err[panel.adj_msk]
                 measurements = np.vstack([panel.measurements for panel in panels])
                 errs = np.vstack([panel.meas_err for panel in panels])
-                data = {"TARGET" + str(i): np.array([meas, err]) for i, (meas, err) in enumerate(zip(measurements, errs))}
+                data = {
+                    "TARGET" + str(i): np.array([meas, err])
+                    for i, (meas, err) in enumerate(zip(measurements, errs))
+                }
                 meas = meas.__class__(data)
                 meas, common_mode_2 = mir.remove_cm(
                     meas,
@@ -403,7 +427,10 @@ def main():
                     panel.meas_err = panel.meas_err[panel.adj_msk]
                 measurements = np.vstack([panel.measurements for panel in panels])
                 errs = np.vstack([panel.meas_err for panel in panels])
-                data = {"TARGET" + str(i): np.array([meas, err]) for i, (meas, err) in enumerate(zip(measurements, errs))}
+                data = {
+                    "TARGET" + str(i): np.array([meas, err])
+                    for i, (meas, err) in enumerate(zip(measurements, errs))
+                }
                 meas = meas.__class__(data)
                 meas, common_mode_2 = mir.remove_cm(
                     meas,

@@ -369,7 +369,9 @@ def affine_basis_transform(
     return aff, sft
 
 
-def err_transform(errs: NDArray[np.float64], aff: NDArray[np.float64]) -> NDArray[np.float64]:
+def err_transform(
+    errs: NDArray[np.float64], aff: NDArray[np.float64]
+) -> NDArray[np.float64]:
     """
     TODO: Move to `megham`?
     Propagate the error on a point through an affine matrix using variance-covariance
@@ -393,8 +395,11 @@ def err_transform(errs: NDArray[np.float64], aff: NDArray[np.float64]) -> NDArra
     if len(errs.shape) != 2:
         raise ValueError("errs must be 1D or 2D")
     npoint, ndim = errs.shape
-    errs = np.tile(np.eye(ndim).ravel(), npoint).reshape((npoint, ndim, ndim))*errs[..., None]
-    cov = aff.T@(errs**2)@aff
+    errs = (
+        np.tile(np.eye(ndim).ravel(), npoint).reshape((npoint, ndim, ndim))
+        * errs[..., None]
+    )
+    cov = aff.T @ (errs**2) @ aff
 
     # For our purposes right now we take just the diagonal
     var = np.array([np.diag(c) for c in cov])

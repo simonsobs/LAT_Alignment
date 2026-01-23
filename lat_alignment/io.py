@@ -1,9 +1,9 @@
 import logging
-from typing import Optional
 import os
 from collections import defaultdict
 from functools import partial
 from importlib.resources import files
+from typing import Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -54,30 +54,60 @@ def _load_tracker_yaml(path: str):
 
 
 def _load_tracker_txt(
-    path: str, group_dist: float = 0.02, group_thresh: float = 0.02, err: float = 0.005, calc_sys_err: bool=False,  cam_transform_path: Optional[str]=None,dist_err: float=8e-7, ang_err: float=5e-6
+    path: str,
+    group_dist: float = 0.02,
+    group_thresh: float = 0.02,
+    err: float = 0.005,
+    calc_sys_err: bool = False,
+    cam_transform_path: Optional[str] = None,
+    dist_err: float = 8e-7,
+    ang_err: float = 5e-6,
 ):
     data = np.genfromtxt(
         path, usecols=(3, 4, 5), skip_header=1, dtype=str, delimiter="\t"
     )
     data = np.char.replace(data, ",", "").astype(float)
 
-    errs = err/np.sqrt(3) * np.ones_like(data)
+    errs = err / np.sqrt(3) * np.ones_like(data)
     if calc_sys_err:
         data_faro = data.copy()
         if cam_transform_path is not None:
             coord_align = np.genfromtxt(cam_transform_path)
-            data_faro = (np.linalg.inv(coord_align)@np.vstack([data_faro.T, np.zeros(len(data_faro))]))[:3].T
+            data_faro = (
+                np.linalg.inv(coord_align)
+                @ np.vstack([data_faro.T, np.zeros(len(data_faro))])
+            )[:3].T
         r = np.linalg.norm(data_faro, axis=1)
-        theta = np.arccos(data_faro[:, 2]/r)
+        theta = np.arccos(data_faro[:, 2] / r)
         phi = np.arctan2(data_faro[:, 1], data_faro[:, 0])
-        errs_sphere = np.column_stack([r*dist_err/np.sqrt(8), np.ones_like(theta)*np.arcsin(ang_err/np.sqrt(8)), np.ones_like(phi)*np.arcsin(ang_err/np.sqrt(8))]) 
+        errs_sphere = np.column_stack(
+            [
+                r * dist_err / np.sqrt(8),
+                np.ones_like(theta) * np.arcsin(ang_err / np.sqrt(8)),
+                np.ones_like(phi) * np.arcsin(ang_err / np.sqrt(8)),
+            ]
+        )
 
-        # Taking the linear appriximation, we may expect a small bias 
+        # Taking the linear appriximation, we may expect a small bias
         st, ct = np.sin(theta), np.cos(theta)
         sp, cp = np.sin(phi), np.cos(phi)
-        errs[:, 0] = np.sqrt(errs[:, 0]**2 + (errs_sphere[:, 0]*st*cp)**2 + (errs_sphere[:, 1]*r*ct*cp)**2 + (errs_sphere[:, 2]*r*st*sp)**2)#/r
-        errs[:, 1] = np.sqrt(errs[:, 1]**2 + (errs_sphere[:, 0]*st*sp)**2 + (errs_sphere[:, 1]*r*ct*sp)**2 + (errs_sphere[:, 2]*r*st*cp)**2)#/r
-        errs[:, 2] = np.sqrt(errs[:, 2]**2 + (errs_sphere[:, 0]*ct)**2 + (errs_sphere[:, 1]*r*st)**2)#/r
+        errs[:, 0] = np.sqrt(
+            errs[:, 0] ** 2
+            + (errs_sphere[:, 0] * st * cp) ** 2
+            + (errs_sphere[:, 1] * r * ct * cp) ** 2
+            + (errs_sphere[:, 2] * r * st * sp) ** 2
+        )  # /r
+        errs[:, 1] = np.sqrt(
+            errs[:, 1] ** 2
+            + (errs_sphere[:, 0] * st * sp) ** 2
+            + (errs_sphere[:, 1] * r * ct * sp) ** 2
+            + (errs_sphere[:, 2] * r * st * cp) ** 2
+        )  # /r
+        errs[:, 2] = np.sqrt(
+            errs[:, 2] ** 2
+            + (errs_sphere[:, 0] * ct) ** 2
+            + (errs_sphere[:, 1] * r * st) ** 2
+        )  # /r
 
         # Brute force...
         # data_sphere = np.column_stack([r, theta, phi])
@@ -104,7 +134,11 @@ def _load_tracker_txt(
             bad_zs = np.abs(zs - np.median(zs)) > group_thresh
             to_kill += group_idx[bad_zs].tolist()
         logger.info("\tFound and removed %d bad group points", len(to_kill))
-    data = {f"TARGET_{i}": np.array([dat[:3], dat[3:]]) for i, dat in enumerate(data) if i not in to_kill}
+    data = {
+        f"TARGET_{i}": np.array([dat[:3], dat[3:]])
+        for i, dat in enumerate(data)
+        if i not in to_kill
+    }
 
     return Dataset(data)
 
@@ -116,7 +150,16 @@ def _load_tracker_csv(path: str):
     )
 
 
-def load_tracker(path: str, group_dist=0.02, group_thresh=0.02, err=0.005, calc_sys_err: bool=False,  cam_transform_path: Optional[str]=None,dist_err: float=8e-7, ang_err: float=5e-6) -> Dataset:
+def load_tracker(
+    path: str,
+    group_dist=0.02,
+    group_thresh=0.02,
+    err=0.005,
+    calc_sys_err: bool = False,
+    cam_transform_path: Optional[str] = None,
+    dist_err: float = 8e-7,
+    ang_err: float = 5e-6,
+) -> Dataset:
     """
     Load laser tracker data.
 
@@ -162,7 +205,16 @@ def load_tracker(path: str, group_dist=0.02, group_thresh=0.02, err=0.005, calc_
     if ext == ".yaml":
         return _load_tracker_yaml(path)
     elif ext == ".txt":
-        return _load_tracker_txt(path, group_dist, group_thresh, err, calc_sys_err, cam_transform_path, dist_err, ang_err)
+        return _load_tracker_txt(
+            path,
+            group_dist,
+            group_thresh,
+            err,
+            calc_sys_err,
+            cam_transform_path,
+            dist_err,
+            ang_err,
+        )
     elif ext == ".csv":
         return _load_tracker_csv(path)
     raise ValueError(f"Invalid tracker data with extension {ext}")
@@ -245,7 +297,9 @@ def load_photo(
         fig.colorbar(p)
         plt.show()
 
-    data = {label: np.array([coord, err]) for label, coord, err in zip(labels, coords, errs)}
+    data = {
+        label: np.array([coord, err]) for label, coord, err in zip(labels, coords, errs)
+    }
     return DatasetPhotogrammetry(data)
 
 

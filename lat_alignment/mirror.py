@@ -244,10 +244,14 @@ class Panel:
         compensation = np.zeros_like(self.measurements)
         sign = -1 if self.mirror == "primary" else 1
         if self.compensate != 0.0:
-           compensation = sign * self.compensate * mirror_norm(
-               self.measurements[:, 0], self.measurements[:, 1], a[self.mirror]
-           )
-           compensation[:, :2] *= -1
+            compensation = (
+                sign
+                * self.compensate
+                * mirror_norm(
+                    self.measurements[:, 0], self.measurements[:, 1], a[self.mirror]
+                )
+            )
+            compensation[:, :2] *= -1
         return compensation
 
     @cached_property
@@ -259,7 +263,7 @@ class Panel:
         x = model[:, 0] + self._compensation[:, 0]
         y = model[:, 1] + self._compensation[:, 1]
         model[:, 2] = mirror_surface(x, y, a[self.mirror]) + self._compensation[:, 2]
-        
+
         return model
 
     @cached_property
@@ -272,7 +276,9 @@ class Panel:
         x = self.model[:, 0] + self._compensation[:, 0]
         y = self.model[:, 1] + self._compensation[:, 1]
         derivs = mirror_deriv(x, y, a[self.mirror])
-        errs = np.sqrt(np.sum((derivs*self.meas_err[:, :2])**2, 1)) # + np.prod(derivs, 1)*np.prod(self.meas_err[:, :2], 1))
+        errs = np.sqrt(
+            np.sum((derivs * self.meas_err[:, :2]) ** 2, 1)
+        )  # + np.prod(derivs, 1)*np.prod(self.meas_err[:, :2], 1))
         errs = np.column_stack([self.meas_err[:, :2], errs])
         return errs
 
@@ -395,7 +401,7 @@ class Panel:
         """
         Get the error on the residuals between model and measurements.
         """
-        return np.sqrt(self.meas_err**2 + self.model_err**2) 
+        return np.sqrt(self.meas_err**2 + self.model_err**2)
 
     @cached_property
     def transformed_residuals(self) -> NDArray[np.float64]:
@@ -409,7 +415,7 @@ class Panel:
         """
         Get the error on the residuals between transformed model and measurements.
         """
-        return np.sqrt(self.meas_err**2 + self.model_transformed_err**2) 
+        return np.sqrt(self.meas_err**2 + self.model_transformed_err**2)
 
     @cached_property
     def res_norm(self) -> NDArray[np.float64]:
@@ -431,8 +437,8 @@ class Panel:
         Get the error oekn the rms between model and measurements.
         """
         serr = 2 * self.residuals_err[:, 2].ravel() * self.residuals[:, 2].ravel()
-        merr = np.sqrt(np.sum(serr/len(serr))**2)
-        return abs(.5 * merr/self.rms)
+        merr = np.sqrt(np.sum(serr / len(serr)) ** 2)
+        return abs(0.5 * merr / self.rms)
 
 
 def gen_panels(
@@ -645,7 +651,10 @@ def remove_cm(
         labels = labels[~cut]
     logger.info("\tMirror has %d good points", len(panel.measurements))
 
-    data = {l: np.array([d, e]) for l, d, e in zip(labels, panel.measurements, panel.meas_err)}
+    data = {
+        l: np.array([d, e])
+        for l, d, e in zip(labels, panel.measurements, panel.meas_err)
+    }
     kept_points = dataset.copy()
     kept_points.data_dict = data
 
@@ -709,7 +718,7 @@ def plot_panels(
     if vmax is None:
         raise ValueError("vmax still None?")
     cmap = "coolwarm"
-    vmin = -1*vmax
+    vmin = -1 * vmax
     if err:
         cmap = "cividis"
         vmin = float(np.percentile(np.abs(res_use[:, 2]), 5))
@@ -777,14 +786,14 @@ def plot_panels(
         )
 
     points = np.array([len(panel.measurements) for panel in panels])
-    weights = points/np.sum(points)
+    weights = points / np.sum(points)
     if use_iqr:
-        tot_rms = iqr(res_all[:, 2].ravel(), scale="normal") # type: ignore
+        tot_rms = iqr(res_all[:, 2].ravel(), scale="normal")  # type: ignore
     else:
         rms = np.array([panel.rms for panel in panels])
         tot_rms = 1000 * np.sum(rms * weights)
     rms_err = np.array([panel.rms_err for panel in panels])
-    tot_rms_err = 1000 * np.sqrt(np.sum((rms_err*weights)**2))  
+    tot_rms_err = 1000 * np.sqrt(np.sum((rms_err * weights) ** 2))
 
     to_diff = model_all.copy()
     to_diff[:, 2] = res_use[:, 2]
