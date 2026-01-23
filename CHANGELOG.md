@@ -1,3 +1,15 @@
+## 8.0.0 (2026-01-23)
+
+### Feat
+
+- add faro systematic error
+- add error propagation
+- include errors in dataset
+
+### Fix
+
+- update dataset formatting in trajectory script
+
 ## 7.6.0 (2025-09-24)
 
 ### Feat
