@@ -3,6 +3,7 @@ import os
 from collections import defaultdict
 from functools import partial
 from importlib.resources import files
+from typing import Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -52,11 +53,70 @@ def _load_tracker_yaml(path: str):
     return DatasetReference(data)
 
 
-def _load_tracker_txt(path: str, group_dist=0.02, group_thresh=0.02):
+def _load_tracker_txt(
+    path: str,
+    group_dist: float = 0.02,
+    group_thresh: float = 0.02,
+    err: float = 0.005,
+    calc_sys_err: bool = False,
+    cam_transform_path: Optional[str] = None,
+    dist_err: float = 8e-7,
+    ang_err: float = 5e-6,
+):
     data = np.genfromtxt(
         path, usecols=(3, 4, 5), skip_header=1, dtype=str, delimiter="\t"
     )
     data = np.char.replace(data, ",", "").astype(float)
+
+    errs = err / np.sqrt(3) * np.ones_like(data)
+    if calc_sys_err:
+        data_faro = data.copy()
+        if cam_transform_path is not None:
+            coord_align = np.genfromtxt(cam_transform_path)
+            data_faro = (
+                np.linalg.inv(coord_align)
+                @ np.vstack([data_faro.T, np.zeros(len(data_faro))])
+            )[:3].T
+        r = np.linalg.norm(data_faro, axis=1)
+        theta = np.arccos(data_faro[:, 2] / r)
+        phi = np.arctan2(data_faro[:, 1], data_faro[:, 0])
+        errs_sphere = np.column_stack(
+            [
+                r * dist_err / np.sqrt(8),
+                np.ones_like(theta) * np.arcsin(ang_err / np.sqrt(8)),
+                np.ones_like(phi) * np.arcsin(ang_err / np.sqrt(8)),
+            ]
+        )
+
+        # Taking the linear appriximation, we may expect a small bias
+        st, ct = np.sin(theta), np.cos(theta)
+        sp, cp = np.sin(phi), np.cos(phi)
+        errs[:, 0] = np.sqrt(
+            errs[:, 0] ** 2
+            + (errs_sphere[:, 0] * st * cp) ** 2
+            + (errs_sphere[:, 1] * r * ct * cp) ** 2
+            + (errs_sphere[:, 2] * r * st * sp) ** 2
+        )  # /r
+        errs[:, 1] = np.sqrt(
+            errs[:, 1] ** 2
+            + (errs_sphere[:, 0] * st * sp) ** 2
+            + (errs_sphere[:, 1] * r * ct * sp) ** 2
+            + (errs_sphere[:, 2] * r * st * cp) ** 2
+        )  # /r
+        errs[:, 2] = np.sqrt(
+            errs[:, 2] ** 2
+            + (errs_sphere[:, 0] * ct) ** 2
+            + (errs_sphere[:, 1] * r * st) ** 2
+        )  # /r
+
+        # Brute force...
+        # data_sphere = np.column_stack([r, theta, phi])
+        # rng = np.random.default_rng()
+        # sphere_dist = data_sphere + rng.normal(size=(1000,)+errs_sphere.shape)*errs_sphere
+        # sphere_dist = np.column_stack([sphere_dist[:, :, 0]*np.sin(sphere_dist[:, :, 1])*np.cos(sphere_dist[:, :, 1]), sphere_dist[:, :, 0]*np.sin(sphere_dist[:, :, 1])*np.sin(sphere_dist[:, :, 1]), sphere_dist[:, :, 0]*np.cos(sphere_dist[:, :, 1])])
+        # errs += np.std(sphere_dist, axis=0)
+
+    data = np.hstack([data, errs])
 
     to_kill = []
     if group_dist > 0 and group_thresh > 0:
@@ -74,7 +134,11 @@ def _load_tracker_txt(path: str, group_dist=0.02, group_thresh=0.02):
             bad_zs = np.abs(zs - np.median(zs)) > group_thresh
             to_kill += group_idx[bad_zs].tolist()
         logger.info("\tFound and removed %d bad group points", len(to_kill))
-    data = {f"TARGET_{i}": dat for i, dat in enumerate(data) if i not in to_kill}
+    data = {
+        f"TARGET_{i}": np.array([dat[:3], dat[3:]])
+        for i, dat in enumerate(data)
+        if i not in to_kill
+    }
 
     return Dataset(data)
 
@@ -86,10 +150,18 @@ def _load_tracker_csv(path: str):
     )
 
 
-def load_tracker(path: str, group_dist=0.02, group_thresh=0.02) -> Dataset:
+def load_tracker(
+    path: str,
+    group_dist=0.02,
+    group_thresh=0.02,
+    err=0.005,
+    calc_sys_err: bool = False,
+    cam_transform_path: Optional[str] = None,
+    dist_err: float = 8e-7,
+    ang_err: float = 5e-6,
+) -> Dataset:
     """
     Load laser tracker data.
-    TODO: This interface needs to be unified with `load_photo` so all code can use either datatype interchangibly
 
     Parameters
     ----------
@@ -104,6 +176,23 @@ def load_tracker(path: str, group_dist=0.02, group_thresh=0.02) -> Dataset:
         Difference in z between point and the median z for a group to cut at.
         Only used for `.txt` files.
         Set to 0 to disable.
+    err : float, default: .005
+        The base error to assume for the tracker data.
+        Only used for `.txt` files.
+    calc_sys_err : bool, default: False
+        It `True` calculate the systematic error based on provided tracker specs.
+        Only used for `.txt` files.
+    cam_transform_path : Optional[str], default: None
+        Alignment matrix exported from CAM2.
+        Used when calculating systematic error.
+        If not provided we assume the data is the the FARO's internal coordinates.
+        Only used for `.txt` files.
+    dist_err : float, default 8e-7
+        The systematic error as a function of distance in mm/mm.
+        Only used for `.txt` files.
+    ang_err : float, default 8e-7
+        The systematic error as a function of angle in mm/mm.
+        Only used for `.txt` files.
 
     Returns
     -------
@@ -116,7 +205,16 @@ def load_tracker(path: str, group_dist=0.02, group_thresh=0.02) -> Dataset:
     if ext == ".yaml":
         return _load_tracker_yaml(path)
     elif ext == ".txt":
-        return _load_tracker_txt(path, group_dist, group_thresh)
+        return _load_tracker_txt(
+            path,
+            group_dist,
+            group_thresh,
+            err,
+            calc_sys_err,
+            cam_transform_path,
+            dist_err,
+            ang_err,
+        )
     elif ext == ".csv":
         return _load_tracker_csv(path)
     raise ValueError(f"Invalid tracker data with extension {ext}")
@@ -156,7 +254,12 @@ def load_photo(
     code_msk = np.char.find(labels, "CODE") >= 0
 
     err_msk = (err < err_thresh * np.median(err[trg_msk])) + code_msk
-    labels, coords, err = labels[err_msk], coords[err_msk], err[err_msk]
+    labels, coords, err, errs = (
+        labels[err_msk],
+        coords[err_msk],
+        err[err_msk],
+        errs[err_msk],
+    )
     logger.info("\t%d good points loaded", len(coords))
     logger.info("\t%d high error points not loaded", np.sum(~err_msk))
 
@@ -178,7 +281,7 @@ def load_photo(
             to_kill += [labels[trg_msk][i]]
     msk = ~np.isin(labels, to_kill)
     logger.info("\tFound and removed %d doubles", len(to_kill))
-    labels, coords, err = labels[msk], coords[msk], err[msk]
+    labels, coords, err, errs = labels[msk], coords[msk], err[msk], errs[msk]
 
     if plot:
         fig = plt.figure()
@@ -194,7 +297,9 @@ def load_photo(
         fig.colorbar(p)
         plt.show()
 
-    data = {label: coord for label, coord in zip(labels, coords)}
+    data = {
+        label: np.array([coord, err]) for label, coord, err in zip(labels, coords, errs)
+    }
     return DatasetPhotogrammetry(data)
 
 
@@ -218,7 +323,7 @@ def load_data(path: str, source: str = "photo", **kwargs) -> Dataset:
     if source == "photo":
         return load_photo(path, **kwargs)
     elif source == "tracker":
-        return load_tracker(path)
+        return load_tracker(path, **kwargs)
     raise ValueError("Invalid data source")
 
 

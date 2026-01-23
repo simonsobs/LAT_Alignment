@@ -20,16 +20,20 @@ class Dataset:
     Attributes
     ----------
     data_dict : dict[str, NDArray[np.float64]]
-        Dict of data points.
+        Dict of data points and errors.
         You should genrally not touch this directly.
+        Each entry should have shape `(2, ndim)` where
+        the first row is the data and the second the errors.
     """
 
     data_dict: dict[str, NDArray[np.float64]]
 
     def _clear_cache(self):
         self.__dict__.pop("points", None)
+        self.__dict__.pop("errs", None)
         self.__dict__.pop("labels", None)
-        self.__dict__.pop("target", None)
+        self.__dict__.pop("targets", None)
+        self.__dict__.pop("target_errs", None)
         self.__dict__.pop("target_labels", None)
 
     def __setattr__(self, name, value):
@@ -39,10 +43,15 @@ class Dataset:
 
     def __setitem__(self, key, item):
         self._clear_cache()
-        self.data_dict[key] = item
+        if key[-4:] == "_err":
+            self.data_dict[key[:-4]][1] = item
+        self.data_dict[key][0] = item
+        self._clear_cache()
 
     def __getitem__(self, key):
-        return self.data_dict[key]
+        if key[-4:] == "_err":
+            return self.data_dict[key[:-4]][1]
+        return self.data_dict[key][0]
 
     def __repr__(self):
         return repr(self.data_dict)
@@ -66,7 +75,15 @@ class Dataset:
         Get all points in the dataset as an array.
         This is cached.
         """
-        return np.array(list(self.data_dict.values()))
+        return np.array(list(self.data_dict.values()))[:, 0, :]
+
+    @cached_property
+    def errs(self) -> NDArray[np.float64]:
+        """
+        Get all points in the dataset as an array.
+        This is cached.
+        """
+        return np.array(list(self.data_dict.values()))[:, 1, :]
 
     @cached_property
     def labels(self) -> NDArray[np.str_]:
@@ -84,6 +101,15 @@ class Dataset:
         """
         msk = np.char.find(self.labels, "TARGET") >= 0
         return self.points[msk]
+
+    @cached_property
+    def target_errs(self) -> NDArray[np.float64]:
+        """
+        Get all target errors in the dataset as an array.
+        This is cached.
+        """
+        msk = np.char.find(self.labels, "TARGET") >= 0
+        return self.errs[msk]
 
     @cached_property
     def target_labels(self) -> NDArray[np.str_]:
@@ -122,6 +148,7 @@ class DatasetReference(Dataset):
 
     def _clear_cache(self):
         self.__dict__.pop("points", None)
+        self.__dict__.pop("errs", None)
         self.__dict__.pop("labels", None)
         self.__dict__.pop("elem_names", None)
         self.__dict__.pop("elem_labels", None)
@@ -161,6 +188,9 @@ class DatasetReference(Dataset):
         else:
             self.data_dict[key] = item
         self._clear_cache()
+
+    def __getitem__(self, key):
+        return self.data_dict[key]
 
     @cached_property
     def elem_names(self) -> list[str]:
@@ -228,10 +258,13 @@ class DatasetPhotogrammetry(Dataset):
 
     def _clear_cache(self):
         self.__dict__.pop("points", None)
+        self.__dict__.pop("errs", None)
         self.__dict__.pop("labels", None)
         self.__dict__.pop("codes", None)
+        self.__dict__.pop("code_errs", None)
         self.__dict__.pop("code_labels", None)
-        self.__dict__.pop("target", None)
+        self.__dict__.pop("targets", None)
+        self.__dict__.pop("target_errs", None)
         self.__dict__.pop("target_labels", None)
 
     def __setattr__(self, name, value):
@@ -247,6 +280,15 @@ class DatasetPhotogrammetry(Dataset):
         """
         msk = np.char.find(self.labels, "CODE") >= 0
         return self.points[msk]
+
+    @cached_property
+    def code_errs(self) -> NDArray[np.float64]:
+        """
+        Get all coded point errors in the dataset as an array.
+        This is cached.
+        """
+        msk = np.char.find(self.labels, "CODE") >= 0
+        return self.errs[msk]
 
     @cached_property
     def code_labels(self) -> NDArray[np.str_]:

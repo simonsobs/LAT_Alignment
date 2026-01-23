@@ -30,6 +30,8 @@ load:
   source: "tracker"
   group_dist: 1
   group_thresh: .01
+  calc_sys_err: True
+  cam_transform_path: LAT_M1_Surface_0_20250831.txt
 align_tracker:
   plot: False
   scale: False
