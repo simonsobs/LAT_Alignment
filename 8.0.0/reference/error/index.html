@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -1238,7 +1238,7 @@ This calculation is from Parshely et al.</p>
     <span class="p">],</span>
     <span class="n">add_err</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get the HWFE errors based on the mirror and receiver positions.</span>
 <span class="sd">    This calculation is from Parshely et al.</span>
 
@@ -1255,22 +1255,22 @@ This calculation is from Parshely et al.</p>
 <span class="sd">    -------</span>
 <span class="sd">    hwfe : float</span>
 <span class="sd">        The HWFE in um-rms.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Put everything in M1 coordinates</span>
     <span class="n">data_m1</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">:</span>
         <span class="n">dat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_m1</span><span class="o">.</span><span class="n">elements</span><span class="p">[</span><span class="n">element</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">add_err</span><span class="p">:</span>
             <span class="n">dat</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">data_m1</span><span class="o">.</span><span class="n">errors</span><span class="p">[</span><span class="n">element</span><span class="p">])</span>
-        <span class="n">data_m1</span><span class="p">[</span><span class="n">element</span><span class="p">]</span> <span class="o">=</span> <span class="n">coord_transform</span><span class="p">(</span><span class="n">dat</span><span class="p">,</span> <span class="s2">&quot;opt_global&quot;</span><span class="p">,</span> <span class="s2">&quot;opt_primary&quot;</span><span class="p">)</span>
-        <span class="n">data_m1</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">element</span><span class="si">}</span><span class="s2">_ref&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coord_transform</span><span class="p">(</span>
-            <span class="n">data_m1</span><span class="o">.</span><span class="n">reference</span><span class="p">[</span><span class="n">element</span><span class="p">],</span> <span class="s2">&quot;opt_global&quot;</span><span class="p">,</span> <span class="s2">&quot;opt_primary&quot;</span>
+        <span class="n">data_m1</span><span class="p">[</span><span class="n">element</span><span class="p">]</span> <span class="o">=</span> <span class="n">coord_transform</span><span class="p">(</span><span class="n">dat</span><span class="p">,</span> <span class="s2">"opt_global"</span><span class="p">,</span> <span class="s2">"opt_primary"</span><span class="p">)</span>
+        <span class="n">data_m1</span><span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">element</span><span class="si">}</span><span class="s2">_ref"</span><span class="p">]</span> <span class="o">=</span> <span class="n">coord_transform</span><span class="p">(</span>
+            <span class="n">data_m1</span><span class="o">.</span><span class="n">reference</span><span class="p">[</span><span class="n">element</span><span class="p">],</span> <span class="s2">"opt_global"</span><span class="p">,</span> <span class="s2">"opt_primary"</span>
         <span class="p">)</span>
 
     <span class="c1"># Transform for M1 perfect</span>
     <span class="n">aff_m1</span><span class="p">,</span> <span class="n">sft_m1</span> <span class="o">=</span> <span class="n">get_transform</span><span class="p">(</span>
-        <span class="n">data_m1</span><span class="o">.</span><span class="n">elements</span><span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">],</span>
-        <span class="n">data_m1</span><span class="o">.</span><span class="n">reference</span><span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">],</span>
+        <span class="n">data_m1</span><span class="o">.</span><span class="n">elements</span><span class="p">[</span><span class="s2">"primary"</span><span class="p">],</span>
+        <span class="n">data_m1</span><span class="o">.</span><span class="n">reference</span><span class="p">[</span><span class="s2">"primary"</span><span class="p">],</span>
     <span class="p">)</span>
 
     <span class="n">hwfe</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1484,7 +1484,7 @@ This calculation is from Parshely et al.</p>
     <span class="n">add_err</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">thresh</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get the pointing error based on the mirror and receiver positions.</span>
 
 <span class="sd">    Parameters</span>
@@ -1502,29 +1502,29 @@ This calculation is from Parshely et al.</p>
 <span class="sd">    -------</span>
 <span class="sd">    pe : float</span>
 <span class="sd">        The pointing error in arcsecs.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">thresh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">thresh</span> <span class="o">/</span> <span class="mi">3600</span><span class="p">)</span>
     <span class="n">rots</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
     <span class="c1"># Get rotations</span>
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">factor</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([(</span><span class="s2">&quot;primary&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;secondary&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)]):</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">factor</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([(</span><span class="s2">"primary"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">"secondary"</span><span class="p">,</span> <span class="mi">2</span><span class="p">)]):</span>
         <span class="n">src</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">elements</span><span class="p">[</span><span class="n">element</span><span class="p">])</span>
         <span class="k">if</span> <span class="n">add_err</span><span class="p">:</span>
             <span class="n">src</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">errors</span><span class="p">[</span><span class="n">element</span><span class="p">])</span>
         <span class="c1"># Put things in the local coords</span>
-        <span class="n">src</span> <span class="o">=</span> <span class="n">coord_transform</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="s2">&quot;opt_global&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;opt_</span><span class="si">{</span><span class="n">element</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="n">coord_transform</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="s2">"opt_global"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"opt_</span><span class="si">{</span><span class="n">element</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="n">dst</span> <span class="o">=</span> <span class="n">coord_transform</span><span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">reference</span><span class="p">[</span><span class="n">element</span><span class="p">]),</span> <span class="s2">&quot;opt_global&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;opt_</span><span class="si">{</span><span class="n">element</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">reference</span><span class="p">[</span><span class="n">element</span><span class="p">]),</span> <span class="s2">"opt_global"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"opt_</span><span class="si">{</span><span class="n">element</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span>
         <span class="c1"># Get rotation</span>
         <span class="n">aff</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_transform</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">)</span>
         <span class="o">*</span><span class="n">_</span><span class="p">,</span> <span class="n">rot</span> <span class="o">=</span> <span class="n">decompose_affine</span><span class="p">(</span><span class="n">aff</span><span class="p">)</span>
         <span class="n">rot</span> <span class="o">=</span> <span class="n">decompose_rotation</span><span class="p">(</span><span class="n">rot</span><span class="p">)</span>
         <span class="n">rot</span><span class="p">[</span><span class="nb">abs</span><span class="p">(</span><span class="n">rot</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">thresh</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Help prevent float errors</span>
-        <span class="n">rot</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># clocking doesn&#39;t matter</span>
+        <span class="n">rot</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># clocking doesn't matter</span>
         <span class="c1"># Put into global coords</span>
-        <span class="n">aff</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">from_euler</span><span class="p">(</span><span class="s2">&quot;xyz&quot;</span><span class="p">,</span> <span class="n">rot</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>
+        <span class="n">aff</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">from_euler</span><span class="p">(</span><span class="s2">"xyz"</span><span class="p">,</span> <span class="n">rot</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>
         <span class="n">aff</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">affine_basis_transform</span><span class="p">(</span>
-            <span class="n">aff</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;opt_</span><span class="si">{</span><span class="n">element</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;opt_global&quot;</span>
+            <span class="n">aff</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span> <span class="sa">f</span><span class="s2">"opt_</span><span class="si">{</span><span class="n">element</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"opt_global"</span>
         <span class="p">)</span>
         <span class="o">*</span><span class="n">_</span><span class="p">,</span> <span class="n">rot</span> <span class="o">=</span> <span class="n">decompose_affine</span><span class="p">(</span><span class="n">aff</span><span class="p">)</span>
         <span class="n">rot</span> <span class="o">=</span> <span class="n">decompose_rotation</span><span class="p">(</span><span class="n">rot</span><span class="p">)</span>
@@ -1597,7 +1597,7 @@ This calculation is from Parshely et al.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../../javascripts/mathjax.js"></script>
       

@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -2027,7 +2027,7 @@ This is to account for things like the Faro SMR.</p>
 <span class="normal">440</span>
 <span class="normal">441</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Panel</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Dataclass for storing a mirror panel.</span>
 
 <span class="sd">    TODO: Add error propagation for:</span>
@@ -2040,7 +2040,7 @@ This is to account for things like the Faro SMR.</p>
 <span class="sd">    ----------</span>
 <span class="sd">    mirror : str</span>
 <span class="sd">        Which mirror this panel is for.</span>
-<span class="sd">        Should be &#39;primary&#39; or &#39;secondary&#39;.</span>
+<span class="sd">        Should be 'primary' or 'secondary'.</span>
 <span class="sd">    row : int</span>
 <span class="sd">        The row of the panel.</span>
 <span class="sd">    col : int</span>
@@ -2050,11 +2050,11 @@ This is to account for things like the Faro SMR.</p>
 <span class="sd">        Should have shape `(4, 3)`.</span>
 <span class="sd">    measurements : NDArray[np.float64]</span>
 <span class="sd">        The measurement data for this panel.</span>
-<span class="sd">        Should be in the mirror&#39;s internal coords.</span>
+<span class="sd">        Should be in the mirror's internal coords.</span>
 <span class="sd">        Should have shape `(npoint, 3)`.</span>
 <span class="sd">    meas_err : NDArray[np.float64]</span>
 <span class="sd">        The error on the measurement data for this panel.</span>
-<span class="sd">        Should be in the mirror&#39;s internal coords.</span>
+<span class="sd">        Should be in the mirror's internal coords.</span>
 <span class="sd">        Should have shape `(npoint, 3)`.</span>
 <span class="sd">    nom_adj : NDArray[np.float64]</span>
 <span class="sd">        The nominal position of the adjusters in the mirror internal coordinates.</span>
@@ -2062,7 +2062,7 @@ This is to account for things like the Faro SMR.</p>
 <span class="sd">    compensate : float, default: 0</span>
 <span class="sd">        The amount (in mm) to compensate the model surface by.</span>
 <span class="sd">        This is to account for things like the Faro SMR.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">mirror</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">row</span><span class="p">:</span> <span class="nb">int</span>
@@ -2079,36 +2079,36 @@ This is to account for things like the Faro SMR.</p>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">if</span> <span class="p">(</span>
-            <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;nom_adj&quot;</span>
-            <span class="ow">or</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;mirror&quot;</span>
-            <span class="ow">or</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;measurements&quot;</span>
-            <span class="ow">or</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;compensate&quot;</span>
+            <span class="n">name</span> <span class="o">==</span> <span class="s2">"nom_adj"</span>
+            <span class="ow">or</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">"mirror"</span>
+            <span class="ow">or</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">"measurements"</span>
+            <span class="ow">or</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">"compensate"</span>
         <span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;can_surface&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;model_err&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;residuals&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;residuals_err&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;transformed_residuals&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;transformed_residuals_err&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;res_norm&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;rms&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;meas_surface&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;meas_adj&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;meas_adj_resid&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;adj_resid&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;model_transformed&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;model_transformed_err&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_transform&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_compensation&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;adjuster_radius&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;meas_adj_resid&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"can_surface"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"model"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"model_err"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"residuals"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"residuals_err"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"transformed_residuals"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"transformed_residuals_err"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"res_norm"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"rms"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"meas_surface"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"meas_adj"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"meas_adj_resid"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"adj_resid"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"model_transformed"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"model_transformed_err"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"_transform"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"_compensation"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">"adjuster_radius"</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"meas_adj_resid"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_compensation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
         <span class="n">compensation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">measurements</span><span class="p">)</span>
-        <span class="n">sign</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mirror</span> <span class="o">==</span> <span class="s2">&quot;primary&quot;</span> <span class="k">else</span> <span class="mi">1</span>
+        <span class="n">sign</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mirror</span> <span class="o">==</span> <span class="s2">"primary"</span> <span class="k">else</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">compensate</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
             <span class="n">compensation</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">sign</span>
@@ -2122,9 +2122,9 @@ This is to account for things like the Faro SMR.</p>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        The modeled mirror surface at the locations of the measurementss.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">measurements</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">model</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compensation</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">model</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compensation</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
@@ -2134,11 +2134,11 @@ This is to account for things like the Faro SMR.</p>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">model_err</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        The error on the input data propagated through the model.</span>
 <span class="sd">        Here we assume that since the mirror is locally flat a linear approximation is fine.</span>
 <span class="sd">        For extreme compensations this may break down.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compensation</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
         <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compensation</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
         <span class="n">derivs</span> <span class="o">=</span> <span class="n">mirror_deriv</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">a</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mirror</span><span class="p">])</span>
@@ -2150,29 +2150,29 @@ This is to account for things like the Faro SMR.</p>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]]:</span>
-        <span class="k">return</span> <span class="n">get_rigid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">measurements</span><span class="p">,</span> <span class="n">center_dst</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">get_rigid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">measurements</span><span class="p">,</span> <span class="n">center_dst</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"mean"</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">rot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Rotation that aligns the model to the measurements.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">shift</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Shift that aligns the model to the measurements.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">can_surface</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the cannonical points to define the panel surface.</span>
 <span class="sd">        These are the adjuster positions projected only the mirror surface.</span>
 <span class="sd">        Note that this is in the nominal coordinates not the measured ones.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">can_z</span> <span class="o">=</span> <span class="n">mirror_surface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nom_adj</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">nom_adj</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mirror</span><span class="p">])</span>
         <span class="n">points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nom_adj</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">points</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">can_z</span>
@@ -2180,25 +2180,25 @@ This is to account for things like the Faro SMR.</p>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">meas_surface</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        The cannonical surface transformed to be in the measured coordinates.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">apply_transform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">can_surface</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rot</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shift</span><span class="p">)</span>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">meas_adj</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        The adjuster points transformed to be in the measured coordinates.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">apply_transform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nom_adj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rot</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shift</span><span class="p">)</span>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">meas_adj_resid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        A correction that can be applied to `meas_adj` where we compute</span>
 <span class="sd">        the average residual of measured points from the transformed model</span>
 <span class="sd">        that are within `adjuster_radius` of the adjuster point in `xy`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">resid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meas_adj</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">adj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meas_adj</span><span class="p">):</span>
             <span class="n">dists</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">measurements</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">adj</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
@@ -2211,11 +2211,11 @@ This is to account for things like the Faro SMR.</p>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">adj_resid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        A correction that can be applied to `nom_adj` where we compute</span>
 <span class="sd">        the average residual of measured points from the model</span>
 <span class="sd">        that are within `adjuster_radius` of the adjuster point in `xy`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">resid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meas_adj</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">adj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meas_adj</span><span class="p">):</span>
             <span class="n">dists</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">measurements</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">adj</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
@@ -2228,9 +2228,9 @@ This is to account for things like the Faro SMR.</p>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">adj_msk</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get a mask that only is True for measurements that are close to an adjustor.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">msk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">measurements</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">measurements</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">msk</span>
@@ -2243,65 +2243,65 @@ This is to account for things like the Faro SMR.</p>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">model_transformed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        The model transformed to be in the measured coordinates.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">apply_transform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rot</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shift</span><span class="p">)</span>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">model_transformed_err</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        The error on the transformed model.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">err_transform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_err</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rot</span><span class="p">)</span>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">residuals</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get residuals between model and measurements.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">measurements</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">residuals_err</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the error on the residuals between model and measurements.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meas_err</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_err</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">transformed_residuals</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get residuals between transformed model and measurements.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">measurements</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_transformed</span>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">transformed_residuals_err</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the error on the residuals between transformed model and measurements.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meas_err</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_transformed_err</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">res_norm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get norm of residuals between transformed model and measurements.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">residuals</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">rms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get rms between model and measurements.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">residuals</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">rms_err</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the error oekn the rms between model and measurements.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">serr</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">residuals_err</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">residuals</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
         <span class="n">merr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">serr</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">serr</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">merr</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">rms</span><span class="p">)</span>
@@ -3012,14 +3012,14 @@ Should be in mm.</p>
     <span class="n">compensate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
     <span class="n">adjuster_radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">50.0</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Panel</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Use a set of measurements to generate panel objects.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    mirror : str</span>
 <span class="sd">        The mirror these panels belong to.</span>
-<span class="sd">        Should be &#39;primary&#39; or &#39;secondary&#39;.</span>
+<span class="sd">        Should be 'primary' or 'secondary'.</span>
 <span class="sd">    dataset : Dataset</span>
 <span class="sd">        The photogrammetry data.</span>
 <span class="sd">    corners : dict[tuple[int, int], ndarray[np.float64]]</span>
@@ -3041,7 +3041,7 @@ Should be in mm.</p>
 <span class="sd">    -------</span>
 <span class="sd">    panels : list[Panels]</span>
 <span class="sd">        A list of panels with the transforme initialized to the identity.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">points</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
     <span class="n">errs</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
     <span class="c1"># dumb brute force</span>
@@ -3225,7 +3225,7 @@ Has shape <code>shape(x) + (2,)</code>.</p>
 <span class="normal">128</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">mirror_deriv</span><span class="p">(</span>
     <span class="n">x</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span> <span class="n">a</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Analytic form of the derivative of the mirror surface.</span>
 
 <span class="sd">    Parameters</span>
@@ -3245,7 +3245,7 @@ Has shape <code>shape(x) + (2,)</code>.</p>
 <span class="sd">    derivs : NDArray[np.float64]</span>
 <span class="sd">        Derivatives of the mirror surface at each input coordinate.</span>
 <span class="sd">        Has shape `shape(x) + (2,)`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">Rn</span> <span class="o">=</span> <span class="mf">3000.0</span>
 
     <span class="n">dx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -3401,7 +3401,7 @@ Has shape <code>shape(x) + (3,)</code>.</p>
 <span class="normal">159</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">mirror_norm</span><span class="p">(</span>
     <span class="n">x</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span> <span class="n">a</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Analytic form of the vector normal to the mirror surface.</span>
 
 <span class="sd">    Parameters</span>
@@ -3421,7 +3421,7 @@ Has shape <code>shape(x) + (3,)</code>.</p>
 <span class="sd">    normals : NDArray[np.float64]</span>
 <span class="sd">        Unit vector normal to the mirror surface at each input coordinate.</span>
 <span class="sd">        Has shape `shape(x) + (3,)`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">derivs</span> <span class="o">=</span> <span class="n">mirror_deriv</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
     <span class="n">z_n</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">derivs</span><span class="p">))</span>
     <span class="n">normals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">derivs</span><span class="p">,</span> <span class="n">z_n</span><span class="p">))</span>
@@ -3571,7 +3571,7 @@ Has the same shape as <code>x</code>.</p>
 <span class="normal">90</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">mirror_surface</span><span class="p">(</span>
     <span class="n">x</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span> <span class="n">a</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Analytic form of the mirror surface.</span>
 
 <span class="sd">    Parameters</span>
@@ -3591,7 +3591,7 @@ Has the same shape as <code>x</code>.</p>
 <span class="sd">    z : NDArray[np.float64]</span>
 <span class="sd">        Z position of the mirror at each input coordinate.</span>
 <span class="sd">        Has the same shape as `x`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="n">Rn</span> <span class="o">=</span> <span class="mf">3000.0</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
@@ -3894,7 +3894,7 @@ directly calculating it.</p>
     <span class="n">vmax</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">use_iqr</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Figure</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Make a plot containing panel residuals and histogram.</span>
 
 <span class="sd">    Parameters</span>
@@ -3918,23 +3918,23 @@ directly calculating it.</p>
 <span class="sd">    -------</span>
 <span class="sd">    figure : Figure</span>
 <span class="sd">        The figure with panels plotted on it.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">res_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">panel</span><span class="o">.</span><span class="n">residuals</span> <span class="k">for</span> <span class="n">panel</span> <span class="ow">in</span> <span class="n">panels</span><span class="p">])</span> <span class="o">*</span> <span class="mi">1000</span>
     <span class="n">res_err_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">panel</span><span class="o">.</span><span class="n">residuals_err</span> <span class="k">for</span> <span class="n">panel</span> <span class="ow">in</span> <span class="n">panels</span><span class="p">])</span> <span class="o">*</span> <span class="mi">1000</span>
     <span class="n">model_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">panel</span><span class="o">.</span><span class="n">model</span> <span class="k">for</span> <span class="n">panel</span> <span class="ow">in</span> <span class="n">panels</span><span class="p">])</span>
     <span class="n">res_use</span> <span class="o">=</span> <span class="n">res_all</span>
-    <span class="n">res_name</span> <span class="o">=</span> <span class="s2">&quot;residuals&quot;</span>
+    <span class="n">res_name</span> <span class="o">=</span> <span class="s2">"residuals"</span>
     <span class="k">if</span> <span class="n">err</span><span class="p">:</span>
         <span class="n">res_use</span> <span class="o">=</span> <span class="n">res_err_all</span>
-        <span class="n">res_name</span> <span class="o">=</span> <span class="s2">&quot;residuals_err&quot;</span>
+        <span class="n">res_name</span> <span class="o">=</span> <span class="s2">"residuals_err"</span>
     <span class="k">if</span> <span class="n">vmax</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">err</span><span class="p">:</span>
         <span class="n">vmax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">res_use</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]),</span> <span class="mi">95</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">vmax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;vmax still None?&quot;</span><span class="p">)</span>
-    <span class="n">cmap</span> <span class="o">=</span> <span class="s2">&quot;coolwarm&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"vmax still None?"</span><span class="p">)</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="s2">"coolwarm"</span>
     <span class="n">vmin</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">vmax</span>
     <span class="k">if</span> <span class="n">err</span><span class="p">:</span>
-        <span class="n">cmap</span> <span class="o">=</span> <span class="s2">&quot;cividis&quot;</span>
+        <span class="n">cmap</span> <span class="o">=</span> <span class="s2">"cividis"</span>
         <span class="n">vmin</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">res_use</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]),</span> <span class="mi">5</span><span class="p">))</span>
     <span class="n">gs</span> <span class="o">=</span> <span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">width_ratios</span><span class="o">=</span><span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">height_ratios</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
     <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
@@ -3946,7 +3946,7 @@ directly calculating it.</p>
     <span class="k">for</span> <span class="n">panel</span> <span class="ow">in</span> <span class="n">panels</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">panel</span><span class="o">.</span><span class="n">model</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Can&#39;t plot panel (</span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">), not enough points&quot;</span><span class="p">,</span> <span class="n">panel</span><span class="o">.</span><span class="n">row</span><span class="p">,</span> <span class="n">panel</span><span class="o">.</span><span class="n">col</span>
+                <span class="s2">"</span><span class="se">\t</span><span class="s2">Can't plot panel (</span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">), not enough points"</span><span class="p">,</span> <span class="n">panel</span><span class="o">.</span><span class="n">row</span><span class="p">,</span> <span class="n">panel</span><span class="o">.</span><span class="n">col</span>
             <span class="p">)</span>
             <span class="k">continue</span>
         <span class="n">ax0</span><span class="o">.</span><span class="n">tricontourf</span><span class="p">(</span>
@@ -3966,17 +3966,17 @@ directly calculating it.</p>
             <span class="n">vmin</span><span class="o">=</span><span class="n">vmin</span><span class="p">,</span>
             <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">,</span>
             <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
-            <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
+            <span class="n">marker</span><span class="o">=</span><span class="s2">"o"</span><span class="p">,</span>
             <span class="n">alpha</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
             <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-            <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+            <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">ax0</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
             <span class="n">panel</span><span class="o">.</span><span class="n">meas_adj</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
             <span class="n">panel</span><span class="o">.</span><span class="n">meas_adj</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
-            <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span>
+            <span class="n">marker</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span>
             <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="n">ax0</span><span class="o">.</span><span class="n">tricontourf</span><span class="p">(</span>
         <span class="n">model_all</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
@@ -3987,22 +3987,22 @@ directly calculating it.</p>
         <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
         <span class="n">alpha</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">ax0</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;x (mm)&quot;</span><span class="p">)</span>
-    <span class="n">ax0</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;y (mm)&quot;</span><span class="p">)</span>
+    <span class="n">ax0</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"x (mm)"</span><span class="p">)</span>
+    <span class="n">ax0</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"y (mm)"</span><span class="p">)</span>
     <span class="n">ax0</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mi">3300</span><span class="p">,</span> <span class="mi">3300</span><span class="p">)</span>  <span class="c1"># ack hardcoded!</span>
     <span class="n">ax0</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mi">3300</span><span class="p">,</span> <span class="mi">3300</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">cb</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">cax</span><span class="p">)</span>
-    <span class="n">ax0</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
+    <span class="n">ax0</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">"equal"</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">panel</span> <span class="ow">in</span> <span class="n">panels</span><span class="p">:</span>
         <span class="n">ax0</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span>
-            <span class="n">Polygon</span><span class="p">(</span><span class="n">panel</span><span class="o">.</span><span class="n">corners</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+            <span class="n">Polygon</span><span class="p">(</span><span class="n">panel</span><span class="o">.</span><span class="n">corners</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">)</span>
         <span class="p">)</span>
 
     <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">panel</span><span class="o">.</span><span class="n">measurements</span><span class="p">)</span> <span class="k">for</span> <span class="n">panel</span> <span class="ow">in</span> <span class="n">panels</span><span class="p">])</span>
     <span class="n">weights</span> <span class="o">=</span> <span class="n">points</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">use_iqr</span><span class="p">:</span>
-        <span class="n">tot_rms</span> <span class="o">=</span> <span class="n">iqr</span><span class="p">(</span><span class="n">res_all</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">scale</span><span class="o">=</span><span class="s2">&quot;normal&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="n">tot_rms</span> <span class="o">=</span> <span class="n">iqr</span><span class="p">(</span><span class="n">res_all</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">scale</span><span class="o">=</span><span class="s2">"normal"</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">rms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">panel</span><span class="o">.</span><span class="n">rms</span> <span class="k">for</span> <span class="n">panel</span> <span class="ow">in</span> <span class="n">panels</span><span class="p">])</span>
         <span class="n">tot_rms</span> <span class="o">=</span> <span class="mi">1000</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">rms</span> <span class="o">*</span> <span class="n">weights</span><span class="p">)</span>
@@ -4017,13 +4017,13 @@ directly calculating it.</p>
     <span class="n">ac</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">binned_statistic</span><span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="n">zdiff</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">panels</span><span class="p">))</span>
     <span class="n">bins</span> <span class="o">=</span> <span class="p">(</span><span class="n">bins</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">bins</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="o">/</span> <span class="mi">2</span>
     <span class="n">ax1</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="n">ac</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">bins</span><span class="p">))</span>
-    <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;scale (mm)&quot;</span><span class="p">)</span>
-    <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;z residual</span><span class="si">{</span><span class="s1">&#39; error&#39;</span><span class="o">*</span><span class="n">err</span><span class="si">}</span><span class="s2"> correlation (um/rtmm)&quot;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"scale (mm)"</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">"z residual</span><span class="si">{</span><span class="s1">' error'</span><span class="o">*</span><span class="n">err</span><span class="si">}</span><span class="s2"> correlation (um/rtmm)"</span><span class="p">)</span>
 
     <span class="n">ax2</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">res_use</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">panels</span><span class="p">))</span>
-    <span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;z residual</span><span class="si">{</span><span class="s1">&#39; error&#39;</span><span class="o">*</span><span class="n">err</span><span class="si">}</span><span class="s2"> (um)&quot;</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">"z residual</span><span class="si">{</span><span class="s1">' error'</span><span class="o">*</span><span class="n">err</span><span class="si">}</span><span class="s2"> (um)"</span><span class="p">)</span>
 
-    <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">title_str</span><span class="si">}{</span><span class="s1">&#39; error&#39;</span><span class="o">*</span><span class="n">err</span><span class="si">}</span><span class="s2">, RMS=</span><span class="si">{</span><span class="n">tot_rms</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> ± </span><span class="si">{</span><span class="n">tot_rms_err</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> um&quot;</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">title_str</span><span class="si">}{</span><span class="s1">' error'</span><span class="o">*</span><span class="n">err</span><span class="si">}</span><span class="s2">, RMS=</span><span class="si">{</span><span class="n">tot_rms</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> ± </span><span class="si">{</span><span class="n">tot_rms_err</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> um"</span><span class="p">)</span>
 
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
@@ -4346,7 +4346,7 @@ the second is the shift.</p>
     <span class="n">cut_thresh</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
     <span class="n">niters</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Dataset</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Fit for the common mode transformation from the model to the measurements of all panels and them remove it.</span>
 <span class="sd">    Note that this will remove all coded targets from the dataset.</span>
 
@@ -4356,7 +4356,7 @@ the second is the shift.</p>
 <span class="sd">        The photogrammetry data.</span>
 <span class="sd">    mirror : str</span>
 <span class="sd">        The mirror this data belong to.</span>
-<span class="sd">        Should be &#39;primary&#39; or &#39;secondary&#39;.</span>
+<span class="sd">        Should be 'primary' or 'secondary'.</span>
 <span class="sd">    compensate : float, default: 0</span>
 <span class="sd">        Compensation to apply to model.</span>
 <span class="sd">        This is to account for the radius of a Faro SMR.</span>
@@ -4374,12 +4374,12 @@ the second is the shift.</p>
 <span class="sd">        The common mode that was removed.</span>
 <span class="sd">        The first element is an affine matrix and</span>
 <span class="sd">        the second is the shift.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Removing common mode for </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">mirror</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Removing common mode for </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">mirror</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_cm</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">panel</span><span class="p">):</span>
         <span class="n">panel</span><span class="o">.</span><span class="n">measurements</span><span class="p">[:]</span> <span class="o">-=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
-        <span class="n">rot</span> <span class="o">=</span> <span class="n">Rotation</span><span class="o">.</span><span class="n">from_euler</span><span class="p">(</span><span class="s2">&quot;xyz&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="mi">4</span><span class="p">:])</span>
+        <span class="n">rot</span> <span class="o">=</span> <span class="n">Rotation</span><span class="o">.</span><span class="n">from_euler</span><span class="p">(</span><span class="s2">"xyz"</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="mi">4</span><span class="p">:])</span>
         <span class="n">panel</span><span class="o">.</span><span class="n">measurements</span> <span class="o">=</span> <span class="n">rot</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">panel</span><span class="o">.</span><span class="n">measurements</span><span class="p">)</span>
         <span class="n">panel</span><span class="o">.</span><span class="n">measurements</span> <span class="o">*=</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -4409,15 +4409,15 @@ the second is the shift.</p>
         <span class="n">mirror</span><span class="p">,</span>
         <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
         <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="s2">&quot;float64&quot;</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="s2">"float64"</span><span class="p">),</span>
         <span class="n">data</span><span class="p">,</span>
         <span class="n">err</span><span class="p">,</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="s2">&quot;float64&quot;</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="s2">"float64"</span><span class="p">),</span>
         <span class="n">compensate</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">data_clean</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Removed </span><span class="si">%d</span><span class="s2"> points not on mirror surface&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">~</span><span class="n">msk</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">Removed </span><span class="si">%d</span><span class="s2"> points not on mirror surface"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">~</span><span class="n">msk</span><span class="p">))</span>
 
     <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">6</span><span class="p">)])</span>
     <span class="n">bounds</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">0.95</span><span class="p">,</span> <span class="mf">1.05</span><span class="p">)]</span> <span class="o">+</span> <span class="p">[(</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">)]</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)]</span> <span class="o">*</span> <span class="mi">3</span>
@@ -4425,19 +4425,19 @@ the second is the shift.</p>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">niters</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">panel</span><span class="o">.</span><span class="n">measurements</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">iter </span><span class="si">%d</span><span class="s2"> for common mode fit&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">iter </span><span class="si">%d</span><span class="s2"> for common mode fit"</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
         <span class="n">cut</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">res_norm</span> <span class="o">&gt;</span> <span class="n">thresh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">panel</span><span class="o">.</span><span class="n">res_norm</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">cut</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">panel</span><span class="o">.</span><span class="n">measurements</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">measurements</span><span class="p">[</span><span class="o">~</span><span class="n">cut</span><span class="p">]</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">~</span><span class="n">cut</span><span class="p">]</span>
 
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">Removing a naive common mode shift of </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">panel</span><span class="o">.</span><span class="n">shift</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="se">\t\t</span><span class="s2">Removing a naive common mode shift of </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">panel</span><span class="o">.</span><span class="n">shift</span><span class="p">))</span>
         <span class="n">panel</span><span class="o">.</span><span class="n">measurements</span> <span class="o">-=</span> <span class="n">panel</span><span class="o">.</span><span class="n">shift</span>
         <span class="n">panel</span><span class="o">.</span><span class="n">measurements</span> <span class="o">@=</span> <span class="n">panel</span><span class="o">.</span><span class="n">rot</span><span class="o">.</span><span class="n">T</span>
 
         <span class="n">res</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">_opt</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="p">(</span><span class="n">panel</span><span class="p">,),</span> <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">Removing a fit common mode with scale </span><span class="si">%f</span><span class="s2">, shift </span><span class="si">%s</span><span class="s2">, and rotation </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">"</span><span class="se">\t\t</span><span class="s2">Removing a fit common mode with scale </span><span class="si">%f</span><span class="s2">, shift </span><span class="si">%s</span><span class="s2">, and rotation </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span>
             <span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
             <span class="nb">str</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]),</span>
             <span class="nb">str</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mi">4</span><span class="p">:]),</span>
@@ -4445,7 +4445,7 @@ the second is the shift.</p>
         <span class="n">_cm</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">panel</span><span class="p">)</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">Removing a secondary common mode shift of </span><span class="si">%s</span><span class="s2"> and rotation of </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">"</span><span class="se">\t\t</span><span class="s2">Removing a secondary common mode shift of </span><span class="si">%s</span><span class="s2"> and rotation of </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span>
             <span class="nb">str</span><span class="p">(</span><span class="n">panel</span><span class="o">.</span><span class="n">shift</span><span class="p">),</span>
             <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">decompose_rotation</span><span class="p">(</span><span class="n">panel</span><span class="o">.</span><span class="n">rot</span><span class="p">))),</span>
         <span class="p">)</span>
@@ -4453,12 +4453,12 @@ the second is the shift.</p>
         <span class="n">panel</span><span class="o">.</span><span class="n">measurements</span> <span class="o">@=</span> <span class="n">panel</span><span class="o">.</span><span class="n">rot</span><span class="o">.</span><span class="n">T</span>
 
     <span class="n">aff</span><span class="p">,</span> <span class="n">sft</span> <span class="o">=</span> <span class="n">get_affine</span><span class="p">(</span>
-        <span class="n">data</span><span class="p">,</span> <span class="n">panel</span><span class="o">.</span><span class="n">measurements</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="n">data</span><span class="p">,</span> <span class="n">panel</span><span class="o">.</span><span class="n">measurements</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"mean"</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
     <span class="p">)</span>
     <span class="n">scale</span><span class="p">,</span> <span class="n">shear</span><span class="p">,</span> <span class="n">rot</span> <span class="o">=</span> <span class="n">decompose_affine</span><span class="p">(</span><span class="n">aff</span><span class="p">)</span>
     <span class="n">rot</span> <span class="o">=</span> <span class="n">decompose_rotation</span><span class="p">(</span><span class="n">rot</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-        <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Full common mode is:</span><span class="se">\n\t\t\t</span><span class="s2">shift = </span><span class="si">%s</span><span class="s2"> mm</span><span class="se">\n\t\t\t</span><span class="s2">scale = </span><span class="si">%s</span><span class="se">\n\t\t\t</span><span class="s2">shear = </span><span class="si">%s</span><span class="se">\n\t\t\t</span><span class="s2">rot = </span><span class="si">%s</span><span class="s2"> deg&quot;</span><span class="p">,</span>
+        <span class="s2">"</span><span class="se">\t</span><span class="s2">Full common mode is:</span><span class="se">\n\t\t\t</span><span class="s2">shift = </span><span class="si">%s</span><span class="s2"> mm</span><span class="se">\n\t\t\t</span><span class="s2">scale = </span><span class="si">%s</span><span class="se">\n\t\t\t</span><span class="s2">shear = </span><span class="si">%s</span><span class="se">\n\t\t\t</span><span class="s2">rot = </span><span class="si">%s</span><span class="s2"> deg"</span><span class="p">,</span>
         <span class="nb">str</span><span class="p">(</span><span class="n">sft</span><span class="p">),</span>
         <span class="nb">str</span><span class="p">(</span><span class="n">scale</span><span class="p">),</span>
         <span class="nb">str</span><span class="p">(</span><span class="n">shear</span><span class="p">),</span>
@@ -4469,11 +4469,11 @@ the second is the shift.</p>
     <span class="n">panel</span><span class="o">.</span><span class="n">meas_err</span> <span class="o">=</span> <span class="n">err_transform</span><span class="p">(</span><span class="n">panel</span><span class="o">.</span><span class="n">meas_err</span><span class="p">,</span> <span class="n">aff</span><span class="p">)</span>
     <span class="n">cut</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">res_norm</span> <span class="o">&gt;</span> <span class="n">cut_thresh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">panel</span><span class="o">.</span><span class="n">res_norm</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">cut</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Removing </span><span class="si">%d</span><span class="s2"> bad points from mirror&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">cut</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">Removing </span><span class="si">%d</span><span class="s2"> bad points from mirror"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">cut</span><span class="p">))</span>
         <span class="n">panel</span><span class="o">.</span><span class="n">measurements</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">measurements</span><span class="p">[</span><span class="o">~</span><span class="n">cut</span><span class="p">]</span>
         <span class="n">panel</span><span class="o">.</span><span class="n">meas_err</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">meas_err</span><span class="p">[</span><span class="o">~</span><span class="n">cut</span><span class="p">]</span>
         <span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="o">~</span><span class="n">cut</span><span class="p">]</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Mirror has </span><span class="si">%d</span><span class="s2"> good points&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">panel</span><span class="o">.</span><span class="n">measurements</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">Mirror has </span><span class="si">%d</span><span class="s2"> good points"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">panel</span><span class="o">.</span><span class="n">measurements</span><span class="p">))</span>
 
     <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
         <span class="n">l</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">])</span>
@@ -4548,7 +4548,7 @@ the second is the shift.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../../javascripts/mathjax.js"></script>
       

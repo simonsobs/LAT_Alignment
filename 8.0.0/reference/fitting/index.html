@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -1363,9 +1363,9 @@ and the last 3 are the shift in (x, y, z) applied after the affine transform.</p
     <span class="n">to_points</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">],</span> <span class="nb">float</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Fit points against the mirror surface.</span>
-<span class="sd">    Ideally the points should be in the mirror&#39;s local coordinate system.</span>
+<span class="sd">    Ideally the points should be in the mirror's local coordinate system.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1391,7 +1391,7 @@ and the last 3 are the shift in (x, y, z) applied after the affine transform.</p
 <span class="sd">        and the last 3 are the shift in (x, y, z) applied after the affine transform.</span>
 <span class="sd">    rms : float</span>
 <span class="sd">        The RMS error between the transformed points and the model.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_fit_func</span><span class="p">(</span><span class="n">transform_pars</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">compensate</span><span class="p">):</span>
         <span class="n">points_transformed</span> <span class="o">=</span> <span class="n">mirror_transform</span><span class="p">(</span><span class="n">transform_pars</span><span class="p">,</span> <span class="n">points</span><span class="p">)</span>
@@ -1557,7 +1557,7 @@ This is useful to model things like the surface traced out by an SMR.</p>
 <span class="normal">42</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">mirror_objective</span><span class="p">(</span>
     <span class="n">points</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">],</span> <span class="n">a</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">],</span> <span class="n">compensate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Objective function to minimize when fitting to mirror surface.</span>
 <span class="sd">    Essentially just a curvature weighted chisq.</span>
 
@@ -1577,7 +1577,7 @@ This is useful to model things like the surface traced out by an SMR.</p>
 <span class="sd">    -------</span>
 <span class="sd">    chisq : float</span>
 <span class="sd">        The value to minimize when fitting to.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">surface</span> <span class="o">=</span> <span class="n">mr</span><span class="o">.</span><span class="n">mirror</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">a</span><span class="p">,</span> <span class="n">compensate</span><span class="p">)</span>
     <span class="n">norm</span> <span class="o">=</span> <span class="n">mr</span><span class="o">.</span><span class="n">mirror_norm</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">a</span><span class="p">)</span>
     <span class="n">res</span> <span class="o">=</span> <span class="p">(</span><span class="n">points</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">surface</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">norm</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
@@ -1708,7 +1708,7 @@ Will have shape (npoint, 3).</p>
 <span class="normal">70</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">mirror_transform</span><span class="p">(</span>
     <span class="n">transform_pars</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">],</span> <span class="n">points</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Function to apply an affine transform to the mirror.</span>
 <span class="sd">    This is the transform we are fitting for.</span>
 
@@ -1727,7 +1727,7 @@ Will have shape (npoint, 3).</p>
 <span class="sd">    points_transformed : NDArray[np.floating]</span>
 <span class="sd">        Array of transformed points.</span>
 <span class="sd">        Will have shape (npoint, 3).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">aff</span> <span class="o">=</span> <span class="n">transform_pars</span><span class="p">[:</span><span class="mi">9</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
     <span class="n">sft</span> <span class="o">=</span> <span class="n">transform_pars</span><span class="p">[</span><span class="mi">9</span><span class="p">:]</span>
     <span class="k">return</span> <span class="n">points</span> <span class="o">@</span> <span class="n">aff</span> <span class="o">+</span> <span class="n">sft</span>
@@ -1854,7 +1854,7 @@ Will have shape (npoint, 3).</p>
 <span class="normal">250</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">res_auto_corr</span><span class="p">(</span>
     <span class="n">residuals</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Compute auto correlation of residuals from fit.</span>
 
 <span class="sd">    Parameters</span>
@@ -1868,7 +1868,7 @@ Will have shape (npoint, 3).</p>
 <span class="sd">        Auto correlation, really just the deviations in mm at each distance scale.</span>
 <span class="sd">    ac_dists : NDArray[np.floating]</span>
 <span class="sd">        Distance scale of each value in ac.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">dists</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">residuals</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">residuals</span><span class="p">)))</span>
     <span class="n">res_diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">residuals</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">residuals</span><span class="p">)))</span>
 
@@ -2027,7 +2027,7 @@ Will have shape (npoint, 3).</p>
 <span class="normal">213</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">tension_fit</span><span class="p">(</span>
     <span class="n">residuals</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">],</span> <span class="nb">float</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Fit a power law model of tension to a point cloud of residuals.</span>
 
 <span class="sd">    Parameters</span>
@@ -2043,13 +2043,13 @@ Will have shape (npoint, 3).</p>
 <span class="sd">        The fit parameters, see docstring of tension_model for details.</span>
 <span class="sd">    rms : float</span>
 <span class="sd">        The rms between the input residuals and the fit model.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">min_func</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="n">residuals</span><span class="p">):</span>
         <span class="n">_z</span> <span class="o">=</span> <span class="n">tension_model</span><span class="p">(</span><span class="o">*</span><span class="n">pars</span><span class="p">[:</span><span class="mi">5</span><span class="p">],</span> <span class="n">residuals</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">residuals</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">_z</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
 
-    <span class="k">if</span> <span class="s2">&quot;bounds&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s2">"bounds"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="n">ptp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ptp</span><span class="p">(</span><span class="n">residuals</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">])</span>
         <span class="n">bounds</span> <span class="o">=</span> <span class="p">[</span>
             <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">residuals</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">residuals</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])),</span>
@@ -2058,7 +2058,7 @@ Will have shape (npoint, 3).</p>
             <span class="p">(</span><span class="mf">1e-10</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">),</span>
             <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">),</span>
         <span class="p">]</span>
-        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;bounds&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bounds</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">"bounds"</span><span class="p">]</span> <span class="o">=</span> <span class="n">bounds</span>
     <span class="n">x0</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">residuals</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">residuals</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
     <span class="n">res</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">min_func</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="p">(</span><span class="n">residuals</span><span class="p">,),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">fun</span>
@@ -2266,7 +2266,7 @@ Will have shape (npoint,).</p>
 <span class="normal">173</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">tension_model</span><span class="p">(</span>
     <span class="n">x0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">y0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">points</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Function to model incorrect panel tensioning.</span>
 <span class="sd">    Currently the model used is a radial power law.</span>
 
@@ -2294,7 +2294,7 @@ Will have shape (npoint,).</p>
 <span class="sd">    z : NDArray[np.floating]</span>
 <span class="sd">        Power law model at each xy.</span>
 <span class="sd">        Will have shape (npoint,).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Avoid divide by 0 error</span>
     <span class="k">if</span> <span class="n">a</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">))</span>
@@ -2369,7 +2369,7 @@ Will have shape (npoint,).</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../../javascripts/mathjax.js"></script>
       

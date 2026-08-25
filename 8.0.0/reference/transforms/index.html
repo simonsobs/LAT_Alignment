@@ -19,7 +19,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
     
     
       
@@ -27,7 +27,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -1276,7 +1276,7 @@ Should be a <code>(3,)</code> array.</p>
     <span class="n">cfrom</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">cto</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Take an affine transform defined in one coordinate system and move it to another.</span>
 <span class="sd">    The valid coordinate systems are the same as in `coord_transform`.</span>
 
@@ -1299,7 +1299,7 @@ Should be a <code>(3,)</code> array.</p>
 <span class="sd">        `aff` transformed into `cto`.</span>
 <span class="sd">    sft_transformed : NDArray[np.float64]</span>
 <span class="sd">        `sft` transformed into `cto`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Make a grid of reference points</span>
     <span class="n">line</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
     <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
@@ -1527,7 +1527,7 @@ Should be a <code>(npoint, 3)</code> array.</p>
 <span class="normal">321</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">coord_transform</span><span class="p">(</span>
     <span class="n">coords</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span> <span class="n">cfrom</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cto</span><span class="p">:</span> <span class="nb">str</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Transform between the six defined mirror coordinates:</span>
 
 <span class="sd">        - opt_global</span>
@@ -1551,72 +1551,72 @@ Should be a <code>(npoint, 3)</code> array.</p>
 <span class="sd">    -------</span>
 <span class="sd">    coords_transformed : NDArray[np.float64]</span>
 <span class="sd">        `coords` transformed into `cto`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">cfrom</span> <span class="o">==</span> <span class="n">cto</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">coords</span>
-    <span class="k">match</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cfrom</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">cto</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span>
-        <span class="k">case</span> <span class="s2">&quot;opt_global-opt_primary&quot;</span><span class="p">:</span>
+    <span class="k">match</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">cfrom</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">cto</span><span class="si">}</span><span class="s2">"</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">"opt_global-opt_primary"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_opt_global_to_opt_primary</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">case</span> <span class="s2">&quot;opt_global-opt_secondary&quot;</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">"opt_global-opt_secondary"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_opt_global_to_opt_secondary</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">case</span> <span class="s2">&quot;opt_primary-opt_global&quot;</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">"opt_primary-opt_global"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_opt_primary_to_opt_global</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">case</span> <span class="s2">&quot;opt_secondary-opt_global&quot;</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">"opt_secondary-opt_global"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_opt_secondary_to_opt_global</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">case</span> <span class="s2">&quot;opt_primary-opt_secondary&quot;</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">"opt_primary-opt_secondary"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_opt_primary_to_opt_secondary</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">case</span> <span class="s2">&quot;opt_secondary-opt_primary&quot;</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">"opt_secondary-opt_primary"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_opt_secondary_to_opt_primary</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">case</span> <span class="s2">&quot;va_global-va_primary&quot;</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">"va_global-va_primary"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_va_global_to_va_primary</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">case</span> <span class="s2">&quot;va_global-va_secondary&quot;</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">"va_global-va_secondary"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_va_global_to_va_secondary</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">case</span> <span class="s2">&quot;va_primary-va_global&quot;</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">"va_primary-va_global"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_va_primary_to_va_global</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">case</span> <span class="s2">&quot;va_secondary-va_global&quot;</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">"va_secondary-va_global"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_va_secondary_to_va_global</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">case</span> <span class="s2">&quot;va_primary-va_secondary&quot;</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">"va_primary-va_secondary"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_va_primary_to_va_secondary</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">case</span> <span class="s2">&quot;va_secondary-va_primary&quot;</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">"va_secondary-va_primary"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_va_secondary_to_va_primary</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">case</span> <span class="s2">&quot;opt_global-va_global&quot;</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">"opt_global-va_global"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_opt_global_to_va_global</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">case</span> <span class="s2">&quot;opt_global-va_primary&quot;</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">"opt_global-va_primary"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_opt_global_to_va_primary</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">case</span> <span class="s2">&quot;opt_global-va_secondary&quot;</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">"opt_global-va_secondary"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_opt_global_to_va_secondary</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">case</span> <span class="s2">&quot;opt_primary-va_global&quot;</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">"opt_primary-va_global"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_opt_primary_to_va_global</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">case</span> <span class="s2">&quot;opt_primary-va_primary&quot;</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">"opt_primary-va_primary"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_opt_primary_to_va_primary</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">case</span> <span class="s2">&quot;opt_primary-va_secondary&quot;</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">"opt_primary-va_secondary"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_opt_primary_to_va_secondary</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">case</span> <span class="s2">&quot;opt_secondary-va_global&quot;</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">"opt_secondary-va_global"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_opt_secondary_to_va_global</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">case</span> <span class="s2">&quot;opt_secondary-va_primary&quot;</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">"opt_secondary-va_primary"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_opt_secondary_to_va_primary</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">case</span> <span class="s2">&quot;opt_secondary-va_secondary&quot;</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">"opt_secondary-va_secondary"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_opt_secondary_to_va_secondary</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">case</span> <span class="s2">&quot;va_global-opt_global&quot;</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">"va_global-opt_global"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_va_global_to_opt_global</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">case</span> <span class="s2">&quot;va_global-opt_primary&quot;</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">"va_global-opt_primary"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_va_global_to_opt_primary</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">case</span> <span class="s2">&quot;va_global-opt_secondary&quot;</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">"va_global-opt_secondary"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_va_global_to_opt_secondary</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">case</span> <span class="s2">&quot;va_primary-opt_global&quot;</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">"va_primary-opt_global"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_va_primary_to_opt_global</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">case</span> <span class="s2">&quot;va_primary-opt_primary&quot;</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">"va_primary-opt_primary"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_va_primary_to_opt_primary</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">case</span> <span class="s2">&quot;va_primary-opt_secondary&quot;</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">"va_primary-opt_secondary"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_va_primary_to_opt_secondary</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">case</span> <span class="s2">&quot;va_secondary-opt_global&quot;</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">"va_secondary-opt_global"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_va_secondary_to_opt_global</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">case</span> <span class="s2">&quot;va_secondary-opt_primary&quot;</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">"va_secondary-opt_primary"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_va_secondary_to_opt_primary</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">case</span> <span class="s2">&quot;va_secondary-opt_secondary&quot;</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">"va_secondary-opt_secondary"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_va_secondary_to_opt_secondary</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
         <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid coordinate system provided!&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Invalid coordinate system provided!"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -1751,7 +1751,7 @@ Should be a <code>(ndim, ndim)</code> array.</p>
 <span class="normal">408</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">err_transform</span><span class="p">(</span>
     <span class="n">errs</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span> <span class="n">aff</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    TODO: Move to `megham`?</span>
 <span class="sd">    Propagate the error on a point through an affine matrix using variance-covariance</span>
 
@@ -1768,11 +1768,11 @@ Should be a <code>(ndim, ndim)</code> array.</p>
 <span class="sd">    -------</span>
 <span class="sd">    errs_transformed : NDArray[np.float64]</span>
 <span class="sd">        The errors propagated through the affine matrix.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">orig_shape</span> <span class="o">=</span> <span class="n">errs</span><span class="o">.</span><span class="n">shape</span>
     <span class="n">errs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">errs</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">errs</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;errs must be 1D or 2D&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"errs must be 1D or 2D"</span><span class="p">)</span>
     <span class="n">npoint</span><span class="p">,</span> <span class="n">ndim</span> <span class="o">=</span> <span class="n">errs</span><span class="o">.</span><span class="n">shape</span>
     <span class="n">errs</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">ndim</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">npoint</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">npoint</span><span class="p">,</span> <span class="n">ndim</span><span class="p">,</span> <span class="n">ndim</span><span class="p">))</span>
@@ -1850,7 +1850,7 @@ Should be a <code>(ndim, ndim)</code> array.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../../javascripts/mathjax.js"></script>
       

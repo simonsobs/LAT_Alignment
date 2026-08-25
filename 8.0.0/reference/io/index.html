@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -1256,16 +1256,16 @@ Each entry is <code>(5, 3)</code> array where each row is an adjuster.</p>
 <span class="normal">395</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">load_adjusters</span><span class="p">(</span>
     <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mirror</span><span class="p">:</span> <span class="nb">str</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get nominal adjuster locations from file.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    path : str</span>
 <span class="sd">        Path to the data file.</span>
-<span class="sd">    mirror : str, default: &#39;primary&#39;</span>
+<span class="sd">    mirror : str, default: 'primary'</span>
 <span class="sd">        The mirror that these points belong to.</span>
-<span class="sd">        Should be either: &#39;primary&#39; or &#39;secondary&#39;.</span>
+<span class="sd">        Should be either: 'primary' or 'secondary'.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1273,14 +1273,14 @@ Each entry is <code>(5, 3)</code> array where each row is an adjuster.</p>
 <span class="sd">        Nominal adjuster locations.</span>
 <span class="sd">        This is indexed by a (row, col) tuple.</span>
 <span class="sd">        Each entry is `(5, 3)` array where each row is an adjuster.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">mirror</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">,</span> <span class="s2">&quot;secondary&quot;</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid mirror: </span><span class="si">{</span><span class="n">mirror</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">mirror</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"primary"</span><span class="p">,</span> <span class="s2">"secondary"</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid mirror: </span><span class="si">{</span><span class="n">mirror</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_transform</span><span class="p">(</span><span class="n">coords</span><span class="p">):</span>
         <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
         <span class="n">coords</span> <span class="o">-=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">120</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>  <span class="c1"># cancel out shift</span>
-        <span class="k">return</span> <span class="n">coord_transform</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="s2">&quot;va_global&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;opt_</span><span class="si">{</span><span class="n">mirror</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">coord_transform</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="s2">"va_global"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"opt_</span><span class="si">{</span><span class="n">mirror</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="c1"># TODO: cleaner transform call</span>
     <span class="n">adjusters</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
@@ -1394,7 +1394,7 @@ Each entry is <code>(4, 3)</code> array where each row is a corner.</p>
 <span class="normal">352</span>
 <span class="normal">353</span>
 <span class="normal">354</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">load_corners</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get panel corners from file.</span>
 
 <span class="sd">    Parameters</span>
@@ -1407,7 +1407,7 @@ Each entry is <code>(4, 3)</code> array where each row is a corner.</p>
 <span class="sd">    corners : dict[tuple[int, int], ndarray[np.float64]]</span>
 <span class="sd">        The corners. This is indexed by a (row, col) tuple.</span>
 <span class="sd">        Each entry is `(4, 3)` array where each row is a corner.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
         <span class="n">corners_raw</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
 
@@ -1428,7 +1428,7 @@ Each entry is <code>(4, 3)</code> array where each row is a corner.</p>
 
 
 <h2 id="lat_alignment.io.load_data" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">load_data</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s1">&#39;photo&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">load_data</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s1">'photo'</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
 
 </h2>
 
@@ -1528,15 +1528,15 @@ See <code>load_photo</code> and <code>load_tracker</code> for details.</p>
 <span class="normal">324</span>
 <span class="normal">325</span>
 <span class="normal">326</span>
-<span class="normal">327</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">load_data</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;photo&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="normal">327</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">load_data</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"photo"</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Load a dataset from path.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    path : str</span>
 <span class="sd">        The path to the data to load.</span>
-<span class="sd">    source : str, default: &#39;photo&#39;</span>
+<span class="sd">    source : str, default: 'photo'</span>
 <span class="sd">        The data source. Current valid options are:</span>
 
 <span class="sd">        * photo</span>
@@ -1544,12 +1544,12 @@ See <code>load_photo</code> and <code>load_tracker</code> for details.</p>
 <span class="sd">    **kwargs</span>
 <span class="sd">        Arguments to pass the relevent loader function.</span>
 <span class="sd">        See `load_photo` and `load_tracker` for details.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="s2">&quot;photo&quot;</span><span class="p">:</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="s2">"photo"</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">load_photo</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">source</span> <span class="o">==</span> <span class="s2">&quot;tracker&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">source</span> <span class="o">==</span> <span class="s2">"tracker"</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">load_tracker</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid data source&quot;</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Invalid data source"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -1748,7 +1748,7 @@ a target need to have to be cut.</p>
 <span class="normal">303</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">load_photo</span><span class="p">(</span>
     <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">err_thresh</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">doubles_dist</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">plot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Load photogrammetry data.</span>
 <span class="sd">    Assuming first column is target names and next three are (x, y , z).</span>
 
@@ -1766,17 +1766,17 @@ a target need to have to be cut.</p>
 <span class="sd">    -------</span>
 <span class="sd">    data : Dataset</span>
 <span class="sd">        The photogrammetry data.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loading measurement data&quot;</span><span class="p">)</span>
-    <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,))</span>
-    <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-    <span class="n">errs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
-    <span class="n">msk</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">char</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="s2">&quot;TARGET&quot;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">char</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="s2">&quot;CODE&quot;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Loading measurement data"</span><span class="p">)</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">","</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,))</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">","</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="n">errs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">","</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+    <span class="n">msk</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">char</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="s2">"TARGET"</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">char</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="s2">"CODE"</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
 
     <span class="n">labels</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">errs</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">msk</span><span class="p">],</span> <span class="n">coords</span><span class="p">[</span><span class="n">msk</span><span class="p">],</span> <span class="n">errs</span><span class="p">[</span><span class="n">msk</span><span class="p">]</span>
     <span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">errs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">trg_msk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">char</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="s2">&quot;TARGET&quot;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span>
-    <span class="n">code_msk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">char</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="s2">&quot;CODE&quot;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+    <span class="n">trg_msk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">char</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="s2">"TARGET"</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+    <span class="n">code_msk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">char</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="s2">"CODE"</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span>
 
     <span class="n">err_msk</span> <span class="o">=</span> <span class="p">(</span><span class="n">err</span> <span class="o">&lt;</span> <span class="n">err_thresh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">err</span><span class="p">[</span><span class="n">trg_msk</span><span class="p">]))</span> <span class="o">+</span> <span class="n">code_msk</span>
     <span class="n">labels</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="n">errs</span> <span class="o">=</span> <span class="p">(</span>
@@ -1785,12 +1785,12 @@ a target need to have to be cut.</p>
         <span class="n">err</span><span class="p">[</span><span class="n">err_msk</span><span class="p">],</span>
         <span class="n">errs</span><span class="p">[</span><span class="n">err_msk</span><span class="p">],</span>
     <span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">%d</span><span class="s2"> good points loaded&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">))</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">%d</span><span class="s2"> high error points not loaded&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">~</span><span class="n">err_msk</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="si">%d</span><span class="s2"> good points loaded"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="si">%d</span><span class="s2"> high error points not loaded"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">~</span><span class="n">err_msk</span><span class="p">))</span>
 
     <span class="c1"># Lets find and remove doubles</span>
     <span class="c1"># Dumb brute force</span>
-    <span class="n">trg_msk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">char</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="s2">&quot;TARGET&quot;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+    <span class="n">trg_msk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">char</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="s2">"TARGET"</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span>
     <span class="n">edm</span> <span class="o">=</span> <span class="n">make_edm</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="n">trg_msk</span><span class="p">,</span> <span class="p">:</span><span class="mi">2</span><span class="p">])</span>
     <span class="n">np</span><span class="o">.</span><span class="n">fill_diagonal</span><span class="p">(</span><span class="n">edm</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
     <span class="n">to_kill</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1805,17 +1805,17 @@ a target need to have to be cut.</p>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">to_kill</span> <span class="o">+=</span> <span class="p">[</span><span class="n">labels</span><span class="p">[</span><span class="n">trg_msk</span><span class="p">][</span><span class="n">i</span><span class="p">]]</span>
     <span class="n">msk</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">to_kill</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Found and removed </span><span class="si">%d</span><span class="s2"> doubles&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">to_kill</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">Found and removed </span><span class="si">%d</span><span class="s2"> doubles"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">to_kill</span><span class="p">))</span>
     <span class="n">labels</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="n">errs</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">msk</span><span class="p">],</span> <span class="n">coords</span><span class="p">[</span><span class="n">msk</span><span class="p">],</span> <span class="n">err</span><span class="p">[</span><span class="n">msk</span><span class="p">],</span> <span class="n">errs</span><span class="p">[</span><span class="n">msk</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
         <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">"3d"</span><span class="p">)</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
             <span class="n">coords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
             <span class="n">coords</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
             <span class="n">coords</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span>
-            <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span>
+            <span class="n">marker</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span>
             <span class="n">c</span><span class="o">=</span><span class="n">err</span><span class="p">,</span>
             <span class="n">vmax</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="mi">90</span><span class="p">),</span>
         <span class="p">)</span>
@@ -2110,7 +2110,7 @@ For yaml files this will be a <code>DatasetReference</code>.</p>
     <span class="n">dist_err</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">8e-7</span><span class="p">,</span>
     <span class="n">ang_err</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5e-6</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Load laser tracker data.</span>
 
 <span class="sd">    Parameters</span>
@@ -2135,7 +2135,7 @@ For yaml files this will be a <code>DatasetReference</code>.</p>
 <span class="sd">    cam_transform_path : Optional[str], default: None</span>
 <span class="sd">        Alignment matrix exported from CAM2.</span>
 <span class="sd">        Used when calculating systematic error.</span>
-<span class="sd">        If not provided we assume the data is the the FARO&#39;s internal coordinates.</span>
+<span class="sd">        If not provided we assume the data is the the FARO's internal coordinates.</span>
 <span class="sd">        Only used for `.txt` files.</span>
 <span class="sd">    dist_err : float, default 8e-7</span>
 <span class="sd">        The systematic error as a function of distance in mm/mm.</span>
@@ -2150,11 +2150,11 @@ For yaml files this will be a <code>DatasetReference</code>.</p>
 <span class="sd">        The tracker data.</span>
 <span class="sd">        For txt or csv files this will be the base `Dataset` class.</span>
 <span class="sd">        For yaml files this will be a `DatasetReference`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;.yaml&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">".yaml"</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">_load_tracker_yaml</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;.txt&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">".txt"</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">_load_tracker_txt</span><span class="p">(</span>
             <span class="n">path</span><span class="p">,</span>
             <span class="n">group_dist</span><span class="p">,</span>
@@ -2165,9 +2165,9 @@ For yaml files this will be a <code>DatasetReference</code>.</p>
             <span class="n">dist_err</span><span class="p">,</span>
             <span class="n">ang_err</span><span class="p">,</span>
         <span class="p">)</span>
-    <span class="k">elif</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;.csv&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">".csv"</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">_load_tracker_csv</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid tracker data with extension </span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid tracker data with extension </span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -2233,7 +2233,7 @@ For yaml files this will be a <code>DatasetReference</code>.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../../javascripts/mathjax.js"></script>
       

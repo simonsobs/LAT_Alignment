@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -1360,7 +1360,7 @@ the connection information prepopulated.</p>
 <span class="normal">352</span>
 <span class="normal">353</span>
 <span class="normal">354</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="n">sock</span><span class="p">:</span> <span class="n">socket</span><span class="o">.</span><span class="n">SocketType</span><span class="p">,</span> <span class="n">send</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Disconnect from the tool.</span>
 
 <span class="sd">    Parameters</span>
@@ -1370,7 +1370,7 @@ the connection information prepopulated.</p>
 <span class="sd">    send : Callable[[str], None]</span>
 <span class="sd">        A function to send a message to the tool with</span>
 <span class="sd">        the connection information prepopulated.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">send</span><span class="p">(</span><span class="n">MID3</span><span class="p">)</span>
     <span class="n">sock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
@@ -1559,7 +1559,7 @@ network operations when communicating.</p>
     <span class="n">cur_try</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="n">max_retry</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">socket</span><span class="o">.</span><span class="n">SocketType</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Connect to the open protocol port in the tool.</span>
 
 <span class="sd">    Parameters</span>
@@ -1580,9 +1580,9 @@ network operations when communicating.</p>
 <span class="sd">    -------</span>
 <span class="sd">    sock : socket.SocketType</span>
 <span class="sd">        A socket object connected to the tool.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">cur_try</span> <span class="o">&gt;=</span> <span class="n">max_retry</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">RecursionError</span><span class="p">(</span><span class="s2">&quot;Maximum attemps to connect exceeded!&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RecursionError</span><span class="p">(</span><span class="s2">"Maximum attemps to connect exceeded!"</span><span class="p">)</span>
     <span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
     <span class="n">sock</span><span class="o">.</span><span class="n">settimeout</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
@@ -1707,7 +1707,7 @@ This will be dumped to a yaml and sent.</p>
 <span class="normal">296</span>
 <span class="normal">297</span>
 <span class="normal">298</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">construct_2500</span><span class="p">(</span><span class="n">pset</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">prog</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Construct a message to update a program via MID 2500.</span>
 
 <span class="sd">    Parameters</span>
@@ -1722,12 +1722,12 @@ This will be dumped to a yaml and sent.</p>
 <span class="sd">    -------</span>
 <span class="sd">    message : str</span>
 <span class="sd">        The message to send to the tool.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">prog_txt</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">prog</span><span class="p">,</span> <span class="n">separators</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="s2">&quot;:&quot;</span><span class="p">))</span>
-    <span class="n">info</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;20100101000004010000000</span><span class="si">{</span><span class="n">pset</span><span class="si">:</span><span class="s2">04</span><span class="si">}{</span><span class="nb">len</span><span class="p">(</span><span class="n">prog_txt</span><span class="p">)</span><span class="si">:</span><span class="s2">06</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="n">mid</span> <span class="o">=</span> <span class="s2">&quot;00002500002000000000&quot;</span>
-    <span class="n">mid</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">info</span><span class="si">}{</span><span class="n">prog_txt</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="n">mid</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">mid</span><span class="p">)</span><span class="si">:</span><span class="s2">04</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">mid</span><span class="p">[</span><span class="mi">4</span><span class="p">:]</span>
+<span class="sd">    """</span>
+    <span class="n">prog_txt</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">prog</span><span class="p">,</span> <span class="n">separators</span><span class="o">=</span><span class="p">(</span><span class="s2">","</span><span class="p">,</span> <span class="s2">":"</span><span class="p">))</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"20100101000004010000000</span><span class="si">{</span><span class="n">pset</span><span class="si">:</span><span class="s2">04</span><span class="si">}{</span><span class="nb">len</span><span class="p">(</span><span class="n">prog_txt</span><span class="p">)</span><span class="si">:</span><span class="s2">06</span><span class="si">}</span><span class="s2">"</span>
+    <span class="n">mid</span> <span class="o">=</span> <span class="s2">"00002500002000000000"</span>
+    <span class="n">mid</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">info</span><span class="si">}{</span><span class="n">prog_txt</span><span class="si">}</span><span class="s2">"</span>
+    <span class="n">mid</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">mid</span><span class="p">)</span><span class="si">:</span><span class="s2">04</span><span class="si">}</span><span class="s2">"</span> <span class="o">+</span> <span class="n">mid</span><span class="p">[</span><span class="mi">4</span><span class="p">:]</span>
     <span class="k">return</span> <span class="n">mid</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -1822,7 +1822,7 @@ This will be dumped to a yaml and sent.</p>
 <span class="normal">271</span>
 <span class="normal">272</span>
 <span class="normal">273</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">construct_2501</span><span class="p">(</span><span class="n">pset</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Construct a message to request MID 2501 via MID 0006.</span>
 
 <span class="sd">    Parameters</span>
@@ -1834,9 +1834,9 @@ This will be dumped to a yaml and sent.</p>
 <span class="sd">    -------</span>
 <span class="sd">    message : str</span>
 <span class="sd">        The message to send to the tool.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">mid</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;003400060010    00  &quot;</span>
-    <span class="n">mid</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;250100207</span><span class="si">{</span><span class="n">pset</span><span class="si">:</span><span class="s2">04</span><span class="si">}</span><span class="s2">2&quot;</span>
+<span class="sd">    """</span>
+    <span class="n">mid</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"003400060010    00  "</span>
+    <span class="n">mid</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"250100207</span><span class="si">{</span><span class="n">pset</span><span class="si">:</span><span class="s2">04</span><span class="si">}</span><span class="s2">2"</span>
     <span class="k">return</span> <span class="n">mid</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -1956,14 +1956,14 @@ sending MID1.</p>
 <span class="normal">180</span>
 <span class="normal">181</span>
 <span class="normal">182</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">decode0002</span><span class="p">(</span><span class="n">mid</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Decode a message from MID 0002.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    mid : str</span>
 <span class="sd">        The MID string.</span>
-<span class="sd">        This should be &#39;0002&#39; or &#39;0004&#39;.</span>
+<span class="sd">        This should be '0002' or '0004'.</span>
 <span class="sd">    message : str</span>
 <span class="sd">        The data returned by `recv` after</span>
 <span class="sd">        sending MID1.</span>
@@ -1972,12 +1972,12 @@ sending MID1.</p>
 <span class="sd">    -------</span>
 <span class="sd">    rep : str</span>
 <span class="sd">        A printable string describing the message.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">mid</span> <span class="o">==</span> <span class="s2">&quot;0004&quot;</span><span class="p">:</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">mid</span> <span class="o">==</span> <span class="s2">"0004"</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">decode0004</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">mid</span> <span class="o">!=</span> <span class="s2">&quot;0002&quot;</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Expected MID 0002 or 0004 but got MID &quot;</span> <span class="o">+</span> <span class="n">mid</span><span class="p">)</span>
-    <span class="n">rep</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Connected to tool </span><span class="si">{</span><span class="n">message</span><span class="p">[</span><span class="mi">10</span><span class="p">:</span><span class="mi">35</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">elif</span> <span class="n">mid</span> <span class="o">!=</span> <span class="s2">"0002"</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Expected MID 0002 or 0004 but got MID "</span> <span class="o">+</span> <span class="n">mid</span><span class="p">)</span>
+    <span class="n">rep</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Connected to tool </span><span class="si">{</span><span class="n">message</span><span class="p">[</span><span class="mi">10</span><span class="p">:</span><span class="mi">35</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
     <span class="k">return</span> <span class="n">rep</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -2073,7 +2073,7 @@ sending MID1.</p>
 <span class="normal">154</span>
 <span class="normal">155</span>
 <span class="normal">156</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">decode0004</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Decode an error message from MID 0004.</span>
 
 <span class="sd">    Parameters</span>
@@ -2085,10 +2085,10 @@ sending MID1.</p>
 <span class="sd">    -------</span>
 <span class="sd">    rep : str</span>
 <span class="sd">        A printable string describing the error.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">mid</span> <span class="o">=</span> <span class="n">message</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span>
     <span class="n">err</span> <span class="o">=</span> <span class="n">message</span><span class="p">[</span><span class="mi">4</span><span class="p">:]</span>
-    <span class="n">rep</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;MID </span><span class="si">{</span><span class="n">mid</span><span class="si">}</span><span class="s2"> failed with error </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">rep</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"MID </span><span class="si">{</span><span class="n">mid</span><span class="si">}</span><span class="s2"> failed with error </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">"</span>
     <span class="k">return</span> <span class="n">rep</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -2217,14 +2217,14 @@ sending MID40.</p>
 <span class="normal">215</span>
 <span class="normal">216</span>
 <span class="normal">217</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">decode0041</span><span class="p">(</span><span class="n">mid</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Decode a message from MID 0041.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    mid : str</span>
 <span class="sd">        The MID string.</span>
-<span class="sd">        This should be &#39;0041&#39; or &#39;0004&#39;.</span>
+<span class="sd">        This should be '0041' or '0004'.</span>
 <span class="sd">    message : str</span>
 <span class="sd">        The data returned by `recv` after</span>
 <span class="sd">        sending MID40.</span>
@@ -2233,11 +2233,11 @@ sending MID40.</p>
 <span class="sd">    -------</span>
 <span class="sd">    rep : str</span>
 <span class="sd">        A printable string describing the message.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">mid</span> <span class="o">==</span> <span class="s2">&quot;0004&quot;</span><span class="p">:</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">mid</span> <span class="o">==</span> <span class="s2">"0004"</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">decode0004</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">mid</span> <span class="o">!=</span> <span class="s2">&quot;0041&quot;</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Expected MID 0041 or 0004 but got MID &quot;</span> <span class="o">+</span> <span class="n">mid</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">mid</span> <span class="o">!=</span> <span class="s2">"0041"</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Expected MID 0041 or 0004 but got MID "</span> <span class="o">+</span> <span class="n">mid</span><span class="p">)</span>
     <span class="n">serial</span> <span class="o">=</span> <span class="n">message</span><span class="p">[:</span><span class="mi">14</span><span class="p">]</span>
     <span class="n">tightenings</span> <span class="o">=</span> <span class="n">message</span><span class="p">[</span><span class="mi">16</span><span class="p">:</span><span class="mi">26</span><span class="p">]</span>
     <span class="n">cal_date</span> <span class="o">=</span> <span class="n">message</span><span class="p">[</span><span class="mi">28</span><span class="p">:</span><span class="mi">38</span><span class="p">]</span>
@@ -2247,7 +2247,7 @@ sending MID40.</p>
     <span class="n">tightenings_since</span> <span class="o">=</span> <span class="n">message</span><span class="p">[</span><span class="mi">91</span><span class="p">:</span><span class="mi">100</span><span class="p">]</span>
     <span class="n">firmware</span> <span class="o">=</span> <span class="n">message</span><span class="p">[</span><span class="mi">115</span><span class="p">:</span><span class="mi">134</span><span class="p">]</span>
 
-    <span class="n">rep</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Tool info:</span><span class="se">\n\t</span><span class="s2">Serial: </span><span class="si">{</span><span class="n">serial</span><span class="si">}</span><span class="se">\n\t</span><span class="s2">Total Tightenings: </span><span class="si">{</span><span class="n">tightenings</span><span class="si">}</span><span class="se">\n\t</span><span class="s2">Last Calibration: </span><span class="si">{</span><span class="n">cal_date</span><span class="si">}</span><span class="se">\n\t</span><span class="s2">Controller Serial: </span><span class="si">{</span><span class="n">cont_serial</span><span class="si">}</span><span class="se">\n\t</span><span class="s2">Calibration: </span><span class="si">{</span><span class="n">cal</span><span class="si">}</span><span class="se">\n\t</span><span class="s2">Last Service: </span><span class="si">{</span><span class="n">service</span><span class="si">}</span><span class="se">\n\t</span><span class="s2">Tightenings Since Service: </span><span class="si">{</span><span class="n">tightenings_since</span><span class="si">}</span><span class="se">\n\t</span><span class="s2">Firmware: </span><span class="si">{</span><span class="n">firmware</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">rep</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Tool info:</span><span class="se">\n\t</span><span class="s2">Serial: </span><span class="si">{</span><span class="n">serial</span><span class="si">}</span><span class="se">\n\t</span><span class="s2">Total Tightenings: </span><span class="si">{</span><span class="n">tightenings</span><span class="si">}</span><span class="se">\n\t</span><span class="s2">Last Calibration: </span><span class="si">{</span><span class="n">cal_date</span><span class="si">}</span><span class="se">\n\t</span><span class="s2">Controller Serial: </span><span class="si">{</span><span class="n">cont_serial</span><span class="si">}</span><span class="se">\n\t</span><span class="s2">Calibration: </span><span class="si">{</span><span class="n">cal</span><span class="si">}</span><span class="se">\n\t</span><span class="s2">Last Service: </span><span class="si">{</span><span class="n">service</span><span class="si">}</span><span class="se">\n\t</span><span class="s2">Tightenings Since Service: </span><span class="si">{</span><span class="n">tightenings_since</span><span class="si">}</span><span class="se">\n\t</span><span class="s2">Firmware: </span><span class="si">{</span><span class="n">firmware</span><span class="si">}</span><span class="s2">"</span>
     <span class="k">return</span> <span class="n">rep</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -2390,14 +2390,14 @@ If MID 0004 was received then an empty dict is returned.</p>
 <span class="normal">252</span>
 <span class="normal">253</span>
 <span class="normal">254</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">decode2501</span><span class="p">(</span><span class="n">mid</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Decode a message from MID 2501.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    mid : str</span>
 <span class="sd">        The MID string.</span>
-<span class="sd">        This should be &#39;2501&#39; or &#39;0004&#39;.</span>
+<span class="sd">        This should be '2501' or '0004'.</span>
 <span class="sd">    message : str</span>
 <span class="sd">        The data returned by `recv` after</span>
 <span class="sd">        sending MID2501 via MID6.</span>
@@ -2410,14 +2410,14 @@ If MID 0004 was received then an empty dict is returned.</p>
 <span class="sd">    prog : dict[str, Any]</span>
 <span class="sd">        A dict generated from the json of the program.</span>
 <span class="sd">        If MID 0004 was received then an empty dict is returned.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">mid</span> <span class="o">==</span> <span class="s2">&quot;0004&quot;</span><span class="p">:</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">mid</span> <span class="o">==</span> <span class="s2">"0004"</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">decode0004</span><span class="p">(</span><span class="n">message</span><span class="p">),</span> <span class="p">{}</span>
-    <span class="k">elif</span> <span class="n">mid</span> <span class="o">!=</span> <span class="s2">&quot;2501&quot;</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Expected MID 2501 or 0004 but got MID &quot;</span> <span class="o">+</span> <span class="n">mid</span><span class="p">)</span>
-    <span class="n">idx</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">mid</span> <span class="o">!=</span> <span class="s2">"2501"</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Expected MID 2501 or 0004 but got MID "</span> <span class="o">+</span> <span class="n">mid</span><span class="p">)</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"{"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;JSON not found in MID 2501 response!&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"JSON not found in MID 2501 response!"</span><span class="p">)</span>
     <span class="n">info</span> <span class="o">=</span> <span class="n">message</span><span class="p">[:</span><span class="n">idx</span><span class="p">]</span>
     <span class="n">info</span> <span class="o">=</span> <span class="n">info</span><span class="p">[:</span><span class="o">-</span><span class="mi">6</span><span class="p">]</span>
     <span class="n">prog_txt</span> <span class="o">=</span> <span class="n">message</span><span class="p">[</span><span class="n">idx</span><span class="p">:]</span>
@@ -2519,7 +2519,7 @@ on the IxB tool.</p>
 <span class="normal">383</span>
 <span class="normal">384</span>
 <span class="normal">385</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_adjs_names</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get the names of the adjusters in the order and format of the programs</span>
 <span class="sd">    on the IxB tool.</span>
 
@@ -2531,12 +2531,12 @@ on the IxB tool.</p>
 <span class="sd">        The names of the adjusters in rows 1-4 of the mirror.</span>
 <span class="sd">    part2 : list[str]</span>
 <span class="sd">        The names of the adjusters in rows 5-9 of the mirror.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">adjs</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">):</span>
-                <span class="n">adjs</span> <span class="o">+=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;P</span><span class="si">{</span><span class="n">r</span><span class="si">}{</span><span class="n">c</span><span class="si">}</span><span class="s2">V</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+                <span class="n">adjs</span> <span class="o">+=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"P</span><span class="si">{</span><span class="n">r</span><span class="si">}{</span><span class="n">c</span><span class="si">}</span><span class="s2">V</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2">"</span><span class="p">]</span>
 
     <span class="c1"># There is a dumb 250 limit</span>
     <span class="c1"># So we split the mirror into two parts</span>
@@ -2544,7 +2544,7 @@ on the IxB tool.</p>
     <span class="n">split</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="mi">9</span> <span class="o">*</span> <span class="mi">5</span>  <span class="c1"># 4 rows * 9 cols * 5 adjusters</span>
     <span class="n">part1</span> <span class="o">=</span> <span class="n">adjs</span><span class="p">[:</span><span class="n">split</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">part2</span> <span class="o">=</span> <span class="n">adjs</span><span class="p">[</span><span class="n">split</span><span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">adjs</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p1</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">p2</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">part1</span><span class="p">,</span> <span class="n">part2</span><span class="p">)]</span> <span class="o">+</span> <span class="n">part2</span><span class="p">[</span><span class="n">split</span><span class="p">:]</span>
+    <span class="n">adjs</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">p1</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">p2</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">part1</span><span class="p">,</span> <span class="n">part2</span><span class="p">)]</span> <span class="o">+</span> <span class="n">part2</span><span class="p">[</span><span class="n">split</span><span class="p">:]</span>
 
     <span class="k">return</span> <span class="n">adjs</span><span class="p">,</span> <span class="n">part1</span><span class="p">,</span> <span class="n">part2</span>
 </code></pre></div></td></tr></table></div>
@@ -2739,7 +2739,7 @@ the connection information prepopulated.</p>
     <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
     <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]],</span>
 <span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Connect to the tool and print identifying information.</span>
 <span class="sd">    Also generates convenience functions.</span>
 
@@ -2761,7 +2761,7 @@ the connection information prepopulated.</p>
 <span class="sd">    recd : Callable[[], tuple[str, str, str, bool, bool]]</span>
 <span class="sd">        A function to receive a message from the tool with</span>
 <span class="sd">        the connection information prepopulated.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">sock</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="n">send</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">send_mid</span><span class="p">,</span> <span class="n">sock</span><span class="o">=</span><span class="n">sock</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">)</span>
     <span class="n">recv</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">recv_mid</span><span class="p">,</span> <span class="n">sock</span><span class="o">=</span><span class="n">sock</span><span class="p">)</span>
@@ -2934,7 +2934,7 @@ the connection information prepopulated.</p>
 <span class="normal">134</span>
 <span class="normal">135</span>
 <span class="normal">136</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">recv_mid</span><span class="p">(</span><span class="n">sock</span><span class="p">:</span> <span class="n">socket</span><span class="o">.</span><span class="n">SocketType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Receive a message from the tool.</span>
 
 <span class="sd">    Parameters</span>
@@ -2947,37 +2947,37 @@ the connection information prepopulated.</p>
 <span class="sd">    mid : str</span>
 <span class="sd">        The MID of the returned message.</span>
 <span class="sd">    rev : str</span>
-<span class="sd">        The revision of the returned message&#39;s MID.</span>
+<span class="sd">        The revision of the returned message's MID.</span>
 <span class="sd">    data : str</span>
 <span class="sd">        The data in the returned message.</span>
 <span class="sd">    disconnect : bool</span>
 <span class="sd">        True if a disconnect event was noticed.</span>
 <span class="sd">    timeout : bool</span>
 <span class="sd">        True if a timeout event was noticed.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">keep_receiving</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="s2">""</span>
     <span class="n">timeout</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">disconnect</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">while</span> <span class="n">keep_receiving</span><span class="p">:</span>
-        <span class="n">chunk</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">chunk</span> <span class="o">=</span> <span class="s2">""</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">chunk</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">timeout</span><span class="p">:</span>
             <span class="n">timeout</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">break</span>
-        <span class="k">if</span> <span class="n">chunk</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">chunk</span> <span class="o">==</span> <span class="s2">""</span><span class="p">:</span>
             <span class="n">disconnect</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">break</span>
         <span class="n">message</span> <span class="o">+=</span> <span class="n">chunk</span>
         <span class="k">if</span> <span class="n">chunk</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span> <span class="o">==</span> <span class="nb">chr</span><span class="p">(</span><span class="mi">0</span><span class="p">):</span>
             <span class="n">keep_receiving</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">if</span> <span class="n">disconnect</span><span class="p">:</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Noticed a disconnect event, you may want to recconect!&quot;</span><span class="p">)</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">"Noticed a disconnect event, you may want to recconect!"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">timeout</span><span class="p">:</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Noticed a timeout event, you may want to recconect!&quot;</span><span class="p">)</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">"Noticed a timeout event, you may want to recconect!"</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">12</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Incomplete header! You may need to recconect!&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Incomplete header! You may need to recconect!"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">message</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">8</span><span class="p">],</span> <span class="n">message</span><span class="p">[</span><span class="mi">8</span><span class="p">:</span><span class="mi">11</span><span class="p">],</span> <span class="n">message</span><span class="p">[</span><span class="mi">22</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">disconnect</span><span class="p">,</span> <span class="n">timeout</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -3090,7 +3090,7 @@ If <code>None</code> a new connection is made.</p>
 <span class="normal">86</span>
 <span class="normal">87</span>
 <span class="normal">88</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">send_mid</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sock</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">socket</span><span class="o">.</span><span class="n">SocketType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Send a message to the tool.</span>
 <span class="sd">    One attempt at recconecting and sending the message is made.</span>
 
@@ -3104,7 +3104,7 @@ If <code>None</code> a new connection is made.</p>
 <span class="sd">        If `None` a new connection is made.</span>
 <span class="sd">    **kwargs</span>
 <span class="sd">        Arguments to pass to `connect` in case we need to recconect.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">sock</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">sock</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="n">to_send</span> <span class="o">=</span> <span class="p">(</span><span class="n">message</span> <span class="o">+</span> <span class="nb">chr</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
@@ -3178,7 +3178,7 @@ If <code>None</code> a new connection is made.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../../javascripts/mathjax.js"></script>
       

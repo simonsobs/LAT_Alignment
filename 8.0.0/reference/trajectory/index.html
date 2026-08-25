@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -1206,7 +1206,7 @@ The input is also modified in place.</p>
     <span class="n">cent</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
     <span class="n">off</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Remove the rotation of an element from a point.</span>
 <span class="sd">    For example undo corotation from a point on the LATR.</span>
 
@@ -1227,9 +1227,9 @@ The input is also modified in place.</p>
 <span class="sd">    src : NDArray[np.float64]</span>
 <span class="sd">        The data with the rotation removed.</span>
 <span class="sd">        The input is also modified in place.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">pt</span><span class="p">,</span> <span class="n">ang</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">angle</span><span class="p">)):</span>
-        <span class="n">rot</span> <span class="o">=</span> <span class="n">Rotation</span><span class="o">.</span><span class="n">from_euler</span><span class="p">(</span><span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="p">(</span><span class="n">ang</span> <span class="o">-</span> <span class="n">off</span><span class="p">),</span> <span class="n">degrees</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">rot</span> <span class="o">=</span> <span class="n">Rotation</span><span class="o">.</span><span class="n">from_euler</span><span class="p">(</span><span class="s2">"Y"</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="p">(</span><span class="n">ang</span> <span class="o">-</span> <span class="n">off</span><span class="p">),</span> <span class="n">degrees</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">src</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">rot</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pt</span> <span class="o">-</span> <span class="n">cent</span><span class="p">)</span> <span class="o">+</span> <span class="n">rot</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">cent</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">src</span>
 </code></pre></div></td></tr></table></div>
@@ -1452,7 +1452,7 @@ Will be a <code>(npoint,)</code> array.</p>
     <span class="n">sep</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">logger</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Reconstruct the angle of an opitcal element from data of a point.</span>
 
 <span class="sd">    Parameters</span>
@@ -1479,9 +1479,9 @@ Will be a <code>(npoint,)</code> array.</p>
 <span class="sd">        Will be a `(npoint,)` array.</span>
 <span class="sd">    center : NDArray[np.float64]</span>
 <span class="sd">        The center of rotation.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-        <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Reconstructing angle in </span><span class="si">%s</span><span class="s2"> mode using a start of </span><span class="si">%f</span><span class="s2"> deg and a seperation of </span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">"</span><span class="se">\t</span><span class="s2">Reconstructing angle in </span><span class="si">%s</span><span class="s2"> mode using a start of </span><span class="si">%f</span><span class="s2"> deg and a seperation of </span><span class="si">%f</span><span class="s2">"</span><span class="p">,</span>
         <span class="n">mode</span><span class="p">,</span>
         <span class="n">start</span><span class="p">,</span>
         <span class="n">sep</span><span class="p">,</span>
@@ -1490,15 +1490,15 @@ Will be a <code>(npoint,)</code> array.</p>
     <span class="n">theta</span><span class="p">,</span> <span class="n">sphere</span> <span class="o">=</span> <span class="n">_get_sphere_and_angle</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
 
     <span class="c1"># Convert delta to an angle delta</span>
-    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;continious&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">"continious"</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-            <span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">Reconstructing angle from continious data, this is approximate and should not be used for pointing corrections! Trajectory Errors will also only be approximate!&quot;</span>
+            <span class="s2">"</span><span class="se">\t\t</span><span class="s2">Reconstructing angle from continious data, this is approximate and should not be used for pointing corrections! Trajectory Errors will also only be approximate!"</span>
         <span class="p">)</span>
         <span class="n">dtheta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">sep</span> <span class="o">/</span> <span class="n">sphere</span><span class="o">.</span><span class="n">radius</span><span class="p">)</span> <span class="o">/</span> <span class="mf">32.0</span>
-    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;step&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">"step"</span><span class="p">:</span>
         <span class="n">dtheta</span> <span class="o">=</span> <span class="n">sep</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid mode: </span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid mode: </span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="c1"># Quantize</span>
     <span class="n">theta_corr</span> <span class="o">=</span> <span class="n">_quantize_angle</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">dtheta</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
@@ -1569,7 +1569,7 @@ Will be a <code>(npoint,)</code> array.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../../javascripts/mathjax.js"></script>
       

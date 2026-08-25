@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -1066,7 +1066,7 @@
 
 
 <h2 id="lat_alignment.data_alignment.align_photo" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">align_photo</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">reference</span><span class="p">,</span> <span class="n">kill_refs</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="s1">&#39;primary&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blind_search</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_dist</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span> <span class="n">rms_thresh</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">align_photo</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">reference</span><span class="p">,</span> <span class="n">kill_refs</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="s1">'primary'</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blind_search</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_dist</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span> <span class="n">rms_thresh</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span></code>
 
 </h2>
 
@@ -1531,7 +1531,7 @@ the second is the shift.</p>
     <span class="n">dataset</span><span class="p">:</span> <span class="n">DatasetPhotogrammetry</span><span class="p">,</span>
     <span class="n">reference</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
     <span class="n">kill_refs</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-    <span class="n">element</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;primary&quot;</span><span class="p">,</span>
+    <span class="n">element</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"primary"</span><span class="p">,</span>
     <span class="n">scale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">blind_search</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -1542,7 +1542,7 @@ the second is the shift.</p>
     <span class="n">DatasetPhotogrammetry</span><span class="p">,</span>
     <span class="nb">tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]],</span>
 <span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Align photogrammetry data and then put it into mirror coordinates.</span>
 
 <span class="sd">    Parameters</span>
@@ -1553,7 +1553,7 @@ the second is the shift.</p>
 <span class="sd">        Reference dictionary.</span>
 <span class="sd">        Should contain a key called `coords` that specifies the</span>
 <span class="sd">        coordinate system that the reference points are in.</span>
-<span class="sd">        The rest of the keys should be optical elements (ie: &quot;primary&quot;)</span>
+<span class="sd">        The rest of the keys should be optical elements (ie: "primary")</span>
 <span class="sd">        pointing to a list of reference points to use.</span>
 <span class="sd">        Each point given should be a tuple with two elements.</span>
 <span class="sd">        The first element is a tuple with the (x, y, z) coordinates</span>
@@ -1564,9 +1564,9 @@ the second is the shift.</p>
 <span class="sd">        the label of the code and the (x, y, z) coordinate of the coded target.</span>
 <span class="sd">    kill_refs : bool</span>
 <span class="sd">        If True remove reference points from the dataset.</span>
-<span class="sd">    element : str, default: &#39;primary&#39;</span>
+<span class="sd">    element : str, default: 'primary'</span>
 <span class="sd">        The element that these points belong to.</span>
-<span class="sd">        Should be either: &#39;primary&#39;, &#39;secondary&#39;, &#39;bearing&#39;, &#39;receiver&#39;, or &#39;all&#39;.</span>
+<span class="sd">        Should be either: 'primary', 'secondary', 'bearing', 'receiver', or 'all'.</span>
 <span class="sd">    scale : bool, default: True</span>
 <span class="sd">        If True also compute a scale factor from the reference points.</span>
 <span class="sd">    blind_search : float, default: -1</span>
@@ -1589,37 +1589,37 @@ the second is the shift.</p>
 <span class="sd">        The transformation that aligned the points.</span>
 <span class="sd">        The first element is a rotation matrix and</span>
 <span class="sd">        the second is the shift.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Aligning with reference points for </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
-    <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">,</span> <span class="s2">&quot;secondary&quot;</span><span class="p">,</span> <span class="s2">&quot;bearing&quot;</span><span class="p">,</span> <span class="s2">&quot;receiver&quot;</span><span class="p">]</span>
+<span class="sd">    """</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">Aligning with reference points for </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
+    <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"primary"</span><span class="p">,</span> <span class="s2">"secondary"</span><span class="p">,</span> <span class="s2">"bearing"</span><span class="p">,</span> <span class="s2">"receiver"</span><span class="p">]</span>
     <span class="c1"># import ipdb; ipdb.set_trace()</span>
-    <span class="k">if</span> <span class="n">element</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">elements</span> <span class="ow">and</span> <span class="n">element</span> <span class="o">!=</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid element: </span><span class="si">{</span><span class="n">element</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">element</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">elements</span> <span class="ow">and</span> <span class="n">element</span> <span class="o">!=</span> <span class="s2">"all"</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid element: </span><span class="si">{</span><span class="n">element</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">reference</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid or empty reference&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">element</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">reference</span> <span class="ow">and</span> <span class="n">element</span> <span class="o">!=</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Element not found in reference dict&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="s2">&quot;coords&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">reference</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Reference coordinate system not specified&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">element</span> <span class="o">==</span> <span class="s2">&quot;primary&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Invalid or empty reference"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">element</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">reference</span> <span class="ow">and</span> <span class="n">element</span> <span class="o">!=</span> <span class="s2">"all"</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Element not found in reference dict"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s2">"coords"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">reference</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Reference coordinate system not specified"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">element</span> <span class="o">==</span> <span class="s2">"primary"</span><span class="p">:</span>
         <span class="n">transform</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
-            <span class="n">coord_transform</span><span class="p">,</span> <span class="n">cfrom</span><span class="o">=</span><span class="n">reference</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">],</span> <span class="n">cto</span><span class="o">=</span><span class="s2">&quot;opt_primary&quot;</span>
+            <span class="n">coord_transform</span><span class="p">,</span> <span class="n">cfrom</span><span class="o">=</span><span class="n">reference</span><span class="p">[</span><span class="s2">"coords"</span><span class="p">],</span> <span class="n">cto</span><span class="o">=</span><span class="s2">"opt_primary"</span>
         <span class="p">)</span>
-    <span class="k">elif</span> <span class="n">element</span> <span class="o">==</span> <span class="s2">&quot;secondary&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">element</span> <span class="o">==</span> <span class="s2">"secondary"</span><span class="p">:</span>
         <span class="n">transform</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
-            <span class="n">coord_transform</span><span class="p">,</span> <span class="n">cfrom</span><span class="o">=</span><span class="n">reference</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">],</span> <span class="n">cto</span><span class="o">=</span><span class="s2">&quot;opt_secondary&quot;</span>
+            <span class="n">coord_transform</span><span class="p">,</span> <span class="n">cfrom</span><span class="o">=</span><span class="n">reference</span><span class="p">[</span><span class="s2">"coords"</span><span class="p">],</span> <span class="n">cto</span><span class="o">=</span><span class="s2">"opt_secondary"</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">transform</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
-            <span class="n">coord_transform</span><span class="p">,</span> <span class="n">cfrom</span><span class="o">=</span><span class="n">reference</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">],</span> <span class="n">cto</span><span class="o">=</span><span class="s2">&quot;opt_global&quot;</span>
+            <span class="n">coord_transform</span><span class="p">,</span> <span class="n">cfrom</span><span class="o">=</span><span class="n">reference</span><span class="p">[</span><span class="s2">"coords"</span><span class="p">],</span> <span class="n">cto</span><span class="o">=</span><span class="s2">"opt_global"</span>
         <span class="p">)</span>
-    <span class="k">if</span> <span class="n">element</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">element</span> <span class="o">==</span> <span class="s2">"all"</span><span class="p">:</span>
         <span class="n">all_refs</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">el</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">reference</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="n">all_refs</span> <span class="o">=</span> <span class="n">all_refs</span> <span class="o">|</span> <span class="n">reference</span><span class="p">[</span><span class="n">el</span><span class="p">]</span>
-        <span class="n">reference</span><span class="p">[</span><span class="s2">&quot;all&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_refs</span>
+        <span class="n">reference</span><span class="p">[</span><span class="s2">"all"</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_refs</span>
 
     <span class="c1"># Lets find the points we can use</span>
     <span class="n">ref</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1627,13 +1627,13 @@ the second is the shift.</p>
     <span class="n">invars</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">ref_coded</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">found_coded</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Looking for reference points&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Looking for reference points"</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">pname</span><span class="p">,</span> <span class="p">(</span><span class="n">rpoint</span><span class="p">,</span> <span class="n">codes</span><span class="p">)</span> <span class="ow">in</span> <span class="n">reference</span><span class="p">[</span><span class="n">element</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Finding point </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">pname</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">Finding point </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">pname</span><span class="p">)</span>
         <span class="n">code_l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">l</span> <span class="k">for</span> <span class="n">l</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">codes</span><span class="p">])</span>
         <span class="n">code_p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">codes</span><span class="p">])</span>
         <span class="n">have</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">code_l</span><span class="p">,</span> <span class="n">dataset</span><span class="o">.</span><span class="n">code_labels</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">Found </span><span class="si">%d</span><span class="s2"> associated codes&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">have</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"</span><span class="se">\t\t</span><span class="s2">Found </span><span class="si">%d</span><span class="s2"> associated codes"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">have</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">have</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">continue</span>
         <span class="c1"># Save the coded we have just in case</span>
@@ -1645,26 +1645,26 @@ the second is the shift.</p>
         <span class="c1"># Find the closest point</span>
         <span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">targets</span> <span class="o">-</span> <span class="n">coded</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_dist</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">Failed to find point </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">pname</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"</span><span class="se">\t\t</span><span class="s2">Failed to find point </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">pname</span><span class="p">)</span>
             <span class="k">continue</span>
         <span class="n">label</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">target_labels</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">dist</span><span class="p">)]</span>
         <span class="n">ref</span> <span class="o">+=</span> <span class="p">[</span><span class="n">rpoint</span><span class="p">]</span>
         <span class="n">pts</span> <span class="o">+=</span> <span class="p">[</span><span class="n">dataset</span><span class="p">[</span><span class="n">label</span><span class="p">]]</span>
         <span class="n">invars</span> <span class="o">+=</span> <span class="p">[</span><span class="n">label</span><span class="p">]</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">Associated </span><span class="si">%s</span><span class="s2"> with </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">pname</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"</span><span class="se">\t\t</span><span class="s2">Associated </span><span class="si">%s</span><span class="s2"> with </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">pname</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">blind_search</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Blind search not implemented yet!&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"Blind search not implemented yet!"</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Only </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span><span class="si">}</span><span class="s2"> reference points found!&quot;</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Adding reference codes&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Only </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span><span class="si">}</span><span class="s2"> reference points found!"</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Adding reference codes"</span><span class="p">)</span>
         <span class="n">pts</span> <span class="o">+=</span> <span class="n">found_coded</span>
         <span class="n">ref</span> <span class="o">+=</span> <span class="n">ref_coded</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Only </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span><span class="si">}</span><span class="s2"> reference points found including codes! Can&#39;t align!&quot;</span>
+            <span class="sa">f</span><span class="s2">"Only </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span><span class="si">}</span><span class="s2"> reference points found including codes! Can't align!"</span>
         <span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-        <span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">Found </span><span class="si">%d</span><span class="s2"> reference points in measurements with labels:</span><span class="se">\n\t\t\t</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">"</span><span class="se">\t\t</span><span class="s2">Found </span><span class="si">%d</span><span class="s2"> reference points in measurements with labels:</span><span class="se">\n\t\t\t</span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span>
         <span class="nb">len</span><span class="p">(</span><span class="n">pts</span><span class="p">),</span>
         <span class="nb">str</span><span class="p">(</span><span class="n">invars</span><span class="p">),</span>
     <span class="p">)</span>
@@ -1673,7 +1673,7 @@ the second is the shift.</p>
     <span class="n">pts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">pts</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">pts</span><span class="p">,</span> <span class="mi">0</span><span class="p">)))</span>
     <span class="n">ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">ref</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="mi">0</span><span class="p">)))</span>
     <span class="n">ref</span> <span class="o">=</span> <span class="n">transform</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">Reference points in element coords:</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">ref</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="se">\t\t</span><span class="s2">Reference points in element coords:</span><span class="se">\n</span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">ref</span><span class="p">))</span>
 
     <span class="n">msk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ref</span><span class="p">),</span> <span class="nb">bool</span><span class="p">)</span>
     <span class="n">scale_fac</span> <span class="o">=</span> <span class="mi">1</span>
@@ -1681,52 +1681,52 @@ the second is the shift.</p>
     <span class="n">sft</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">rms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span> <span class="o">-</span> <span class="mi">4</span><span class="p">):</span>
-        <span class="n">rot</span><span class="p">,</span> <span class="n">sft</span> <span class="o">=</span> <span class="n">get_rigid</span><span class="p">(</span><span class="n">pts</span><span class="p">[</span><span class="n">msk</span><span class="p">],</span> <span class="n">ref</span><span class="p">[</span><span class="n">msk</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">)</span>
+        <span class="n">rot</span><span class="p">,</span> <span class="n">sft</span> <span class="o">=</span> <span class="n">get_rigid</span><span class="p">(</span><span class="n">pts</span><span class="p">[</span><span class="n">msk</span><span class="p">],</span> <span class="n">ref</span><span class="p">[</span><span class="n">msk</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">"mean"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">scale</span><span class="p">:</span>
             <span class="n">triu_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">triu_indices</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pts</span><span class="p">[</span><span class="n">msk</span><span class="p">]),</span> <span class="mi">1</span><span class="p">)</span>
             <span class="n">scale_fac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span>
                 <span class="n">make_edm</span><span class="p">(</span><span class="n">ref</span><span class="p">[</span><span class="n">msk</span><span class="p">])[</span><span class="n">triu_idx</span><span class="p">]</span> <span class="o">/</span> <span class="n">make_edm</span><span class="p">(</span><span class="n">pts</span><span class="p">[</span><span class="n">msk</span><span class="p">])[</span><span class="n">triu_idx</span><span class="p">]</span>
             <span class="p">)</span>
         <span class="n">pts_scaled</span> <span class="o">=</span> <span class="n">pts</span> <span class="o">*</span> <span class="n">scale_fac</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">Scale factor of </span><span class="si">%f</span><span class="s2"> applied&quot;</span><span class="p">,</span> <span class="n">scale_fac</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="se">\t\t</span><span class="s2">Scale factor of </span><span class="si">%f</span><span class="s2"> applied"</span><span class="p">,</span> <span class="n">scale_fac</span><span class="p">)</span>
 
         <span class="n">new_rot</span><span class="p">,</span> <span class="n">new_sft</span> <span class="o">=</span> <span class="n">get_rigid</span><span class="p">(</span>
-            <span class="n">pts_scaled</span><span class="p">[</span><span class="n">msk</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span> <span class="n">ref</span><span class="p">[</span><span class="n">msk</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span>
+            <span class="n">pts_scaled</span><span class="p">[</span><span class="n">msk</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span> <span class="n">ref</span><span class="p">[</span><span class="n">msk</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">"mean"</span>
         <span class="p">)</span>
         <span class="n">pts_t</span> <span class="o">=</span> <span class="n">apply_transform</span><span class="p">(</span><span class="n">pts_scaled</span><span class="p">[</span><span class="n">msk</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span> <span class="n">new_rot</span><span class="p">,</span> <span class="n">new_sft</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
             <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-            <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">pts</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">pts</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">pts</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">)</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">pts_t</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">pts_t</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">pts_t</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">ref</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">ref</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">ref</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">"3d"</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">pts</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">pts</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">pts</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">"g"</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">pts_t</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">pts_t</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">pts_t</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">"b"</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">ref</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">ref</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">ref</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">"r"</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"X"</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
         <span class="n">diff</span> <span class="o">=</span> <span class="n">pts_t</span> <span class="o">-</span> <span class="n">ref</span><span class="p">[</span><span class="n">msk</span><span class="p">]</span>
         <span class="n">new_rms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">diff</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
         <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">new_rms</span> <span class="o">&gt;</span> <span class="n">rms</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">New RMS is worse, accepting last try&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"</span><span class="se">\t\t</span><span class="s2">New RMS is worse, accepting last try"</span><span class="p">)</span>
             <span class="k">break</span>
         <span class="n">rms</span> <span class="o">=</span> <span class="n">new_rms</span>
         <span class="n">rot</span> <span class="o">=</span> <span class="n">new_rot</span>
         <span class="n">sft</span> <span class="o">=</span> <span class="n">new_sft</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-            <span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">RMS of reference points after alignment: </span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">"</span><span class="se">\t\t</span><span class="s2">RMS of reference points after alignment: </span><span class="si">%f</span><span class="s2">"</span><span class="p">,</span>
             <span class="n">rms</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="n">rms</span> <span class="o">&lt;=</span> <span class="n">rms_thresh</span><span class="p">:</span>
             <span class="k">break</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">RMS over thresh, trying cutting worst point&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"</span><span class="se">\t\t</span><span class="s2">RMS over thresh, trying cutting worst point"</span><span class="p">)</span>
         <span class="n">to_cut</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">diff</span><span class="p">))</span>
         <span class="n">_msk</span> <span class="o">=</span> <span class="n">msk</span><span class="p">[</span><span class="n">msk</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">_msk</span><span class="p">[</span><span class="n">to_cut</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">msk</span><span class="p">[</span><span class="n">msk</span><span class="p">]</span> <span class="o">=</span> <span class="n">_msk</span>
 
     <span class="k">if</span> <span class="n">rot</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">sft</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Transformation is None&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Transformation is None"</span><span class="p">)</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">Shift is </span><span class="si">%s</span><span class="s2"> mm&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">sft</span><span class="p">))</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">Rotation is </span><span class="si">%s</span><span class="s2"> deg&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">decompose_rotation</span><span class="p">(</span><span class="n">rot</span><span class="p">))))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="se">\t\t</span><span class="s2">Shift is </span><span class="si">%s</span><span class="s2"> mm"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">sft</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="se">\t\t</span><span class="s2">Rotation is </span><span class="si">%s</span><span class="s2"> deg"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">decompose_rotation</span><span class="p">(</span><span class="n">rot</span><span class="p">))))</span>
     <span class="n">scale_fac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">scale_fac</span>
     <span class="n">rot</span> <span class="o">@=</span> <span class="n">scale_fac</span>
 
@@ -1748,12 +1748,12 @@ the second is the shift.</p>
 
     <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
         <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">"3d"</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
             <span class="n">transformed</span><span class="o">.</span><span class="n">targets</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
             <span class="n">transformed</span><span class="o">.</span><span class="n">targets</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
             <span class="n">transformed</span><span class="o">.</span><span class="n">targets</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span>
-            <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span>
+            <span class="n">marker</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
@@ -1768,7 +1768,7 @@ the second is the shift.</p>
 
 
 <h2 id="lat_alignment.data_alignment.align_tracker" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">align_tracker</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">tracker_yaml</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="s1">&#39;primary&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">align_tracker</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">tracker_yaml</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="s1">'primary'</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
 
 </h2>
 
@@ -2050,7 +2050,7 @@ the second is the shift.</p>
 <span class="normal">386</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">align_tracker</span><span class="p">(</span>
     <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span>
     <span class="n">tracker_yaml</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">element</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;primary&quot;</span><span class="p">,</span>
+    <span class="n">element</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"primary"</span><span class="p">,</span>
     <span class="n">scale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">plot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -2058,7 +2058,7 @@ the second is the shift.</p>
     <span class="n">Dataset</span><span class="p">,</span>
     <span class="nb">tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]],</span>
 <span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Align photogrammetry data and then put it into mirror coordinates.</span>
 
 <span class="sd">    Parameters</span>
@@ -2067,9 +2067,9 @@ the second is the shift.</p>
 <span class="sd">        The photogrammetry data to align.</span>
 <span class="sd">    tracker_yaml : str</span>
 <span class="sd">        The path to the yaml file with measuerments of the reference points.</span>
-<span class="sd">    element : str, default: &#39;primary&#39;</span>
+<span class="sd">    element : str, default: 'primary'</span>
 <span class="sd">        The element that these points belong to.</span>
-<span class="sd">        Should be either: &#39;primary&#39;, &#39;secondary&#39;, &#39;bearing&#39;, &#39;receiver&#39;, or &#39;all&#39;.</span>
+<span class="sd">        Should be either: 'primary', 'secondary', 'bearing', 'receiver', or 'all'.</span>
 <span class="sd">    scale : bool, default: True</span>
 <span class="sd">        If True also compute a scale factor from the reference points.</span>
 <span class="sd">    plot : bool, default: True</span>
@@ -2084,70 +2084,70 @@ the second is the shift.</p>
 <span class="sd">        The transformation that aligned the points.</span>
 <span class="sd">        The first element is a rotation matrix and</span>
 <span class="sd">        the second is the shift.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Aligning with reference points for </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
-    <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">,</span> <span class="s2">&quot;secondary&quot;</span><span class="p">,</span> <span class="s2">&quot;bearing&quot;</span><span class="p">,</span> <span class="s2">&quot;receiver&quot;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">element</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">elements</span> <span class="ow">and</span> <span class="n">element</span> <span class="o">!=</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid element: </span><span class="si">{</span><span class="n">element</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">Aligning with reference points for </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
+    <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"primary"</span><span class="p">,</span> <span class="s2">"secondary"</span><span class="p">,</span> <span class="s2">"bearing"</span><span class="p">,</span> <span class="s2">"receiver"</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">element</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">elements</span> <span class="ow">and</span> <span class="n">element</span> <span class="o">!=</span> <span class="s2">"all"</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid element: </span><span class="si">{</span><span class="n">element</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="n">reference</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">DatasetReference</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">load_tracker</span><span class="p">(</span><span class="n">tracker_yaml</span><span class="p">))</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">reference</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid or empty reference&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">element</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">reference</span><span class="o">.</span><span class="n">elem_names</span> <span class="ow">and</span> <span class="n">element</span> <span class="o">!=</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Element not found in reference dict&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">element</span> <span class="o">==</span> <span class="s2">&quot;primary&quot;</span><span class="p">:</span>
-        <span class="n">transform</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">coord_transform</span><span class="p">,</span> <span class="n">cfrom</span><span class="o">=</span><span class="s2">&quot;opt_global&quot;</span><span class="p">,</span> <span class="n">cto</span><span class="o">=</span><span class="s2">&quot;opt_primary&quot;</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">element</span> <span class="o">==</span> <span class="s2">&quot;secondary&quot;</span><span class="p">:</span>
-        <span class="n">transform</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">coord_transform</span><span class="p">,</span> <span class="n">cfrom</span><span class="o">=</span><span class="s2">&quot;opt_global&quot;</span><span class="p">,</span> <span class="n">cto</span><span class="o">=</span><span class="s2">&quot;opt_secondary&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Invalid or empty reference"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">element</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">reference</span><span class="o">.</span><span class="n">elem_names</span> <span class="ow">and</span> <span class="n">element</span> <span class="o">!=</span> <span class="s2">"all"</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Element not found in reference dict"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">element</span> <span class="o">==</span> <span class="s2">"primary"</span><span class="p">:</span>
+        <span class="n">transform</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">coord_transform</span><span class="p">,</span> <span class="n">cfrom</span><span class="o">=</span><span class="s2">"opt_global"</span><span class="p">,</span> <span class="n">cto</span><span class="o">=</span><span class="s2">"opt_primary"</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">element</span> <span class="o">==</span> <span class="s2">"secondary"</span><span class="p">:</span>
+        <span class="n">transform</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">coord_transform</span><span class="p">,</span> <span class="n">cfrom</span><span class="o">=</span><span class="s2">"opt_global"</span><span class="p">,</span> <span class="n">cto</span><span class="o">=</span><span class="s2">"opt_secondary"</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">transform</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">coord_transform</span><span class="p">,</span> <span class="n">cfrom</span><span class="o">=</span><span class="s2">&quot;opt_global&quot;</span><span class="p">,</span> <span class="n">cto</span><span class="o">=</span><span class="s2">&quot;opt_global&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">element</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+        <span class="n">transform</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">coord_transform</span><span class="p">,</span> <span class="n">cfrom</span><span class="o">=</span><span class="s2">"opt_global"</span><span class="p">,</span> <span class="n">cto</span><span class="o">=</span><span class="s2">"opt_global"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">element</span> <span class="o">==</span> <span class="s2">"all"</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">el</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">reference</span><span class="o">.</span><span class="n">elem_names</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="k">for</span> <span class="n">pt</span> <span class="ow">in</span> <span class="n">reference</span><span class="o">.</span><span class="n">elem_labels</span><span class="p">[</span><span class="n">el</span><span class="p">]:</span>
-                <span class="n">reference</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;all_</span><span class="si">{</span><span class="n">pt</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reference</span><span class="p">[</span><span class="n">pt</span><span class="p">]</span>
-                <span class="n">reference</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;all_</span><span class="si">{</span><span class="n">pt</span><span class="si">}</span><span class="s2">_err&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reference</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pt</span><span class="si">}</span><span class="s2">_err&quot;</span><span class="p">]</span>
-                <span class="n">reference</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;all_</span><span class="si">{</span><span class="n">pt</span><span class="si">}</span><span class="s2">_ref&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reference</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pt</span><span class="si">}</span><span class="s2">_ref&quot;</span><span class="p">]</span>
+                <span class="n">reference</span><span class="p">[</span><span class="sa">f</span><span class="s2">"all_</span><span class="si">{</span><span class="n">pt</span><span class="si">}</span><span class="s2">"</span><span class="p">]</span> <span class="o">=</span> <span class="n">reference</span><span class="p">[</span><span class="n">pt</span><span class="p">]</span>
+                <span class="n">reference</span><span class="p">[</span><span class="sa">f</span><span class="s2">"all_</span><span class="si">{</span><span class="n">pt</span><span class="si">}</span><span class="s2">_err"</span><span class="p">]</span> <span class="o">=</span> <span class="n">reference</span><span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">pt</span><span class="si">}</span><span class="s2">_err"</span><span class="p">]</span>
+                <span class="n">reference</span><span class="p">[</span><span class="sa">f</span><span class="s2">"all_</span><span class="si">{</span><span class="n">pt</span><span class="si">}</span><span class="s2">_ref"</span><span class="p">]</span> <span class="o">=</span> <span class="n">reference</span><span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">pt</span><span class="si">}</span><span class="s2">_ref"</span><span class="p">]</span>
 
     <span class="c1"># Lets find the points we can use</span>
     <span class="n">pts</span> <span class="o">=</span> <span class="n">reference</span><span class="o">.</span><span class="n">elements</span><span class="p">[</span><span class="n">element</span><span class="p">]</span>
     <span class="n">ref</span> <span class="o">=</span> <span class="n">reference</span><span class="o">.</span><span class="n">reference</span><span class="p">[</span><span class="n">element</span><span class="p">]</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Only </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span><span class="si">}</span><span class="s2"> reference points found! Can&#39;t align!&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Only </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span><span class="si">}</span><span class="s2"> reference points found! Can't align!"</span><span class="p">)</span>
     <span class="n">ref</span> <span class="o">=</span> <span class="n">transform</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">Reference points in element coords:</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">ref</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="se">\t\t</span><span class="s2">Reference points in element coords:</span><span class="se">\n</span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">ref</span><span class="p">))</span>
 
     <span class="n">msk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ref</span><span class="p">),</span> <span class="nb">bool</span><span class="p">)</span>
     <span class="n">scale_fac</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">rot</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">sft</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">rot</span><span class="p">,</span> <span class="n">sft</span> <span class="o">=</span> <span class="n">get_rigid</span><span class="p">(</span><span class="n">pts</span><span class="p">[</span><span class="n">msk</span><span class="p">],</span> <span class="n">ref</span><span class="p">[</span><span class="n">msk</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">)</span>
+    <span class="n">rot</span><span class="p">,</span> <span class="n">sft</span> <span class="o">=</span> <span class="n">get_rigid</span><span class="p">(</span><span class="n">pts</span><span class="p">[</span><span class="n">msk</span><span class="p">],</span> <span class="n">ref</span><span class="p">[</span><span class="n">msk</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">"mean"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">scale</span><span class="p">:</span>
         <span class="n">triu_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">triu_indices</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pts</span><span class="p">[</span><span class="n">msk</span><span class="p">]),</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">scale_fac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span>
             <span class="n">make_edm</span><span class="p">(</span><span class="n">ref</span><span class="p">[</span><span class="n">msk</span><span class="p">])[</span><span class="n">triu_idx</span><span class="p">]</span> <span class="o">/</span> <span class="n">make_edm</span><span class="p">(</span><span class="n">pts</span><span class="p">[</span><span class="n">msk</span><span class="p">])[</span><span class="n">triu_idx</span><span class="p">]</span>
         <span class="p">)</span>
     <span class="n">pts_scaled</span> <span class="o">=</span> <span class="n">pts</span> <span class="o">*</span> <span class="n">scale_fac</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">Scale factor of </span><span class="si">%f</span><span class="s2"> applied&quot;</span><span class="p">,</span> <span class="n">scale_fac</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="se">\t\t</span><span class="s2">Scale factor of </span><span class="si">%f</span><span class="s2"> applied"</span><span class="p">,</span> <span class="n">scale_fac</span><span class="p">)</span>
 
-    <span class="n">new_rot</span><span class="p">,</span> <span class="n">new_sft</span> <span class="o">=</span> <span class="n">get_rigid</span><span class="p">(</span><span class="n">pts_scaled</span><span class="p">[</span><span class="n">msk</span><span class="p">],</span> <span class="n">ref</span><span class="p">[</span><span class="n">msk</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">)</span>
+    <span class="n">new_rot</span><span class="p">,</span> <span class="n">new_sft</span> <span class="o">=</span> <span class="n">get_rigid</span><span class="p">(</span><span class="n">pts_scaled</span><span class="p">[</span><span class="n">msk</span><span class="p">],</span> <span class="n">ref</span><span class="p">[</span><span class="n">msk</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">"mean"</span><span class="p">)</span>
     <span class="n">pts_t</span> <span class="o">=</span> <span class="n">apply_transform</span><span class="p">(</span><span class="n">pts_scaled</span><span class="p">[</span><span class="n">msk</span><span class="p">],</span> <span class="n">new_rot</span><span class="p">,</span> <span class="n">new_sft</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
         <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">pts</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">pts</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">pts</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">pts_t</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">pts_t</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">pts_t</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">ref</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">ref</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">ref</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">"3d"</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">pts</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">pts</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">pts</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">"g"</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">pts_t</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">pts_t</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">pts_t</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">"b"</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">ref</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">ref</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">ref</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">"r"</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"X"</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
     <span class="n">diff</span> <span class="o">=</span> <span class="n">pts_t</span> <span class="o">-</span> <span class="n">ref</span><span class="p">[</span><span class="n">msk</span><span class="p">]</span>
     <span class="n">rms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">diff</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-        <span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">RMS of reference points after alignment: </span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">"</span><span class="se">\t\t</span><span class="s2">RMS of reference points after alignment: </span><span class="si">%f</span><span class="s2">"</span><span class="p">,</span>
         <span class="n">rms</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">Shift is </span><span class="si">%s</span><span class="s2"> mm&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">sft</span><span class="p">))</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">Rotation is </span><span class="si">%s</span><span class="s2"> deg&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">decompose_rotation</span><span class="p">(</span><span class="n">rot</span><span class="p">))))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="se">\t\t</span><span class="s2">Shift is </span><span class="si">%s</span><span class="s2"> mm"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">sft</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="se">\t\t</span><span class="s2">Rotation is </span><span class="si">%s</span><span class="s2"> deg"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">decompose_rotation</span><span class="p">(</span><span class="n">rot</span><span class="p">))))</span>
     <span class="n">scale_fac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">scale_fac</span>
     <span class="n">rot</span> <span class="o">@=</span> <span class="n">scale_fac</span>
 
@@ -2163,12 +2163,12 @@ the second is the shift.</p>
 
     <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
         <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">"3d"</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
             <span class="n">transformed</span><span class="o">.</span><span class="n">targets</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
             <span class="n">transformed</span><span class="o">.</span><span class="n">targets</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
             <span class="n">transformed</span><span class="o">.</span><span class="n">targets</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span>
-            <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span>
+            <span class="n">marker</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
@@ -2238,7 +2238,7 @@ the second is the shift.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../../javascripts/mathjax.js"></script>
       
