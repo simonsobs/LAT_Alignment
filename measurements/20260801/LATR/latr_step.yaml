@@ -1,0 +1,23 @@
+correct_rot: True
+zemax_path: /home/lordskh/Documents/ID9_checked_trace_data.npz
+receiver:
+  receiver_1:
+    path: "./LATR_1_start_-20_step_10.txt"
+    mode: step 
+    start: -20
+    sep: 10
+  receiver_2:
+    path: "./LATR_2_start_-20_step_10.txt"
+    mode: step 
+    start: -20
+    sep: 10
+  receiver_3:
+    path: "./LATR_3_start_-20_step_10.txt"
+    mode: step 
+    start: -20
+    sep: 10
+  receiver_4:
+    path: "./LATR_4_start_-20_step_10.txt"
+    mode: step 
+    start: -20
+    sep: 10

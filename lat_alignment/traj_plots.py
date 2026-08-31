@@ -110,6 +110,7 @@ def plot_by_ax(
     ylab: str,
     title: str,
     plt_root: str,
+    labels: tuple[str, str, str] = ("x", "y", "z"),
 ):
     """
     Plot data with seperate subplots for each dimension.
@@ -139,41 +140,61 @@ def plot_by_ax(
         The title of the plot.
     plt_root : str
         The directory to save plots to.
+    labels : tuple[str, str, str], default: ('x', 'y', 'z')
+        Labels for each spatial axes.
     """
-    _, axs = plt.subplots(3, 1, sharex=True)
-    for i, dim in enumerate(["x", "y", "z"]):
+    fig, axs = plt.subplots(3, 1, sharex=True, figsize=(16, 24))
+    for i, dim in enumerate(labels):
+        y = dat[:, i]
+        axs[i].quiver(
+            x[:-1],
+            y[:-1],
+            x[1:] - x[:-1],
+            y[1:] - y[:-1],
+            scale_units="xy",
+            angles="xy",
+            scale=1,
+            alpha=0.3,
+            width=0.003,
+        )
+        s = 256
         axs[i].scatter(
             x[direction == 0],
             dat[direction == 0, i],
             color="black",
             marker="o",
-            alpha=0.25,
+            alpha=0.5,
             label="Stationary",
+            s=s,
         )
         axs[i].scatter(
             x[direction < 0],
             dat[direction < 0, i],
             color="blue",
             marker="x",
-            alpha=0.25,
+            alpha=0.5,
             label="Decreasing",
+            s=s,
         )
         axs[i].scatter(
             x[direction > 0],
             dat[direction > 0, i],
             color="red",
             marker="+",
-            alpha=0.25,
+            alpha=0.5,
             label="Increasing",
+            s=s,
         )
         axs[i].scatter(x[missing], dat[missing, i], color="gray", marker="1")
         axs[i].set_ylabel(f"{dim} {ylab}")
     axs[0].legend()
     axs[-1].set_xlabel(xlab)
     plt.suptitle(title)
+    fig.tight_layout()
+    fig.subplots_adjust(top=0.95)
     plt.savefig(
         os.path.join(plt_root, f"{title.lower().replace(' ' , '_')}_{xax}.png"),
-        bbox_inches="tight",
+        # bbox_inches="tight",
     )
     plt.close()
 
@@ -186,6 +207,7 @@ def plot_all_ax(
     ylab: str,
     title: str,
     plt_root: str,
+    labels: tuple[str, str, str] = ("x", "y", "z"),
 ):
     """
     Plot data with dimensions as seperate lines on the same plot.
@@ -211,10 +233,12 @@ def plot_all_ax(
         The title of the plot.
     plt_root : str
         The directory to save plots to.
+    labels : tuple[str, str, str], default: ('x', 'y', 'z')
+        Labels for each spatial axes.
     """
-    plt.scatter(x, dat[:, 0], alpha=0.5, label="x")
-    plt.scatter(x, dat[:, 1], alpha=0.5, label="y")
-    plt.scatter(x, dat[:, 2], alpha=0.5, label="z")
+    plt.scatter(x, dat[:, 0], alpha=0.5, label=labels[0])
+    plt.scatter(x, dat[:, 1], alpha=0.5, label=labels[1])
+    plt.scatter(x, dat[:, 2], alpha=0.5, label=labels[2])
     plt.scatter(x[missing], dat[missing, 0], color="gray", marker="1")
     plt.scatter(x[missing], dat[missing, 1], color="gray", marker="1")
     plt.scatter(x[missing], dat[missing, 2], color="gray", marker="1")

@@ -1,6 +1,6 @@
 mirror: "primary"
-measurement: Set_20.csv 
-title: "M1 LAT Set 20"
+measurement: Set_06.csv 
+title: "M1 LAT Set 06"
 vmax: 50
 load:
   doubles_dist: 3

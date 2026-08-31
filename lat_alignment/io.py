@@ -64,9 +64,10 @@ def _load_tracker_txt(
     ang_err: float = 5e-6,
 ):
     data = np.genfromtxt(
-        path, usecols=(3, 4, 5), skip_header=1, dtype=str, delimiter="\t"
+        path, usecols=(2, 3, 4, 5), skip_header=1, dtype=str, delimiter="\t"
     )
     data = np.char.replace(data, ",", "").astype(float)
+    data = data[np.argsort(data[:, 0]), 1:]
 
     errs = err / np.sqrt(3) * np.ones_like(data)
     if calc_sys_err:

@@ -1,0 +1,4 @@
+Enabled	Feature                        	ID	x          	y          	z         	i	j	k	Dev From Fit	Device Position  	Probe	Device Name
+Checked	M1_Lower_Right_start_40_step_10	1 	-2,145.2392	-2,702.0645	4,937.8458	 	 	 	0.0000      	Device Position 1	38.1 	V20003907682
+Checked	M1_Lower_Right_start_40_step_10	2 	-1,255.8065	-2,701.7868	5,235.2704	 	 	 	0.0000      	Device Position 1	38.1 	V20003907682
+Checked	M1_Lower_Right_start_40_step_10	3 	-328.1748  	-2,701.4737	5,373.7839	 	 	 	0.0000      	Device Position 1	38.1 	V20003907682

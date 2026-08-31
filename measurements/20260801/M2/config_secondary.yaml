@@ -1,0 +1,34 @@
+mirror: "secondary"
+title: "M2 Tracker 20260801"
+measurement:
+  - M2_1.txt
+  - M2_2.txt
+  - M2_3.txt
+  - M2_4.txt
+  - M2_5.txt
+tracker_yaml:
+  - ref_1.yaml
+  - ref_2.yaml
+  - ref_3.yaml
+  - ref_4.yaml
+  - ref_5.yaml
+vmax: 50
+common_mode:
+  thresh: 5
+  cut_thresh: 5
+  niters: 3
+fit_adjustments: False
+only_adj: False 
+adj_radius: 1500
+# sample_every: [2, 3]
+compensate: 19.05
+iqr: True
+load:
+  source: "tracker"
+  group_dist: .01
+  group_thresh: .005
+  # calc_sys_err: True
+  # cam_transform_path: LAT_M2_Surface_180_20250828.txt
+align_tracker:
+  plot: False
+  scale: False 

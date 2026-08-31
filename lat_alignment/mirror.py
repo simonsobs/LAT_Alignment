@@ -31,6 +31,7 @@ from lat_alignment.transforms import err_transform
 from .dataset import Dataset
 
 logger = logging.getLogger("lat_alignment")
+plt.rcParams.update({"font.size": 14})
 
 # fmt: off
 a = {'primary' : 
@@ -723,7 +724,8 @@ def plot_panels(
         cmap = "cividis"
         vmin = float(np.percentile(np.abs(res_use[:, 2]), 5))
     gs = gridspec.GridSpec(3, 2, width_ratios=[20, 1], height_ratios=[2, 1, 1])
-    fig = plt.figure()
+    fig = plt.figure(tight_layout=True, figsize=(8, 16), dpi=800)
+
     ax0 = plt.subplot(gs[0])
     cax = plt.subplot(gs[1])
     ax1 = plt.subplot(gs[2:4])
@@ -811,6 +813,6 @@ def plot_panels(
 
     fig.suptitle(f"{title_str}{' error'*err}, RMS={tot_rms:.2f} ± {tot_rms_err:.2f} um")
 
-    plt.show()
+    # plt.show()
 
     return fig

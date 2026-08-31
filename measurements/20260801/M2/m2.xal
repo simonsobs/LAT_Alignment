@@ -1,0 +1,42 @@
+<Transformation product="FARO CAM2 2019" version="11.16.59.0">
+    <entity type="ARMPOS" isComposite="False" description="Transformation matrix" id="" recording="" datetimecreated="01/03/2026 08:32:45">
+        <numOfPoints>0</numOfPoints>
+        <customAttributes>
+            <property type="reportOrder" description="">false</property>
+            <property type="rms" description="RMS">0</property>
+            <property type="standarddev" description="Standarddev">0</property>
+            <property type="errormax" description="Errormax">0</property>
+            <property type="maxtolerance" description="">0</property>
+            <property type="errormin" description="Errormin">0</property>
+            <property type="average" description="Average">0</property>
+            <property type="span" description="Span">0</property>
+            <property type="scale" description="Scale">1</property>
+        </customAttributes>
+        <geometricalRepresentation>
+            <recordedGeometries>
+                <matrixGeometry revision="Revision" recording="" type="Guid_GeometryMatrix">
+                    <property type="Rx" description="XRotation">
+                        <property type="I" description="I">0.037978695727322861</property>
+                        <property type="J" description="J">-0.99744756388716915</property>
+                        <property type="K" description="K">-0.060464667090816479</property>
+                    </property>
+                    <property type="Ry" description="YRotation">
+                        <property type="I" description="I">-0.99898832728227316</property>
+                        <property type="J" description="J">-0.036439886326576486</property>
+                        <property type="K" description="K">-0.026352545195334524</property>
+                    </property>
+                    <property type="Rz" description="ZRotation">
+                        <property type="I" description="I">0.024081956411749303</property>
+                        <property type="J" description="J">0.061404331932348392</property>
+                        <property type="K" description="K">-0.99782241275455663</property>
+                    </property>
+                    <property type="T" description="Translation">
+                        <property type="X" description="X">68.878707021449557</property>
+                        <property type="Y" description="Y">4449.7276171991007</property>
+                        <property type="Z" description="Z">518.38788021381549</property>
+                    </property>
+                </matrixGeometry>
+            </recordedGeometries>
+        </geometricalRepresentation>
+    </entity>
+</Transformation>
