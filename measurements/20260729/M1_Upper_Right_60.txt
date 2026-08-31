@@ -1,0 +1,2 @@
+Enabled	Feature          	ID	x         	y         	z         	i	j	k	Dev From Fit	Device Position  	Probe	Device Name
+Checked	M1_Upper_Right_60	1 	1,007.9232	2,654.1589	3,055.5095	 	 	 	0.0000      	Device Position 1	38.1 	V20003907682

@@ -1,0 +1,22 @@
+correct_rot: True
+receiver:
+  receiver_1:
+    path: "./LATR_1_start_-40_step_10.txt"
+    mode: step 
+    start: -40
+    sep: 10
+  receiver_2:
+    path: "./LATR_2_start_-40_step_10.txt"
+    mode: step 
+    start: -40
+    sep: 10
+  receiver_3:
+    path: "./LATR_3_start_-40_step_10.txt"
+    mode: step 
+    start: -40
+    sep: 10
+  receiver_4:
+    path: "./LATR_4_start_-40_step_10.txt"
+    mode: step 
+    start: -40
+    sep: 10
