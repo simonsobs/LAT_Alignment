@@ -1,3 +1,14 @@
+## 8.1.0 (2026-08-31)
+
+### Feat
+
+- add zemax projection and show arrows in trajectory
+
+### Fix
+
+- sort by id
+- more consistant plotting
+
 ## 8.0.0 (2026-01-23)
 
 ### Feat
