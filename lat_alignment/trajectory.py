@@ -175,7 +175,15 @@ def _plot_point_and_hwfe(
 
 
 def _plot_transform(
-    data, ref, get_transform, plt_root, logger, skip_missing, expand=1000
+    data,
+    ref,
+    get_transform,
+    plt_root,
+    logger,
+    skip_missing,
+    expand=1000,
+    zemax_path=None,
+    front_to_sec=244.1,
 ):
     logger.info("Plotting transformation information")
     for elem in data.keys():
@@ -186,6 +194,7 @@ def _plot_transform(
         if data[elem].ntods < 4:
             logger.error("\t\tOnly %d points found! Skipping...", data[elem].ntods)
             continue
+
         src = data[elem].data.copy()
         dst = ref.reference[elem]
         sfts = np.zeros((len(src), 3)) + np.nan
@@ -193,11 +202,13 @@ def _plot_transform(
         scales = np.zeros((len(src), 3)) + np.nan
         resids = np.zeros((len(src), len(dst), 3)) + np.nan
         missing = []
+
         for i, _src in enumerate(src):
             if not np.all(np.isfinite(_src)):
                 if skip_missing:
                     continue
                 missing += [i]
+
             try:
                 aff, sft = get_transform(_src, dst)
             except ValueError:
@@ -205,6 +216,7 @@ def _plot_transform(
                     "\t\tFailed to get transform for a data point! Filling with nans"
                 )
                 continue
+
             scale, _, rot = decompose_affine(aff)
             rot = np.rad2deg(decompose_rotation(rot))
             sfts[i] = sft
@@ -213,10 +225,11 @@ def _plot_transform(
             trf = apply_transform(_src, aff, sft)
             resids[i] = dst - trf
 
-        # Lets plot shift and rotation
-        # First with time
         plt_root_elem = os.path.join(plt_root, elem)
         os.makedirs(plt_root_elem, exist_ok=True)
+
+        # Lets plot shift and rotation
+        # First with time
         plot_all_ax(
             data[elem].meas_number,
             sfts,
@@ -256,7 +269,7 @@ def _plot_transform(
             "Angle (deg)",
             "shift (mm)",
             f"{elem} Shifts by Angle",
-            os.path.join(plt_root, elem),
+            plt_root_elem,
         )
         plot_by_ax(
             data[elem].angle,
@@ -267,7 +280,7 @@ def _plot_transform(
             "Angle (deg)",
             "rotation (deg)",
             f"{elem} Rotation by Angle",
-            os.path.join(plt_root, elem),
+            plt_root_elem,
         )
         plot_by_ax(
             data[elem].angle,
@@ -278,8 +291,51 @@ def _plot_transform(
             "Angle (deg)",
             "scale ",
             f"{elem} Scale by Angle",
-            os.path.join(plt_root, elem),
+            plt_root_elem,
         )
+
+        # Compute on-sky offset for LATR motion.
+        if elem == "receiver" and zemax_path is not None and front_to_sec is not None:
+            from sotodlib.coords import optics as co
+            xi_eta = np.zeros((len(src), 3)) + np.nan
+
+            for i, (sft, rot) in enumerate(zip(sfts, rots)):
+                if not np.all(np.isfinite(sft)) or not np.all(np.isfinite(rot)):
+                    continue
+
+                xi_eta[i, :2] = co.latr_tilt_shift_to_xieta(
+                    zemax_path,
+                    tilt_x=np.deg2rad(rot[0]),
+                    tilt_y=np.deg2rad(-1*rot[2]),
+                    shift_x=sft[0],
+                    shift_y=-1*sft[2],
+                    front_to_sec=front_to_sec,
+                    roll=np.deg2rad(-1*rot[1])
+                )
+
+            plot_all_ax(
+                data[elem].meas_number,
+                xi_eta,
+                missing,
+                "Measurement (#)",
+                "Sky Offset (rad)",
+                "LATR Sky Offset over time",
+                plt_root_elem,
+                labels=("xi", "eta", "gamma"),
+            )
+
+            plot_by_ax(
+                data[elem].angle,
+                xi_eta,
+                direction,
+                missing,
+                "angle_tod",
+                "Angle (deg)",
+                "Sky Offset (rad)",
+                "LATR Sky Offset by Angle",
+                plt_root_elem,
+                labels=("xi", "eta", "gamma"),
+            )
 
         # Plot resids
         for xax, xlab in [
@@ -296,8 +352,9 @@ def _plot_transform(
                 xax,
                 xlab,
                 f"{elem} Residuals",
-                os.path.join(plt_root, elem),
+                plt_root_elem,
             )
+
         resids[:, :, 0] *= expand
         resids[:, :, 1] *= expand
         plot_anim(
@@ -307,7 +364,7 @@ def _plot_transform(
             "x (mm)",
             "y (mm)",
             f"{elem} Residuals {expand}x",
-            os.path.join(plt_root, elem),
+            plt_root_elem,
         )
 
 
@@ -679,7 +736,7 @@ def main():
                 raise ValueError(f"{elem} already in data!")
             if f"{point}_ref" not in ref:
                 logger.info("\tNo reference for %s found!", point)
-            dat = load_tracker(cfg[elem][point]["path"])
+            dat = load_tracker(cfg[elem][point]["path"], group_thresh=0)
             mode = cfg[elem][point]["mode"]
             start = cfg[elem][point]["start"]
             sep = cfg[elem][point]["sep"]
@@ -744,6 +801,8 @@ def main():
         logger,
         cfg.get("skip_missing", False),
         cfg.get("expand", 1000),
+        cfg.get("zemax_path", None),
+        cfg.get("front_to_sec", 244.1),
     )
     _plot_point_and_hwfe(
         data_ref,
