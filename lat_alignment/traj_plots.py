@@ -110,7 +110,7 @@ def plot_by_ax(
     ylab: str,
     title: str,
     plt_root: str,
-    labels: tuple[str, str, str] = ('x', 'y', 'z'),
+    labels: tuple[str, str, str] = ("x", "y", "z"),
 ):
     """
     Plot data with seperate subplots for each dimension.
@@ -146,8 +146,18 @@ def plot_by_ax(
     fig, axs = plt.subplots(3, 1, sharex=True, figsize=(16, 24))
     for i, dim in enumerate(labels):
         y = dat[:, i]
-        axs[i].quiver(x[:-1], y[:-1], x[1:]-x[:-1], y[1:]-y[:-1], scale_units='xy', angles='xy', scale=1, alpha=.3, width=.003)
-        s=256
+        axs[i].quiver(
+            x[:-1],
+            y[:-1],
+            x[1:] - x[:-1],
+            y[1:] - y[:-1],
+            scale_units="xy",
+            angles="xy",
+            scale=1,
+            alpha=0.3,
+            width=0.003,
+        )
+        s = 256
         axs[i].scatter(
             x[direction == 0],
             dat[direction == 0, i],
@@ -184,7 +194,7 @@ def plot_by_ax(
     fig.subplots_adjust(top=0.95)
     plt.savefig(
         os.path.join(plt_root, f"{title.lower().replace(' ' , '_')}_{xax}.png"),
-        #bbox_inches="tight",
+        # bbox_inches="tight",
     )
     plt.close()
 
@@ -197,7 +207,7 @@ def plot_all_ax(
     ylab: str,
     title: str,
     plt_root: str,
-    labels: tuple[str, str, str] = ('x', 'y', 'z'),
+    labels: tuple[str, str, str] = ("x", "y", "z"),
 ):
     """
     Plot data with dimensions as seperate lines on the same plot.

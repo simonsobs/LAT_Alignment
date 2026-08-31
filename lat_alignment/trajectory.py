@@ -297,6 +297,7 @@ def _plot_transform(
         # Compute on-sky offset for LATR motion.
         if elem == "receiver" and zemax_path is not None and front_to_sec is not None:
             from sotodlib.coords import optics as co
+
             xi_eta = np.zeros((len(src), 3)) + np.nan
 
             for i, (sft, rot) in enumerate(zip(sfts, rots)):
@@ -306,11 +307,11 @@ def _plot_transform(
                 xi_eta[i, :2] = co.latr_tilt_shift_to_xieta(
                     zemax_path,
                     tilt_x=np.deg2rad(rot[0]),
-                    tilt_y=np.deg2rad(-1*rot[2]),
+                    tilt_y=np.deg2rad(-1 * rot[2]),
                     shift_x=sft[0],
-                    shift_y=-1*sft[2],
+                    shift_y=-1 * sft[2],
                     front_to_sec=front_to_sec,
-                    roll=np.deg2rad(-1*rot[1])
+                    roll=np.deg2rad(-1 * rot[1]),
                 )
 
             plot_all_ax(

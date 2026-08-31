@@ -31,7 +31,7 @@ from lat_alignment.transforms import err_transform
 from .dataset import Dataset
 
 logger = logging.getLogger("lat_alignment")
-plt.rcParams.update({'font.size': 14})
+plt.rcParams.update({"font.size": 14})
 
 # fmt: off
 a = {'primary' : 
